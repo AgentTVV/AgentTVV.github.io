@@ -1,364 +1,201 @@
 <!doctype html>
 <html lang="ru">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Golden Frame — 3D Photo Gallery</title>
-  <style>
-    :root {
-      --bg: #09070d;
-      --gold: #f6c85f;
-      --gold2: #fff0a8;
-      --pink: #ff5da2;
-      --text: #fff8e8;
-      --muted: #b9afbd;
-      --card: #15111d;
-    }
-    * { box-sizing: border-box }
-    html, body { margin: 0; min-height: 100%; font-family: Inter, system-ui, -apple-system, Segoe UI, sans-serif; color: var(--text) }
-    body {
-      background:
-        radial-gradient(circle at 15% 10%, rgba(255,193,70,.12), transparent 30%),
-        radial-gradient(circle at 85% 20%, rgba(255,60,150,.11), transparent 28%),
-        linear-gradient(135deg, #07060b, #120b16 55%, #08070d);
-      overflow-x: hidden;
-    }
-    button { font: inherit }
-    .app { max-width: 1400px; margin: auto; padding: 42px 24px 70px }
-    header { text-align: center; margin-bottom: 34px }
-    .badge {
-      display: inline-flex; padding: 7px 12px; border: 1px solid rgba(246,200,95,.35); border-radius: 999px;
-      color: #ffe8a0; background: rgba(246,200,95,.07); font-size: 12px; letter-spacing: .12em; text-transform: uppercase;
-    }
-    h1 { font-size: clamp(32px, 5vw, 64px); margin: 15px 0 8px; line-height: 1.02 }
-    h1 span { background: linear-gradient(90deg, #fff, var(--gold), #ff9ac8); -webkit-background-clip: text; background-clip: text; color: transparent }
-    .subtitle { color: var(--muted); max-width: 650px; margin: auto; line-height: 1.6 }
-    .toolbar {
-      display: flex; justify-content: center; align-items: center; gap: 14px; flex-wrap: wrap;
-      margin: 28px 0 32px;
-    }
-    #fileInput { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none }
-    .upload {
-      display: inline-flex; align-items: center; justify-content: center; border: 0; cursor: pointer;
-      color: #17100a; font-weight: 800; padding: 13px 20px; border-radius: 14px;
-      background: linear-gradient(135deg, #fff1a8, #f2b83f);
-      box-shadow: 0 0 30px rgba(246,200,95,.18);
-      transition: .25s transform, .25s box-shadow;
-    }
-    .upload:hover { transform: translateY(-2px); box-shadow: 0 0 38px rgba(246,200,95,.35) }
-    .counter { color: #d8cfda; padding: 11px 15px; border: 1px solid #332a39; border-radius: 14px; background: #120e17 }
-    .gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 18px }
-    .card {
-      position: relative; aspect-ratio: 4/3; border-radius: 18px; overflow: hidden;
-      background: var(--card); border: 1px solid #302638; cursor: pointer;
-      transition: transform .3s, box-shadow .3s, border-color .3s;
-    }
-    .card:hover {
-      transform: translateY(-7px) scale(1.025);
-      border-color: rgba(246,200,95,.65);
-      box-shadow: 0 18px 45px rgba(0,0,0,.5), 0 0 28px rgba(246,200,95,.13);
-    }
-    .card img { width: 100%; height: 100%; display: block; object-fit: cover; transition: transform .5s }
-    .card:hover img { transform: scale(1.06) }
-    .card:after {
-      content: ""; position: absolute; inset: 0;
-      background: linear-gradient(transparent 55%, rgba(0,0,0,.6));
-      pointer-events: none;
-    }
-    .delete {
-      position: absolute; z-index: 3; right: 10px; top: 10px; width: 34px; height: 34px;
-      border: 1px solid rgba(255,255,255,.2); border-radius: 50%;
-      background: rgba(0,0,0,.58); color: white; cursor: pointer;
-      opacity: 0; transform: scale(.8); transition: .2s;
-    }
-    .card:hover .delete { opacity: 1; transform: scale(1) }
-    .delete:hover { background: #d92f66 }
-    .empty {
-      grid-column: 1/-1; text-align: center; padding: 70px 20px;
-      border: 1px dashed #3b3043; border-radius: 24px; color: #aaa0ad;
-    }
-    .empty strong { display: block; color: #f3d98c; font-size: 20px; margin-bottom: 7px }
-
-    /* модальное окно */
-    .modal {
-      position: fixed; inset: 0; z-index: 20;
-      display: grid; place-items: center; padding: 24px;
-      background: rgba(4,2,8,.72);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
-      opacity: 0; visibility: hidden;
-      transition: opacity .3s, visibility .3s;
-    }
-    .modal.open { opacity: 1; visibility: visible }
-    .stage {
-      position: relative;
-      width: min(86vw, 820px);
-      height: min(78vh, 650px);
-      display: grid; place-items: center;
-      perspective: 1300px;
-    }
-    .frame {
-      position: relative;
-      width: min(78vw, 700px);
-      height: min(68vh, 560px);
-      padding: 16px;
-      border-radius: 20px;
-      background: linear-gradient(135deg, #6d4a13, #ffeaa0 20%, #a86c16 42%, #fff1a1 58%, #70470e 80%, #ffd86a);
-      box-shadow: 0 0 0 2px rgba(255,225,130,.4), 0 30px 80px rgba(0,0,0,.7);
-      transform: scale(.3) rotateX(28deg) rotateY(-20deg) rotateZ(-5deg);
-      opacity: 0;
-      transition: transform .85s cubic-bezier(.17,.89,.32,1.25), opacity .35s;
-    }
-    .open .frame {
-      transform: scale(1) rotateX(0) rotateY(0) rotateZ(0);
-      opacity: 1;
-    }
-    .frame:before {
-      content: "";
-      position: absolute; inset: -5px; border-radius: 24px; z-index: -1;
-      background: conic-gradient(from 0deg, #6b4208, #fff0a0, #d9941a, #fff7bd, #7a4c09, #ffe27b, #6b4208);
-      animation: spinBorder 4s linear infinite;
-      filter: drop-shadow(0 0 13px rgba(255,207,79,.8));
-    }
-    .frame:after {
-      content: "";
-      position: absolute; inset: 0; border-radius: 15px; pointer-events: none;
-      background: linear-gradient(105deg, transparent 35%, rgba(255,255,255,.42) 48%, rgba(255,236,170,.1) 53%, transparent 64%);
-      transform: translateX(-130%);
-      animation: shine 2.8s 1s ease-in-out infinite;
-    }
-    .photo-wrap {
-      width: 100%; height: 100%; overflow: hidden; border-radius: 7px;
-      background: #08070a; position: relative;
-    }
-    .photo-wrap:after {
-      content: ""; position: absolute; inset: 0;
-      box-shadow: inset 0 0 55px rgba(0,0,0,.55);
-      pointer-events: none;
-    }
-    .modal-photo {
-      width: 100%; height: 100%; display: block; object-fit: contain;
-      cursor: pointer;
-      transform-style: preserve-3d;
-      animation: photo3d 8s linear infinite;
-    }
-    .modal-photo.paused { animation-play-state: paused }
-    .corner {
-      position: absolute; width: 55px; height: 55px; z-index: 4;
-      opacity: 0;
-      filter: drop-shadow(0 0 9px #ffd96c);
-      transition: opacity .35s .5s, transform .5s .5s;
-    }
-    .open .corner { opacity: 1; transform: none }
-    .c1 { left: -7px; top: -7px; border-left: 5px solid #ffe889; border-top: 5px solid #ffe889; border-radius: 16px 0 0 }
-    .c2 { right: -7px; top: -7px; border-right: 5px solid #ffe889; border-top: 5px solid #ffe889; border-radius: 0 16px 0 0 }
-    .c3 { left: -7px; bottom: -7px; border-left: 5px solid #ffe889; border-bottom: 5px solid #ffe889; border-radius: 0 0 0 16px }
-    .c4 { right: -7px; bottom: -7px; border-right: 5px solid #ffe889; border-bottom: 5px solid #ffe889; border-radius: 0 0 16px 0 }
-    .flash {
-      position: absolute; width: 30px; height: 30px; border-radius: 50%;
-      background: #fff5ad; box-shadow: 0 0 30px 12px #ffd75d;
-      opacity: 0; z-index: 5; pointer-events: none;
-    }
-    .open .flash { animation: flash .9s ease-out .45s }
-    .close {
-      position: absolute; right: 0; top: -45px; width: 40px; height: 40px;
-      border-radius: 50%; border: 1px solid rgba(255,255,255,.25);
-      background: rgba(10,7,13,.7); color: #fff; font-size: 25px;
-      cursor: pointer; z-index: 10;
-    }
-    .hint {
-      position: absolute; bottom: -45px; left: 50%; transform: translateX(-50%);
-      color: #c8becb; font-size: 13px; white-space: nowrap;
-    }
-    .particle {
-      position: absolute; left: 50%; top: 50%;
-      width: var(--s); height: var(--s);
-      border-radius: 50%; background: var(--c);
-      box-shadow: 0 0 9px var(--c);
-      pointer-events: none;
-      animation: particle var(--d) cubic-bezier(.12,.7,.25,1) var(--delay) forwards;
-    }
-
-    /* анимации */
-    @keyframes spinBorder { to { transform: rotate(360deg) } }
-    @keyframes shine {
-      0%, 25% { transform: translateX(-130%) }
-      70%, 100% { transform: translateX(130%) }
-    }
-    @keyframes photo3d {
-      0% { transform: rotateY(-9deg) }
-      50% { transform: rotateY(9deg) }
-      100% { transform: rotateY(-9deg) }
-    }
-    @keyframes flash {
-      0% { opacity: 1; transform: scale(.2) }
-      70% { opacity: .5 }
-      100% { opacity: 0; transform: scale(18) }
-    }
-    @keyframes particle {
-      0% { opacity: 1; transform: translate(-50%, -50%) scale(.3) }
-      70% { opacity: 1 }
-      100% { opacity: 0; transform: translate(calc(-50% + var(--x)), calc(-50% + var(--y))) scale(.05) }
-    }
-
-    /* адаптив */
-    @media (max-width: 600px) {
-      .app { padding: 28px 14px 50px }
-      .gallery { grid-template-columns: repeat(2, 1fr); gap: 10px }
-      .frame { padding: 10px }
-      .hint { font-size: 11px }
-      .close { right: -2px; top: -48px }
-      .stage { width: 92vw }
-    }
-    @media (prefers-reduced-motion: reduce) {
-      *, *:before, *:after {
-        animation-duration: .01ms !important;
-        animation-iteration-count: 1 !important;
-        transition-duration: .01ms !important;
-      }
-    }
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0a0710">
+<title>Golden Gallery — Cloud</title>
+<style>
+:root{--bg:#08060c;--panel:#120e18;--panel2:#19121f;--gold:#f5c75c;--gold2:#fff0a3;--pink:#ff6cae;--text:#fff9ed;--muted:#afa5b5;--line:#302538}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif;color:var(--text)}
+body{background:radial-gradient(circle at 12% 8%,rgba(245,199,92,.12),transparent 30%),radial-gradient(circle at 90% 18%,rgba(255,80,160,.11),transparent 30%),linear-gradient(135deg,#06050a,#130b17 55%,#08070c);overflow-x:hidden}
+button,input{font:inherit}.app{max-width:1450px;margin:auto;padding:36px 22px 70px}
+header{text-align:center;margin-bottom:24px}.badge{display:inline-flex;padding:7px 12px;border:1px solid #654e27;border-radius:999px;color:#ffe59a;background:#f5c75c0d;font-size:11px;letter-spacing:.14em;text-transform:uppercase}
+h1{font-size:clamp(34px,5vw,64px);line-height:1;margin:14px 0 8px}h1 span{background:linear-gradient(90deg,#fff,var(--gold),#ff9bc9);-webkit-background-clip:text;color:transparent}
+.subtitle{max-width:720px;margin:auto;color:var(--muted);line-height:1.55}
+.status{display:inline-flex;align-items:center;gap:7px;margin-top:12px;color:#cfc5d1;font-size:12px}.dot{width:8px;height:8px;border-radius:50%;background:#777}.dot.online{background:#57e38b;box-shadow:0 0 10px #57e38b}.dot.offline{background:#ffb84e}
+.toolbar{display:flex;justify-content:center;align-items:center;gap:10px;flex-wrap:wrap;margin:26px 0}
+.upload{display:inline-flex;align-items:center;justify-content:center;padding:12px 18px;border:0;border-radius:13px;cursor:pointer;font-weight:800;color:#171009;background:linear-gradient(135deg,#fff1aa,#efb83f);box-shadow:0 0 28px #f5c75c22;transition:.25s transform,.25s box-shadow}
+.upload:hover{transform:translateY(-2px);box-shadow:0 0 38px #f5c75c44}.count,.select{padding:11px 13px;color:#ddd3df;background:#120e18;border:1px solid var(--line);border-radius:13px}.select{outline:0}
+#fileInput{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+.gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(215px,1fr));gap:17px}
+.empty{grid-column:1/-1;padding:70px 20px;text-align:center;border:1px dashed #3b3045;border-radius:22px;color:#a9a0ae}.empty strong{display:block;color:#f4d98d;font-size:20px;margin-bottom:7px}
+.card{position:relative;aspect-ratio:4/3;border:1px solid #302638;border-radius:18px;overflow:hidden;background:#120e18;cursor:pointer;transition:transform .3s,box-shadow .3s,border-color .3s}
+.card:hover{transform:translateY(-6px) scale(1.02);border-color:#b98b37;box-shadow:0 20px 45px #0009,0 0 26px #f5c75c1b}.card img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s}.card:hover img{transform:scale(1.06)}
+.card:after{content:"";position:absolute;inset:0;background:linear-gradient(transparent 52%,#000a);pointer-events:none}
+.card-meta{position:absolute;left:11px;right:45px;bottom:10px;z-index:2;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-shadow:0 2px 5px #000}
+.delete{position:absolute;z-index:4;right:9px;top:9px;width:35px;height:35px;border-radius:50%;border:1px solid #ffffff38;background:#0009;color:white;cursor:pointer;opacity:0;transform:scale(.8);transition:.2s}.card:hover .delete{opacity:1;transform:scale(1)}.delete:hover{background:#e42e69}
+.card.removing{pointer-events:none;animation:removeCard .62s cubic-bezier(.7,-.05,.8,.4) forwards}
+@keyframes removeCard{0%{opacity:1;transform:scale(1) rotate(0)}35%{transform:scale(1.08) rotate(-2deg);filter:brightness(1.6)}100%{opacity:0;transform:scale(.05) rotate(14deg);filter:blur(7px)}}
+.modal{position:fixed;inset:0;z-index:30;display:grid;place-items:center;padding:24px;background:#040208bd;backdrop-filter:blur(15px);-webkit-backdrop-filter:blur(15px);opacity:0;visibility:hidden;transition:.3s}.modal.open{opacity:1;visibility:visible}
+.stage{position:relative;width:min(90vw,850px);height:min(78vh,680px);display:grid;place-items:center;perspective:1300px}.frame{position:relative;width:min(82vw,720px);height:min(68vh,570px);padding:16px;border-radius:20px;background:linear-gradient(135deg,#70490e,#fff0a0 20%,#a86d18 42%,#fff3ad 58%,#6d450d 80%,#ffd86a);box-shadow:0 30px 90px #000c;transform:scale(.3) rotateX(28deg) rotateY(-20deg) rotateZ(-5deg);opacity:0;transition:transform .85s cubic-bezier(.17,.89,.32,1.25),opacity .35s}.open .frame{transform:none;opacity:1}
+.frame:before{content:"";position:absolute;inset:-5px;border-radius:24px;z-index:-1;background:conic-gradient(#70470a,#fff0a0,#d9941a,#fff7bd,#70470a,#ffe27b,#70470a);animation:borderSpin 4s linear infinite;filter:drop-shadow(0 0 14px #ffd45a)}
+.frame:after{content:"";position:absolute;inset:0;border-radius:15px;pointer-events:none;background:linear-gradient(105deg,transparent 35%,#fff8 48%,#ffeca91a 53%,transparent 64%);transform:translateX(-130%);animation:shine 2.8s 1s ease-in-out infinite}
+.photo-wrap{width:100%;height:100%;overflow:hidden;border-radius:7px;background:#050509;position:relative}.photo-wrap:after{content:"";position:absolute;inset:0;box-shadow:inset 0 0 55px #0008;pointer-events:none}
+.modal-photo{width:100%;height:100%;object-fit:contain;display:block;cursor:pointer;animation:photo3d 8s linear infinite}.modal-photo.paused{animation-play-state:paused}
+.corner{position:absolute;width:55px;height:55px;z-index:4;border-color:#ffe889;filter:drop-shadow(0 0 9px #ffd96c);opacity:0;transition:.4s .45s}.open .corner{opacity:1}.c1{left:-7px;top:-7px;border-left:5px solid;border-top:5px solid;border-radius:16px 0 0}.c2{right:-7px;top:-7px;border-right:5px solid;border-top:5px solid;border-radius:0 16px 0 0}.c3{left:-7px;bottom:-7px;border-left:5px solid;border-bottom:5px solid;border-radius:0 0 0 16px}.c4{right:-7px;bottom:-7px;border-right:5px solid;border-bottom:5px solid;border-radius:0 0 16px 0}
+.close{position:absolute;right:0;top:-48px;width:40px;height:40px;border-radius:50%;border:1px solid #fff4;background:#0a0710c9;color:#fff;font-size:25px;cursor:pointer;z-index:10}.hint{position:absolute;bottom:-44px;left:50%;transform:translateX(-50%);white-space:nowrap;color:#c8bfca;font-size:12px}
+.flash{position:absolute;width:30px;height:30px;border-radius:50%;background:#fff5ad;box-shadow:0 0 30px 12px #ffd75d;opacity:0;z-index:5}.open .flash{animation:flash .9s ease-out .45s}
+.particle{position:absolute;left:50%;top:50%;width:var(--s);height:var(--s);border-radius:50%;background:var(--c);box-shadow:0 0 9px var(--c);pointer-events:none;animation:particle var(--d) cubic-bezier(.12,.7,.25,1) var(--delay) forwards}
+.toast{position:fixed;left:50%;bottom:25px;z-index:100;transform:translate(-50%,20px);opacity:0;padding:12px 16px;border:1px solid #ffffff1c;border-radius:12px;background:#120e18eF;color:#fff;box-shadow:0 12px 35px #0009;transition:.3s}.toast.show{opacity:1;transform:translate(-50%,0)}
+@keyframes borderSpin{to{transform:rotate(360deg)}}@keyframes shine{0%,25%{transform:translateX(-130%)}70%,100%{transform:translateX(130%)}}@keyframes photo3d{0%{transform:rotateY(-9deg)}50%{transform:rotateY(9deg)}100%{transform:rotateY(-9deg)}}@keyframes flash{0%{opacity:1;transform:scale(.2)}70%{opacity:.5}100%{opacity:0;transform:scale(18)}}@keyframes particle{0%{opacity:1;transform:translate(-50%,-50%) scale(.3)}70%{opacity:1}100%{opacity:0;transform:translate(calc(-50% + var(--x)),calc(-50% + var(--y))) scale(.05)}}
+@media(max-width:600px){.app{padding:25px 12px 50px}.gallery{grid-template-columns:repeat(2,1fr);gap:9px}.frame{padding:10px}.hint{font-size:10px}.close{right:-3px}.stage{width:94vw}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+</style>
 </head>
 <body>
 <main class="app">
-  <header>
-    <div class="badge">3D Photo Experience</div>
-    <h1>Golden <span>Gallery</span></h1>
-    <p class="subtitle">Загружайте фотографии и открывайте их в премиальной 3D-рамке с золотым свечением, бликами и фейерверком частиц.</p>
-  </header>
-  <div class="toolbar">
-    <input id="fileInput" type="file" accept="image/*" multiple>
-    <label class="upload" id="uploadBtn" for="fileInput">＋ Загрузить фото</label>
-    <div class="counter">Фотографий: <b id="count">0</b></div>
-  </div>
-  <section class="gallery" id="gallery">
-    <div class="empty" id="empty"><strong>Галерея пока пуста</strong>Нажмите «Загрузить фото», чтобы добавить изображения.</div>
-  </section>
+<header>
+<div class="badge">Cloud • Realtime • 3D</div>
+<h1>Golden <span>Gallery</span></h1>
+<p class="subtitle">Общая облачная фотогалерея. Загружайте изображения — остальные пользователи увидят изменения автоматически.</p>
+<div class="status"><i class="dot" id="statusDot"></i><span id="statusText">Подключение…</span></div>
+</header>
+<div class="toolbar">
+<input id="fileInput" type="file" accept="image/*" multiple>
+<label class="upload" for="fileInput">＋ Загрузить фото</label>
+<select class="select" id="sort">
+<option value="new">Новые сначала</option><option value="old">Старые сначала</option><option value="az">Название А → Я</option><option value="za">Название Я → А</option><option value="size">Размер</option>
+</select>
+<div class="count">Фотографий: <b id="count">0</b></div>
+</div>
+<section class="gallery" id="gallery"><div class="empty" id="empty"><strong>Галерея пока пуста</strong>Загрузите первую фотографию.</div></section>
 </main>
 
-<div class="modal" id="modal" aria-hidden="true">
-  <div class="stage" id="stage">
-    <button class="close" id="closeBtn" aria-label="Закрыть">×</button>
-    <div class="frame" id="frame">
-      <i class="corner c1"></i><i class="corner c2"></i><i class="corner c3"></i><i class="corner c4"></i>
-      <div class="flash"></div>
-      <div class="photo-wrap"><img class="modal-photo" id="modalPhoto" alt=""></div>
-    </div>
-    <div class="hint">Клик по фото — пауза / продолжить 3D-вращение</div>
-  </div>
-</div>
+<div class="modal" id="modal" aria-hidden="true"><div class="stage" id="stage">
+<button class="close" id="closeBtn">×</button><div class="frame">
+<i class="corner c1"></i><i class="corner c2"></i><i class="corner c3"></i><i class="corner c4"></i><div class="flash"></div>
+<div class="photo-wrap"><img class="modal-photo" id="modalPhoto" alt=""></div></div><div class="hint">Клик по фото — пауза / продолжить 3D-вращение</div>
+</div></div><div class="toast" id="toast"></div>
 
-<script>
-  const state = { photos: [], activeId: null, rotating: true };
-  const fileInput = document.getElementById('fileInput');
-  const gallery = document.getElementById('gallery');
-  const count = document.getElementById('count');
-  const empty = document.getElementById('empty');
-  const modal = document.getElementById('modal');
-  const modalPhoto = document.getElementById('modalPhoto');
-  const closeBtn = document.getElementById('closeBtn');
-  const stage = document.getElementById('stage');
+<!-- Firebase SDK. Никаких сборщиков: файл можно разместить прямо на GitHub Pages. -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
+import { getFirestore, collection, addDoc, deleteDoc, doc, onSnapshot, query, orderBy, serverTimestamp, initializeFirestore, persistentLocalCache, persistentMultipleTabManager } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-storage.js";
+import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
 
-  fileInput.addEventListener('change', function(e) {
-    const files = Array.from(e.target.files || []);
-    if (!files.length) return;
-    files.forEach(file => {
-      if (!file.type || !file.type.startsWith('image/')) return;
-      const reader = new FileReader();
-      reader.onload = function(ev) {
-        state.photos.push({
-          id: (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : Date.now() + '-' + Math.random(),
-          src: ev.target.result,
-          name: file.name
-        });
-        render();
-      };
-      reader.onerror = function() { alert('Не удалось прочитать файл: ' + file.name); };
-      reader.readAsDataURL(file);
-    });
-    e.target.value = '';
-  });
+/* ============================================================
+   ВСТАВЬ СЮДА CONFIG ИЗ FIREBASE CONSOLE
+   ============================================================ */
+const firebaseConfig = {
+  apiKey: "ВСТАВЬ_API_KEY",
+  authDomain: "ВСТАВЬ_AUTH_DOMAIN",
+  projectId: "ВСТАВЬ_PROJECT_ID",
+  storageBucket: "ВСТАВЬ_STORAGE_BUCKET",
+  messagingSenderId: "ВСТАВЬ_MESSAGING_SENDER_ID",
+  appId: "ВСТАВЬ_APP_ID"
+};
+/* ============================================================ */
 
-  function render() {
-    gallery.querySelectorAll('.card').forEach(x => x.remove());
-    empty.style.display = state.photos.length ? 'none' : 'block';
-    count.textContent = state.photos.length;
-    state.photos.forEach(p => {
-      const card = document.createElement('article');
-      card.className = 'card';
-      card.dataset.id = p.id;
-      const img = document.createElement('img');
-      img.src = p.src;
-      img.alt = p.name;
-      const del = document.createElement('button');
-      del.className = 'delete';
-      del.innerHTML = '×';
-      del.title = 'Удалить';
-      del.onclick = e => { e.stopPropagation(); removePhoto(p.id); };
-      card.onclick = () => openModal(p.id);
-      card.append(img, del);
-      gallery.append(card);
-    });
-  }
+const configured = !Object.values(firebaseConfig).some(v => String(v).startsWith("ВСТАВЬ_"));
 
-  function removePhoto(id) {
-    if (state.activeId === id) closeModal();
-    state.photos = state.photos.filter(p => p.id !== id);
+const fileInput=document.getElementById('fileInput'),gallery=document.getElementById('gallery'),empty=document.getElementById('empty');
+const count=document.getElementById('count'),sort=document.getElementById('sort'),toast=document.getElementById('toast');
+const modal=document.getElementById('modal'),modalPhoto=document.getElementById('modalPhoto'),closeBtn=document.getElementById('closeBtn'),stage=document.getElementById('stage');
+const statusDot=document.getElementById('statusDot'),statusText=document.getElementById('statusText');
+
+let db,storage,auth,photos=[],unsubscribe=null,activeId=null,rotating=true;
+
+function notify(msg){toast.textContent=msg;toast.classList.add('show');clearTimeout(notify.t);notify.t=setTimeout(()=>toast.classList.remove('show'),3200)}
+function status(ok,text){statusDot.className='dot '+(ok?'online':'offline');statusText.textContent=text}
+
+if(!configured){
+  status(false,'Нужно вставить Firebase config');
+  notify('Откройте файл и вставьте Firebase Config');
+}else{
+  try{
+    const app=initializeApp(firebaseConfig);
+    db=initializeFirestore(app,{localCache:persistentLocalCache({tabManager:persistentMultipleTabManager()})});
+    storage=getStorage(app);auth=getAuth(app);
+    await signInAnonymously(auth);
+    status(true,'Онлайн • синхронизация включена');
+    startRealtime();
+  }catch(err){console.error(err);status(false,'Ошибка подключения');notify('Firebase: '+err.message)}
+}
+
+function startRealtime(){
+  const q=query(collection(db,'photos'),orderBy('createdAt','desc'));
+  unsubscribe=onSnapshot(q,{includeMetadataChanges:true},snap=>{
+    photos=snap.docs.map(d=>({id:d.id,...d.data()}));
     render();
+    status(!snap.metadata.fromCache,'Онлайн • '+(snap.metadata.fromCache?'кэш':'синхронизация'));
+  },err=>{console.error(err);status(false,'Ошибка синхронизации');notify('Не удалось получить галерею: '+err.message)});
+}
+
+fileInput.addEventListener('change',async e=>{
+  const files=Array.from(e.target.files||[]);e.target.value='';
+  if(!files.length)return;
+  if(!configured){notify('Сначала настройте Firebase Config');return}
+  for(const file of files){
+    if(!file.type.startsWith('image/'))continue;
+    try{
+      notify('Загрузка: '+file.name);
+      const safeName=file.name.replace(/[^\w.\-а-яА-ЯёЁ ]/g,'_');
+      const path='photos/'+Date.now()+'_'+Math.random().toString(36).slice(2)+'_'+safeName;
+      const storageRef=ref(storage,path);
+      await uploadBytes(storageRef,file,{contentType:file.type});
+      const url=await getDownloadURL(storageRef);
+      await addDoc(collection(db,'photos'),{name:file.name,url,storagePath:path,size:file.size,type:file.type,createdAt:serverTimestamp()});
+    }catch(err){console.error(err);notify('Ошибка загрузки: '+err.message)}
   }
+});
 
-  function openModal(id) {
-    const p = state.photos.find(x => x.id === id);
-    if (!p) return;
-    state.activeId = id;
-    state.rotating = true;
-    modalPhoto.src = p.src;
-    modalPhoto.alt = p.name;
-    modalPhoto.classList.remove('paused');
-    createParticles(140);
-    modal.classList.add('open');
-    modal.setAttribute('aria-hidden', 'false');
-    document.body.style.overflow = 'hidden';
+sort.addEventListener('change',render);
+
+function sorted(){
+  const a=[...photos];
+  const time=x=>x.createdAt?.seconds?x.createdAt.seconds*1000:0;
+  if(sort.value==='new')a.sort((x,y)=>time(y)-time(x));
+  if(sort.value==='old')a.sort((x,y)=>time(x)-time(y));
+  if(sort.value==='az')a.sort((x,y)=>(x.name||'').localeCompare(y.name||'','ru'));
+  if(sort.value==='za')a.sort((x,y)=>(y.name||'').localeCompare(x.name||'','ru'));
+  if(sort.value==='size')a.sort((x,y)=>(y.size||0)-(x.size||0));
+  return a;
+}
+function fmtSize(n){if(!n)return '';if(n<1024*1024)return Math.round(n/1024)+' KB';return (n/1024/1024).toFixed(1)+' MB'}
+function render(){
+  gallery.querySelectorAll('.card').forEach(x=>x.remove());
+  count.textContent=photos.length;empty.style.display=photos.length?'none':'block';
+  sorted().forEach(p=>{
+    const card=document.createElement('article');card.className='card';card.dataset.id=p.id;
+    const img=document.createElement('img');img.src=p.url;img.alt=p.name||'Фото';img.loading='lazy';
+    const del=document.createElement('button');del.className='delete';del.innerHTML='×';del.title='Удалить';
+    del.onclick=e=>{e.stopPropagation();removePhoto(card,p)};
+    const meta=document.createElement('div');meta.className='card-meta';meta.textContent=(p.name||'Без названия')+(p.size?' • '+fmtSize(p.size):'');
+    card.append(img,meta,del);card.onclick=()=>openModal(p);gallery.append(card);
+  });
+}
+async function removePhoto(card,p){
+  if(!confirm('Удалить это фото у всех пользователей?'))return;
+  card.classList.add('removing');createDeleteParticles(card);
+  try{
+    await deleteDoc(doc(db,'photos',p.id));
+    if(p.storagePath)await deleteObject(ref(storage,p.storagePath)).catch(()=>{});
+    if(activeId===p.id)closeModal();
+    notify('Фото удалено');
+  }catch(err){card.classList.remove('removing');console.error(err);notify('Ошибка удаления: '+err.message)}
+}
+function createDeleteParticles(card){
+  const r=card.getBoundingClientRect();
+  for(let i=0;i<28;i++){
+    const x=r.left+r.width/2,y=r.top+r.height/2;
+    const el=document.createElement('i');el.style.cssText=`position:fixed;left:${x}px;top:${y}px;width:${2+Math.random()*5}px;height:${2+Math.random()*5}px;border-radius:50%;z-index:50;background:${['#ffd65a','#ff6cae','#fff','#7ee7ff'][i%4]};box-shadow:0 0 8px currentColor;pointer-events:none;`;
+    document.body.appendChild(el);
+    const a=Math.random()*Math.PI*2,d=40+Math.random()*160;
+    el.animate([{transform:'translate(-50%,-50%) scale(1)',opacity:1},{transform:`translate(${Math.cos(a)*d}px,${Math.sin(a)*d}px) scale(0)`,opacity:0}],{duration:500+Math.random()*350,easing:'cubic-bezier(.12,.7,.25,1)',fill:'forwards'}).onfinish=()=>el.remove();
   }
-
-  function closeModal() {
-    modal.classList.remove('open');
-    modal.setAttribute('aria-hidden', 'true');
-    state.activeId = null;
-    modalPhoto.classList.remove('paused');
-    modalPhoto.removeAttribute('src');
-    document.querySelectorAll('.particle').forEach(p => p.remove());
-    document.body.style.overflow = '';
-  }
-
-  modalPhoto.onclick = () => {
-    state.rotating = !state.rotating;
-    modalPhoto.classList.toggle('paused', !state.rotating);
-  };
-
-  closeBtn.onclick = closeModal;
-  modal.onclick = e => { if (e.target === modal) closeModal(); };
-  document.addEventListener('keydown', e => { if (e.key === 'Escape' && modal.classList.contains('open')) closeModal(); });
-
-  function createParticles(n) {
-    document.querySelectorAll('.particle').forEach(p => p.remove());
-    const colors = ['#ffd65a','#fff3a5','#ff6cae','#7ee7ff','#c69cff','#ffffff','#ff8c42'];
-    for (let i = 0; i < n; i++) {
-      const p = document.createElement('i');
-      p.className = 'particle';
-      const a = Math.random() * Math.PI * 2;
-      const dist = 120 + Math.random() * 360;
-      p.style.setProperty('--x', Math.cos(a) * dist + 'px');
-      p.style.setProperty('--y', Math.sin(a) * dist + 'px');
-      p.style.setProperty('--s', 2 + Math.random() * 5 + 'px');
-      p.style.setProperty('--c', colors[Math.floor(Math.random() * colors.length)]);
-      p.style.setProperty('--d', .7 + Math.random() * 1.5 + 's');
-      p.style.setProperty('--delay', Math.random() * .35 + 's');
-      stage.appendChild(p);
-    }
-  }
-
-  render();
+}
+function openModal(p){activeId=p.id;rotating=true;modalPhoto.src=p.url;modalPhoto.classList.remove('paused');createParticles(120);modal.classList.add('open');modal.setAttribute('aria-hidden','false');document.body.style.overflow='hidden'}
+function closeModal(){modal.classList.remove('open');modal.setAttribute('aria-hidden','true');activeId=null;modalPhoto.removeAttribute('src');document.querySelectorAll('.particle').forEach(x=>x.remove());document.body.style.overflow=''}
+modalPhoto.onclick=()=>{rotating=!rotating;modalPhoto.classList.toggle('paused',!rotating)}
+closeBtn.onclick=closeModal;modal.onclick=e=>{if(e.target===modal)closeModal()};document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal()});
+function createParticles(n){
+ document.querySelectorAll('.particle').forEach(x=>x.remove());const colors=['#ffd65a','#fff3a5','#ff6cae','#7ee7ff','#c69cff','#fff'];
+ for(let i=0;i<n;i++){const p=document.createElement('i');p.className='particle';const a=Math.random()*Math.PI*2,d=120+Math.random()*360;
+ p.style.setProperty('--x',Math.cos(a)*d+'px');p.style.setProperty('--y',Math.sin(a)*d+'px');p.style.setProperty('--s',2+Math.random()*5+'px');p.style.setProperty('--c',colors[i%colors.length]);p.style.setProperty('--d',.7+Math.random()*1.5+'s');p.style.setProperty('--delay',Math.random()*.35+'s');stage.appendChild(p)}
+}
+render();
 </script>
 </body>
 </html>
