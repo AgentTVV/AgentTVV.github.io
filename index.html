@@ -1,201 +1,359 @@
 <!doctype html>
 <html lang="ru">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#0a0710">
-<title>Golden Gallery — Cloud</title>
-<style>
-:root{--bg:#08060c;--panel:#120e18;--panel2:#19121f;--gold:#f5c75c;--gold2:#fff0a3;--pink:#ff6cae;--text:#fff9ed;--muted:#afa5b5;--line:#302538}
-*{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif;color:var(--text)}
-body{background:radial-gradient(circle at 12% 8%,rgba(245,199,92,.12),transparent 30%),radial-gradient(circle at 90% 18%,rgba(255,80,160,.11),transparent 30%),linear-gradient(135deg,#06050a,#130b17 55%,#08070c);overflow-x:hidden}
-button,input{font:inherit}.app{max-width:1450px;margin:auto;padding:36px 22px 70px}
-header{text-align:center;margin-bottom:24px}.badge{display:inline-flex;padding:7px 12px;border:1px solid #654e27;border-radius:999px;color:#ffe59a;background:#f5c75c0d;font-size:11px;letter-spacing:.14em;text-transform:uppercase}
-h1{font-size:clamp(34px,5vw,64px);line-height:1;margin:14px 0 8px}h1 span{background:linear-gradient(90deg,#fff,var(--gold),#ff9bc9);-webkit-background-clip:text;color:transparent}
-.subtitle{max-width:720px;margin:auto;color:var(--muted);line-height:1.55}
-.status{display:inline-flex;align-items:center;gap:7px;margin-top:12px;color:#cfc5d1;font-size:12px}.dot{width:8px;height:8px;border-radius:50%;background:#777}.dot.online{background:#57e38b;box-shadow:0 0 10px #57e38b}.dot.offline{background:#ffb84e}
-.toolbar{display:flex;justify-content:center;align-items:center;gap:10px;flex-wrap:wrap;margin:26px 0}
-.upload{display:inline-flex;align-items:center;justify-content:center;padding:12px 18px;border:0;border-radius:13px;cursor:pointer;font-weight:800;color:#171009;background:linear-gradient(135deg,#fff1aa,#efb83f);box-shadow:0 0 28px #f5c75c22;transition:.25s transform,.25s box-shadow}
-.upload:hover{transform:translateY(-2px);box-shadow:0 0 38px #f5c75c44}.count,.select{padding:11px 13px;color:#ddd3df;background:#120e18;border:1px solid var(--line);border-radius:13px}.select{outline:0}
-#fileInput{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
-.gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(215px,1fr));gap:17px}
-.empty{grid-column:1/-1;padding:70px 20px;text-align:center;border:1px dashed #3b3045;border-radius:22px;color:#a9a0ae}.empty strong{display:block;color:#f4d98d;font-size:20px;margin-bottom:7px}
-.card{position:relative;aspect-ratio:4/3;border:1px solid #302638;border-radius:18px;overflow:hidden;background:#120e18;cursor:pointer;transition:transform .3s,box-shadow .3s,border-color .3s}
-.card:hover{transform:translateY(-6px) scale(1.02);border-color:#b98b37;box-shadow:0 20px 45px #0009,0 0 26px #f5c75c1b}.card img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s}.card:hover img{transform:scale(1.06)}
-.card:after{content:"";position:absolute;inset:0;background:linear-gradient(transparent 52%,#000a);pointer-events:none}
-.card-meta{position:absolute;left:11px;right:45px;bottom:10px;z-index:2;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-shadow:0 2px 5px #000}
-.delete{position:absolute;z-index:4;right:9px;top:9px;width:35px;height:35px;border-radius:50%;border:1px solid #ffffff38;background:#0009;color:white;cursor:pointer;opacity:0;transform:scale(.8);transition:.2s}.card:hover .delete{opacity:1;transform:scale(1)}.delete:hover{background:#e42e69}
-.card.removing{pointer-events:none;animation:removeCard .62s cubic-bezier(.7,-.05,.8,.4) forwards}
-@keyframes removeCard{0%{opacity:1;transform:scale(1) rotate(0)}35%{transform:scale(1.08) rotate(-2deg);filter:brightness(1.6)}100%{opacity:0;transform:scale(.05) rotate(14deg);filter:blur(7px)}}
-.modal{position:fixed;inset:0;z-index:30;display:grid;place-items:center;padding:24px;background:#040208bd;backdrop-filter:blur(15px);-webkit-backdrop-filter:blur(15px);opacity:0;visibility:hidden;transition:.3s}.modal.open{opacity:1;visibility:visible}
-.stage{position:relative;width:min(90vw,850px);height:min(78vh,680px);display:grid;place-items:center;perspective:1300px}.frame{position:relative;width:min(82vw,720px);height:min(68vh,570px);padding:16px;border-radius:20px;background:linear-gradient(135deg,#70490e,#fff0a0 20%,#a86d18 42%,#fff3ad 58%,#6d450d 80%,#ffd86a);box-shadow:0 30px 90px #000c;transform:scale(.3) rotateX(28deg) rotateY(-20deg) rotateZ(-5deg);opacity:0;transition:transform .85s cubic-bezier(.17,.89,.32,1.25),opacity .35s}.open .frame{transform:none;opacity:1}
-.frame:before{content:"";position:absolute;inset:-5px;border-radius:24px;z-index:-1;background:conic-gradient(#70470a,#fff0a0,#d9941a,#fff7bd,#70470a,#ffe27b,#70470a);animation:borderSpin 4s linear infinite;filter:drop-shadow(0 0 14px #ffd45a)}
-.frame:after{content:"";position:absolute;inset:0;border-radius:15px;pointer-events:none;background:linear-gradient(105deg,transparent 35%,#fff8 48%,#ffeca91a 53%,transparent 64%);transform:translateX(-130%);animation:shine 2.8s 1s ease-in-out infinite}
-.photo-wrap{width:100%;height:100%;overflow:hidden;border-radius:7px;background:#050509;position:relative}.photo-wrap:after{content:"";position:absolute;inset:0;box-shadow:inset 0 0 55px #0008;pointer-events:none}
-.modal-photo{width:100%;height:100%;object-fit:contain;display:block;cursor:pointer;animation:photo3d 8s linear infinite}.modal-photo.paused{animation-play-state:paused}
-.corner{position:absolute;width:55px;height:55px;z-index:4;border-color:#ffe889;filter:drop-shadow(0 0 9px #ffd96c);opacity:0;transition:.4s .45s}.open .corner{opacity:1}.c1{left:-7px;top:-7px;border-left:5px solid;border-top:5px solid;border-radius:16px 0 0}.c2{right:-7px;top:-7px;border-right:5px solid;border-top:5px solid;border-radius:0 16px 0 0}.c3{left:-7px;bottom:-7px;border-left:5px solid;border-bottom:5px solid;border-radius:0 0 0 16px}.c4{right:-7px;bottom:-7px;border-right:5px solid;border-bottom:5px solid;border-radius:0 0 16px 0}
-.close{position:absolute;right:0;top:-48px;width:40px;height:40px;border-radius:50%;border:1px solid #fff4;background:#0a0710c9;color:#fff;font-size:25px;cursor:pointer;z-index:10}.hint{position:absolute;bottom:-44px;left:50%;transform:translateX(-50%);white-space:nowrap;color:#c8bfca;font-size:12px}
-.flash{position:absolute;width:30px;height:30px;border-radius:50%;background:#fff5ad;box-shadow:0 0 30px 12px #ffd75d;opacity:0;z-index:5}.open .flash{animation:flash .9s ease-out .45s}
-.particle{position:absolute;left:50%;top:50%;width:var(--s);height:var(--s);border-radius:50%;background:var(--c);box-shadow:0 0 9px var(--c);pointer-events:none;animation:particle var(--d) cubic-bezier(.12,.7,.25,1) var(--delay) forwards}
-.toast{position:fixed;left:50%;bottom:25px;z-index:100;transform:translate(-50%,20px);opacity:0;padding:12px 16px;border:1px solid #ffffff1c;border-radius:12px;background:#120e18eF;color:#fff;box-shadow:0 12px 35px #0009;transition:.3s}.toast.show{opacity:1;transform:translate(-50%,0)}
-@keyframes borderSpin{to{transform:rotate(360deg)}}@keyframes shine{0%,25%{transform:translateX(-130%)}70%,100%{transform:translateX(130%)}}@keyframes photo3d{0%{transform:rotateY(-9deg)}50%{transform:rotateY(9deg)}100%{transform:rotateY(-9deg)}}@keyframes flash{0%{opacity:1;transform:scale(.2)}70%{opacity:.5}100%{opacity:0;transform:scale(18)}}@keyframes particle{0%{opacity:1;transform:translate(-50%,-50%) scale(.3)}70%{opacity:1}100%{opacity:0;transform:translate(calc(-50% + var(--x)),calc(-50% + var(--y))) scale(.05)}}
-@media(max-width:600px){.app{padding:25px 12px 50px}.gallery{grid-template-columns:repeat(2,1fr);gap:9px}.frame{padding:10px}.hint{font-size:10px}.close{right:-3px}.stage{width:94vw}}
-@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
-</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PartsVault — каталог деталей</title>
+  <style>
+    *{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif;background:#0f1115;color:#e9edf3}
+    button,input,textarea{font:inherit}button{cursor:pointer}
+    .app{min-height:100vh}.top{height:64px;border-bottom:1px solid #292e38;display:flex;align-items:center;justify-content:space-between;padding:0 24px;background:#151820}
+    .logo{font-weight:800;font-size:20px}.logo span{color:#65a8ff}.user{display:flex;gap:10px;align-items:center;color:#aeb7c5}
+    .layout{display:flex;min-height:calc(100vh - 64px)}.side{width:250px;border-right:1px solid #292e38;padding:18px;background:#13161c}
+    .side button{width:100%;margin-bottom:8px;padding:11px;border:1px solid #303643;background:#1b2029;color:#dfe6ef;border-radius:9px;text-align:left}
+    .side button.active{background:#2469c8;border-color:#3982e6;color:white}
+    .main{flex:1;padding:28px;max-width:1200px}.row{display:flex;gap:12px;align-items:center}.between{justify-content:space-between}
+    h1{margin:0 0 6px;font-size:28px}h2{font-size:18px;margin:0 0 14px}.muted{color:#8e99a9}
+    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px;margin-top:22px}
+    .card{background:#171b23;border:1px solid #2a303b;border-radius:13px;padding:17px}.card:hover{border-color:#3b4657}
+    .card h3{margin:0 0 7px;font-size:17px}.meta{font-size:13px;color:#8994a4}
+    .badge{display:inline-block;padding:4px 8px;border-radius:99px;font-size:12px;background:#253247;color:#9bc7ff}.private{background:#35282a;color:#ffb0b0}
+    .primary{background:#2d78dc!important;border-color:#3989f1!important;color:#fff!important}.danger{background:#48262b!important;border-color:#68343b!important;color:#ffb6bd!important}
+    .btn{padding:9px 12px;border:1px solid #303743;border-radius:8px;background:#1b2029;color:#e8edf5}
+    input,textarea{width:100%;background:#101319;color:#edf2f8;border:1px solid #333a47;border-radius:8px;padding:10px;outline:none}
+    textarea{min-height:120px;resize:vertical}.form{display:grid;gap:12px}.field label{display:block;font-size:13px;color:#9ca7b6;margin-bottom:6px}
+    .modal{position:fixed;inset:0;background:#0009;display:flex;align-items:center;justify-content:center;padding:20px;z-index:10}.modalbox{width:min(520px,100%);background:#181c24;border:1px solid #303744;border-radius:14px;padding:20px}
+    .hidden{display:none!important}.files{display:grid;gap:9px;margin-top:16px}.file{padding:14px;background:#171b23;border:1px solid #2b313d;border-radius:10px;display:flex;justify-content:space-between;gap:10px;align-items:center}
+    .empty{padding:50px;text-align:center;border:1px dashed #343b48;border-radius:13px;color:#8e99a9;margin-top:20px}
+    .search{max-width:340px}.share{font-size:12px;word-break:break-all;color:#74b0ff}
+    .auth{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}.authbox{width:min(420px,100%);background:#171b23;border:1px solid #2d3440;border-radius:16px;padding:25px}.authbox h1{margin-bottom:20px}
+    .notice{padding:12px;border-radius:9px;background:#202735;color:#b8c9df;font-size:13px;margin-bottom:14px}
+    @media(max-width:700px){.side{width:190px}.main{padding:18px}.top{padding:0 14px}}
+  </style>
 </head>
 <body>
-<main class="app">
-<header>
-<div class="badge">Cloud • Realtime • 3D</div>
-<h1>Golden <span>Gallery</span></h1>
-<p class="subtitle">Общая облачная фотогалерея. Загружайте изображения — остальные пользователи увидят изменения автоматически.</p>
-<div class="status"><i class="dot" id="statusDot"></i><span id="statusText">Подключение…</span></div>
-</header>
-<div class="toolbar">
-<input id="fileInput" type="file" accept="image/*" multiple>
-<label class="upload" for="fileInput">＋ Загрузить фото</label>
-<select class="select" id="sort">
-<option value="new">Новые сначала</option><option value="old">Старые сначала</option><option value="az">Название А → Я</option><option value="za">Название Я → А</option><option value="size">Размер</option>
-</select>
-<div class="count">Фотографий: <b id="count">0</b></div>
-</div>
-<section class="gallery" id="gallery"><div class="empty" id="empty"><strong>Галерея пока пуста</strong>Загрузите первую фотографию.</div></section>
-</main>
+<div id="root"></div>
+<script>
+  const KEY = 'partsvault_demo_v1';
+  let db = JSON.parse(localStorage.getItem(KEY) || 'null') || { users: [], folders: [], files: [], session: null };
+  const save = () => localStorage.setItem(KEY, JSON.stringify(db));
+  const id = () => Math.random().toString(36).slice(2,10) + Date.now().toString(36);
+  const user = () => db.users.find(x => x.id === db.session);
 
-<div class="modal" id="modal" aria-hidden="true"><div class="stage" id="stage">
-<button class="close" id="closeBtn">×</button><div class="frame">
-<i class="corner c1"></i><i class="corner c2"></i><i class="corner c3"></i><i class="corner c4"></i><div class="flash"></div>
-<div class="photo-wrap"><img class="modal-photo" id="modalPhoto" alt=""></div></div><div class="hint">Клик по фото — пауза / продолжить 3D-вращение</div>
-</div></div><div class="toast" id="toast"></div>
+  // Экранирование для защиты от XSS
+  function esc(s = '') {
+    return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+  }
 
-<!-- Firebase SDK. Никаких сборщиков: файл можно разместить прямо на GitHub Pages. -->
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
-import { getFirestore, collection, addDoc, deleteDoc, doc, onSnapshot, query, orderBy, serverTimestamp, initializeFirestore, persistentLocalCache, persistentMultipleTabManager } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
-import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-storage.js";
-import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+  function render() {
+    user() ? renderApp() : renderAuth();
+  }
 
-/* ============================================================
-   ВСТАВЬ СЮДА CONFIG ИЗ FIREBASE CONSOLE
-   ============================================================ */
-const firebaseConfig = {
-  apiKey: "ВСТАВЬ_API_KEY",
-  authDomain: "ВСТАВЬ_AUTH_DOMAIN",
-  projectId: "ВСТАВЬ_PROJECT_ID",
-  storageBucket: "ВСТАВЬ_STORAGE_BUCKET",
-  messagingSenderId: "ВСТАВЬ_MESSAGING_SENDER_ID",
-  appId: "ВСТАВЬ_APP_ID"
-};
-/* ============================================================ */
+  function renderAuth() {
+    root.innerHTML = `
+      <div class="auth">
+        <div class="authbox">
+          <div class="logo">Parts<span>Vault</span></div>
+          <h1 style="margin-top:12px">Вход / регистрация</h1>
+          <div class="notice">Демо-версия: данные хранятся только в браузере. Для настоящего сайта нужна серверная база данных и авторизация.</div>
+          <div class="form">
+            <div class="field"><label>Имя пользователя</label><input id="login" placeholder="например, nikita"></div>
+            <div class="field"><label>Пароль</label><input id="pass" type="password" placeholder="••••••••"></div>
+            <div class="row">
+              <button class="btn primary" onclick="login()">Войти</button>
+              <button class="btn" onclick="register()">Создать аккаунт</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+  }
 
-const configured = !Object.values(firebaseConfig).some(v => String(v).startsWith("ВСТАВЬ_"));
-
-const fileInput=document.getElementById('fileInput'),gallery=document.getElementById('gallery'),empty=document.getElementById('empty');
-const count=document.getElementById('count'),sort=document.getElementById('sort'),toast=document.getElementById('toast');
-const modal=document.getElementById('modal'),modalPhoto=document.getElementById('modalPhoto'),closeBtn=document.getElementById('closeBtn'),stage=document.getElementById('stage');
-const statusDot=document.getElementById('statusDot'),statusText=document.getElementById('statusText');
-
-let db,storage,auth,photos=[],unsubscribe=null,activeId=null,rotating=true;
-
-function notify(msg){toast.textContent=msg;toast.classList.add('show');clearTimeout(notify.t);notify.t=setTimeout(()=>toast.classList.remove('show'),3200)}
-function status(ok,text){statusDot.className='dot '+(ok?'online':'offline');statusText.textContent=text}
-
-if(!configured){
-  status(false,'Нужно вставить Firebase config');
-  notify('Откройте файл и вставьте Firebase Config');
-}else{
-  try{
-    const app=initializeApp(firebaseConfig);
-    db=initializeFirestore(app,{localCache:persistentLocalCache({tabManager:persistentMultipleTabManager()})});
-    storage=getStorage(app);auth=getAuth(app);
-    await signInAnonymously(auth);
-    status(true,'Онлайн • синхронизация включена');
-    startRealtime();
-  }catch(err){console.error(err);status(false,'Ошибка подключения');notify('Firebase: '+err.message)}
-}
-
-function startRealtime(){
-  const q=query(collection(db,'photos'),orderBy('createdAt','desc'));
-  unsubscribe=onSnapshot(q,{includeMetadataChanges:true},snap=>{
-    photos=snap.docs.map(d=>({id:d.id,...d.data()}));
+  function login() {
+    let l = document.getElementById('login').value.trim();
+    let p = document.getElementById('pass').value;
+    let u = db.users.find(x => x.login === l);
+    if (!u || u.pass !== p) return alert('Неверный логин или пароль');
+    db.session = u.id;
+    save();
     render();
-    status(!snap.metadata.fromCache,'Онлайн • '+(snap.metadata.fromCache?'кэш':'синхронизация'));
-  },err=>{console.error(err);status(false,'Ошибка синхронизации');notify('Не удалось получить галерею: '+err.message)});
-}
-
-fileInput.addEventListener('change',async e=>{
-  const files=Array.from(e.target.files||[]);e.target.value='';
-  if(!files.length)return;
-  if(!configured){notify('Сначала настройте Firebase Config');return}
-  for(const file of files){
-    if(!file.type.startsWith('image/'))continue;
-    try{
-      notify('Загрузка: '+file.name);
-      const safeName=file.name.replace(/[^\w.\-а-яА-ЯёЁ ]/g,'_');
-      const path='photos/'+Date.now()+'_'+Math.random().toString(36).slice(2)+'_'+safeName;
-      const storageRef=ref(storage,path);
-      await uploadBytes(storageRef,file,{contentType:file.type});
-      const url=await getDownloadURL(storageRef);
-      await addDoc(collection(db,'photos'),{name:file.name,url,storagePath:path,size:file.size,type:file.type,createdAt:serverTimestamp()});
-    }catch(err){console.error(err);notify('Ошибка загрузки: '+err.message)}
   }
-});
 
-sort.addEventListener('change',render);
-
-function sorted(){
-  const a=[...photos];
-  const time=x=>x.createdAt?.seconds?x.createdAt.seconds*1000:0;
-  if(sort.value==='new')a.sort((x,y)=>time(y)-time(x));
-  if(sort.value==='old')a.sort((x,y)=>time(x)-time(y));
-  if(sort.value==='az')a.sort((x,y)=>(x.name||'').localeCompare(y.name||'','ru'));
-  if(sort.value==='za')a.sort((x,y)=>(y.name||'').localeCompare(x.name||'','ru'));
-  if(sort.value==='size')a.sort((x,y)=>(y.size||0)-(x.size||0));
-  return a;
-}
-function fmtSize(n){if(!n)return '';if(n<1024*1024)return Math.round(n/1024)+' KB';return (n/1024/1024).toFixed(1)+' MB'}
-function render(){
-  gallery.querySelectorAll('.card').forEach(x=>x.remove());
-  count.textContent=photos.length;empty.style.display=photos.length?'none':'block';
-  sorted().forEach(p=>{
-    const card=document.createElement('article');card.className='card';card.dataset.id=p.id;
-    const img=document.createElement('img');img.src=p.url;img.alt=p.name||'Фото';img.loading='lazy';
-    const del=document.createElement('button');del.className='delete';del.innerHTML='×';del.title='Удалить';
-    del.onclick=e=>{e.stopPropagation();removePhoto(card,p)};
-    const meta=document.createElement('div');meta.className='card-meta';meta.textContent=(p.name||'Без названия')+(p.size?' • '+fmtSize(p.size):'');
-    card.append(img,meta,del);card.onclick=()=>openModal(p);gallery.append(card);
-  });
-}
-async function removePhoto(card,p){
-  if(!confirm('Удалить это фото у всех пользователей?'))return;
-  card.classList.add('removing');createDeleteParticles(card);
-  try{
-    await deleteDoc(doc(db,'photos',p.id));
-    if(p.storagePath)await deleteObject(ref(storage,p.storagePath)).catch(()=>{});
-    if(activeId===p.id)closeModal();
-    notify('Фото удалено');
-  }catch(err){card.classList.remove('removing');console.error(err);notify('Ошибка удаления: '+err.message)}
-}
-function createDeleteParticles(card){
-  const r=card.getBoundingClientRect();
-  for(let i=0;i<28;i++){
-    const x=r.left+r.width/2,y=r.top+r.height/2;
-    const el=document.createElement('i');el.style.cssText=`position:fixed;left:${x}px;top:${y}px;width:${2+Math.random()*5}px;height:${2+Math.random()*5}px;border-radius:50%;z-index:50;background:${['#ffd65a','#ff6cae','#fff','#7ee7ff'][i%4]};box-shadow:0 0 8px currentColor;pointer-events:none;`;
-    document.body.appendChild(el);
-    const a=Math.random()*Math.PI*2,d=40+Math.random()*160;
-    el.animate([{transform:'translate(-50%,-50%) scale(1)',opacity:1},{transform:`translate(${Math.cos(a)*d}px,${Math.sin(a)*d}px) scale(0)`,opacity:0}],{duration:500+Math.random()*350,easing:'cubic-bezier(.12,.7,.25,1)',fill:'forwards'}).onfinish=()=>el.remove();
+  function register() {
+    let l = document.getElementById('login').value.trim();
+    let p = document.getElementById('pass').value;
+    if (!l || !p) return alert('Заполните поля');
+    if (db.users.some(x => x.login === l)) return alert('Такой пользователь уже существует');
+    let u = { id: id(), login: l, pass: p };
+    db.users.push(u);
+    db.session = u.id;
+    save();
+    render();
   }
-}
-function openModal(p){activeId=p.id;rotating=true;modalPhoto.src=p.url;modalPhoto.classList.remove('paused');createParticles(120);modal.classList.add('open');modal.setAttribute('aria-hidden','false');document.body.style.overflow='hidden'}
-function closeModal(){modal.classList.remove('open');modal.setAttribute('aria-hidden','true');activeId=null;modalPhoto.removeAttribute('src');document.querySelectorAll('.particle').forEach(x=>x.remove());document.body.style.overflow=''}
-modalPhoto.onclick=()=>{rotating=!rotating;modalPhoto.classList.toggle('paused',!rotating)}
-closeBtn.onclick=closeModal;modal.onclick=e=>{if(e.target===modal)closeModal()};document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal()});
-function createParticles(n){
- document.querySelectorAll('.particle').forEach(x=>x.remove());const colors=['#ffd65a','#fff3a5','#ff6cae','#7ee7ff','#c69cff','#fff'];
- for(let i=0;i<n;i++){const p=document.createElement('i');p.className='particle';const a=Math.random()*Math.PI*2,d=120+Math.random()*360;
- p.style.setProperty('--x',Math.cos(a)*d+'px');p.style.setProperty('--y',Math.sin(a)*d+'px');p.style.setProperty('--s',2+Math.random()*5+'px');p.style.setProperty('--c',colors[i%colors.length]);p.style.setProperty('--d',.7+Math.random()*1.5+'s');p.style.setProperty('--delay',Math.random()*.35+'s');stage.appendChild(p)}
-}
-render();
+
+  function renderApp() {
+    root.innerHTML = `
+      <div class="app">
+        <header class="top">
+          <div class="logo">Parts<span>Vault</span></div>
+          <div class="user">👤 ${esc(user().login)} <button class="btn" onclick="logout()">Выйти</button></div>
+        </header>
+        <div class="layout">
+          <aside class="side">
+            <button class="active" onclick="showFolders()">📁 Мои папки</button>
+            <button onclick="newFolder()">＋ Новая папка</button>
+            <button onclick="showPublic()">🌐 Открытые папки</button>
+          </aside>
+          <main class="main" id="main"></main>
+        </div>
+      </div>
+    `;
+    showFolders();
+  }
+
+  function showFolders() {
+    const main = document.getElementById('main');
+    const folders = db.folders.filter(f => f.owner === user().id);
+    main.innerHTML = `
+      <div class="row between">
+        <div><h1>Мои папки</h1><div class="muted">Каталог деталей и кодов</div></div>
+        <button class="btn primary" onclick="newFolder()">＋ Создать папку</button>
+      </div>
+      <div class="grid">
+        ${folders.map(f => folderCard(f)).join('') ||
+          '<div class="empty" style="grid-column:1/-1">Папок пока нет.<br>Создайте первую папку для деталей.</div>'}
+      </div>
+    `;
+  }
+
+  function folderCard(f) {
+    const n = db.files.filter(x => x.folder === f.id).length;
+    return `
+      <div class="card">
+        <div class="row between">
+          <h3>📁 ${esc(f.name)}</h3>
+          <span class="badge ${f.public ? '' : 'private'}">${f.public ? 'Открытая' : 'Закрытая'}</span>
+        </div>
+        <div class="meta">${n} файл(ов)</div>
+        <div class="row" style="margin-top:15px">
+          <button class="btn primary" onclick="openFolder('${f.id}')">Открыть</button>
+          <button class="btn" onclick="editFolder('${f.id}')">Настройки</button>
+        </div>
+      </div>
+    `;
+  }
+
+  function newFolder() {
+    modal(`
+      <h2>Новая папка</h2>
+      <div class="form">
+        <div class="field"><label>Название</label><input id="fname" placeholder="Например: Фрезы"></div>
+        <label><input id="fpub" type="checkbox" style="width:auto"> Сделать папку открытой</label>
+        <button class="btn primary" onclick="createFolder()">Создать</button>
+      </div>
+    `);
+  }
+
+  function createFolder() {
+    const name = document.getElementById('fname').value.trim();
+    if (!name) return alert('Введите название');
+    db.folders.push({ id: id(), owner: user().id, name, public: document.getElementById('fpub').checked });
+    save();
+    closeModal();
+    showFolders();
+  }
+
+  function editFolder(fid) {
+    const f = db.folders.find(x => x.id === fid);
+    if (!f) return alert('Папка не найдена');
+    modal(`
+      <h2>Настройки папки</h2>
+      <div class="form">
+        <div class="field"><label>Название</label><input id="fname" value="${esc(f.name)}"></div>
+        <label><input id="fpub" type="checkbox" ${f.public ? 'checked' : ''} style="width:auto"> Открытый доступ</label>
+        <div class="share">Ссылка: ${location.href.split('#')[0]}#folder=${f.id}</div>
+        <div class="row">
+          <button class="btn primary" onclick="updateFolder('${f.id}')">Сохранить</button>
+          <button class="btn danger" onclick="deleteFolder('${f.id}')">Удалить</button>
+        </div>
+      </div>
+    `);
+  }
+
+  function updateFolder(fid) {
+    const f = db.folders.find(x => x.id === fid);
+    if (!f) return alert('Папка не найдена');
+    const name = document.getElementById('fname').value.trim();
+    if (name) f.name = name;
+    f.public = document.getElementById('fpub').checked;
+    save();
+    closeModal();
+    showFolders();
+  }
+
+  function deleteFolder(fid) {
+    if (!confirm('Удалить папку и все её файлы?')) return;
+    db.folders = db.folders.filter(x => x.id !== fid);
+    db.files = db.files.filter(x => x.folder !== fid);
+    save();
+    closeModal();
+    showFolders();
+  }
+
+  function openFolder(fid) {
+    const f = db.folders.find(x => x.id === fid);
+    if (!f) return alert('Папка не найдена');
+    const owner = f.owner === user().id;
+    if (!owner && !f.public) return alert('Эта папка закрыта');
+    const files = db.files.filter(x => x.folder === fid);
+    const main = document.getElementById('main');
+    main.innerHTML = `
+      <div class="row between">
+        <div>
+          <button class="btn" onclick="showFolders()">← Назад</button>
+          <h1 style="margin-top:15px">📁 ${esc(f.name)}</h1>
+          <div class="muted">${f.public ? 'Открытая папка' : 'Закрытая папка'} · ${files.length} файл(ов)</div>
+        </div>
+        ${owner ? `<button class="btn primary" onclick="newFile('${fid}')">＋ Добавить файл</button>` : ''}
+      </div>
+      <div class="files">
+        ${files.map(x => fileRow(x, owner)).join('') || '<div class="empty">В этой папке пока нет файлов.</div>'}
+      </div>
+    `;
+  }
+
+  function fileRow(x, owner) {
+    return `
+      <div class="file">
+        <div><b>📄 ${esc(x.name)}</b><div class="meta">Номер: ${esc(x.number)} · Код: ${esc(x.code)}</div></div>
+        <div class="row">
+          <button class="btn" onclick="downloadFile('${x.id}')">Скачать</button>
+          ${owner ? `<button class="btn" onclick="editFile('${x.id}')">Изменить</button>` : ''}
+        </div>
+      </div>
+    `;
+  }
+
+  function newFile(fid) {
+    modal(`
+      <h2>Новая деталь</h2>
+      <div class="form">
+        <div class="field"><label>Название детали</label><input id="dname" placeholder="Например: Корпус"></div>
+        <div class="field"><label>Номер детали</label><input id="dnum" placeholder="123-456"></div>
+        <div class="field"><label>Код</label><input id="dcode" placeholder="ABC-789"></div>
+        <button class="btn primary" onclick="createFile('${fid}')">Создать файл</button>
+      </div>
+    `);
+  }
+
+  function createFile(fid) {
+    const name = document.getElementById('dname').value.trim();
+    const number = document.getElementById('dnum').value.trim();
+    const code = document.getElementById('dcode').value.trim();
+    if (!name || !number || !code) return alert('Заполните все поля');
+    db.files.push({ id: id(), folder: fid, name, number, code });
+    save();
+    closeModal();
+    openFolder(fid);
+  }
+
+  function editFile(idv) {
+    const x = db.files.find(x => x.id === idv);
+    if (!x) return alert('Файл не найден');
+    modal(`
+      <h2>Изменить деталь</h2>
+      <div class="form">
+        <div class="field"><label>Название</label><input id="dname" value="${esc(x.name)}"></div>
+        <div class="field"><label>Номер</label><input id="dnum" value="${esc(x.number)}"></div>
+        <div class="field"><label>Код</label><input id="dcode" value="${esc(x.code)}"></div>
+        <div class="row">
+          <button class="btn primary" onclick="updateFile('${x.id}')">Сохранить</button>
+          <button class="btn danger" onclick="deleteFile('${x.id}')">Удалить</button>
+        </div>
+      </div>
+    `);
+  }
+
+  function updateFile(idv) {
+    const x = db.files.find(x => x.id === idv);
+    if (!x) return alert('Файл не найден');
+    x.name = document.getElementById('dname').value.trim() || x.name;
+    x.number = document.getElementById('dnum').value.trim() || x.number;
+    x.code = document.getElementById('dcode').value.trim() || x.code;
+    save();
+    closeModal();
+    openFolder(x.folder);
+  }
+
+  function deleteFile(idv) {
+    const x = db.files.find(x => x.id === idv);
+    if (!x) return alert('Файл не найден');
+    if (!confirm('Удалить файл?')) return;
+    db.files = db.files.filter(y => y.id !== idv);
+    save();
+    closeModal();
+    openFolder(x.folder);
+  }
+
+  function downloadFile(idv) {
+    const x = db.files.find(x => x.id === idv);
+    if (!x) return alert('Файл не найден');
+    const text = `Название детали: ${x.name}\nНомер детали: ${x.number}\nКод: ${x.code}\n`;
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([text], { type: 'text/plain;charset=utf-8' }));
+    a.download = `${x.name}_${x.number}.txt`;
+    a.click();
+    URL.revokeObjectURL(a.href);
+  }
+
+  function showPublic() {
+    const fs = db.folders.filter(f => f.public);
+    const main = document.getElementById('main');
+    main.innerHTML = `
+      <div><h1>Открытые папки</h1><div class="muted">Папки, доступные другим пользователям</div></div>
+      <div class="grid">
+        ${fs.map(f => folderCardPublic(f)).join('') ||
+          '<div class="empty" style="grid-column:1/-1">Открытых папок нет.</div>'}
+      </div>
+    `;
+  }
+
+  function folderCardPublic(f) {
+    const n = db.files.filter(x => x.folder === f.id).length;
+    const owner = db.users.find(u => u.id === f.owner);
+    return `
+      <div class="card">
+        <h3>📁 ${esc(f.name)}</h3>
+        <div class="meta">${n} файл(ов) · владелец: ${esc(owner?.login || '')}</div>
+        <button class="btn primary" style="margin-top:15px" onclick="openFolder('${f.id}')">Просмотреть</button>
+      </div>
+    `;
+  }
+
+  function modal(content) {
+    const d = document.createElement('div');
+    d.id = 'modal';
+    d.className = 'modal';
+    d.innerHTML = `
+      <div class="modalbox">
+        <div class="row" style="justify-content:flex-end"><button class="btn" onclick="closeModal()">✕</button></div>
+        ${content}
+      </div>
+    `;
+    document.body.appendChild(d);
+  }
+
+  function closeModal() {
+    document.getElementById('modal')?.remove();
+  }
+
+  function logout() {
+    db.session = null;
+    save();
+    render();
+  }
+
+  render();
 </script>
 </body>
 </html>
