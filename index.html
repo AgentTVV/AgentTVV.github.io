@@ -1,359 +1,2828 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>PartsVault — каталог деталей</title>
-  <style>
-    *{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif;background:#0f1115;color:#e9edf3}
-    button,input,textarea{font:inherit}button{cursor:pointer}
-    .app{min-height:100vh}.top{height:64px;border-bottom:1px solid #292e38;display:flex;align-items:center;justify-content:space-between;padding:0 24px;background:#151820}
-    .logo{font-weight:800;font-size:20px}.logo span{color:#65a8ff}.user{display:flex;gap:10px;align-items:center;color:#aeb7c5}
-    .layout{display:flex;min-height:calc(100vh - 64px)}.side{width:250px;border-right:1px solid #292e38;padding:18px;background:#13161c}
-    .side button{width:100%;margin-bottom:8px;padding:11px;border:1px solid #303643;background:#1b2029;color:#dfe6ef;border-radius:9px;text-align:left}
-    .side button.active{background:#2469c8;border-color:#3982e6;color:white}
-    .main{flex:1;padding:28px;max-width:1200px}.row{display:flex;gap:12px;align-items:center}.between{justify-content:space-between}
-    h1{margin:0 0 6px;font-size:28px}h2{font-size:18px;margin:0 0 14px}.muted{color:#8e99a9}
-    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px;margin-top:22px}
-    .card{background:#171b23;border:1px solid #2a303b;border-radius:13px;padding:17px}.card:hover{border-color:#3b4657}
-    .card h3{margin:0 0 7px;font-size:17px}.meta{font-size:13px;color:#8994a4}
-    .badge{display:inline-block;padding:4px 8px;border-radius:99px;font-size:12px;background:#253247;color:#9bc7ff}.private{background:#35282a;color:#ffb0b0}
-    .primary{background:#2d78dc!important;border-color:#3989f1!important;color:#fff!important}.danger{background:#48262b!important;border-color:#68343b!important;color:#ffb6bd!important}
-    .btn{padding:9px 12px;border:1px solid #303743;border-radius:8px;background:#1b2029;color:#e8edf5}
-    input,textarea{width:100%;background:#101319;color:#edf2f8;border:1px solid #333a47;border-radius:8px;padding:10px;outline:none}
-    textarea{min-height:120px;resize:vertical}.form{display:grid;gap:12px}.field label{display:block;font-size:13px;color:#9ca7b6;margin-bottom:6px}
-    .modal{position:fixed;inset:0;background:#0009;display:flex;align-items:center;justify-content:center;padding:20px;z-index:10}.modalbox{width:min(520px,100%);background:#181c24;border:1px solid #303744;border-radius:14px;padding:20px}
-    .hidden{display:none!important}.files{display:grid;gap:9px;margin-top:16px}.file{padding:14px;background:#171b23;border:1px solid #2b313d;border-radius:10px;display:flex;justify-content:space-between;gap:10px;align-items:center}
-    .empty{padding:50px;text-align:center;border:1px dashed #343b48;border-radius:13px;color:#8e99a9;margin-top:20px}
-    .search{max-width:340px}.share{font-size:12px;word-break:break-all;color:#74b0ff}
-    .auth{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}.authbox{width:min(420px,100%);background:#171b23;border:1px solid #2d3440;border-radius:16px;padding:25px}.authbox h1{margin-bottom:20px}
-    .notice{padding:12px;border-radius:9px;background:#202735;color:#b8c9df;font-size:13px;margin-bottom:14px}
-    @media(max-width:700px){.side{width:190px}.main{padding:18px}.top{padding:0 14px}}
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MiniCAD — Конструкторская документация</title>
+
+<style>
+:root{
+  --bg:#080b12;
+  --bg2:#0d111a;
+  --panel:rgba(20,26,38,.78);
+  --panel2:rgba(25,32,47,.9);
+  --border:rgba(255,255,255,.09);
+  --text:#f4f7fb;
+  --muted:#8c98aa;
+  --accent:#5b8cff;
+  --accent2:#7c5cff;
+  --danger:#ff5570;
+  --success:#36d399;
+  --shadow:0 20px 70px rgba(0,0,0,.35);
+}
+
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  color:var(--text);
+  background:
+    radial-gradient(circle at 15% 10%,rgba(91,140,255,.16),transparent 30%),
+    radial-gradient(circle at 90% 80%,rgba(124,92,255,.12),transparent 30%),
+    var(--bg);
+  min-height:100vh;
+}
+
+button,input,textarea,select{font:inherit}
+
+button{
+  border:0;
+  cursor:pointer;
+}
+
+.hidden{display:none!important}
+
+.app{
+  display:flex;
+  min-height:100vh;
+}
+
+/* SIDEBAR */
+
+.sidebar{
+  width:270px;
+  padding:22px 16px;
+  background:rgba(8,11,18,.88);
+  border-right:1px solid var(--border);
+  backdrop-filter:blur(25px);
+  position:fixed;
+  left:0;
+  top:0;
+  bottom:0;
+  z-index:10;
+}
+
+.logo{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:8px 10px 25px;
+}
+
+.logo-icon{
+  width:42px;
+  height:42px;
+  border-radius:13px;
+  display:grid;
+  place-items:center;
+  font-size:22px;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  box-shadow:0 10px 35px rgba(91,140,255,.3);
+}
+
+.logo-title{
+  font-weight:800;
+  font-size:19px;
+}
+
+.logo-sub{
+  color:var(--muted);
+  font-size:11px;
+  margin-top:2px;
+}
+
+.nav{
+  display:flex;
+  flex-direction:column;
+  gap:7px;
+}
+
+.nav button{
+  color:#aeb8c9;
+  background:transparent;
+  padding:13px 14px;
+  border-radius:12px;
+  text-align:left;
+  transition:.2s;
+}
+
+.nav button:hover,
+.nav button.active{
+  color:white;
+  background:rgba(91,140,255,.12);
+}
+
+.nav button.active{
+  box-shadow:inset 3px 0 var(--accent);
+}
+
+.sidebar-bottom{
+  position:absolute;
+  left:16px;
+  right:16px;
+  bottom:20px;
+}
+
+.user-card{
+  padding:13px;
+  border:1px solid var(--border);
+  border-radius:15px;
+  background:rgba(255,255,255,.035);
+}
+
+.user-email{
+  font-size:13px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.user-label{
+  color:var(--muted);
+  font-size:11px;
+  margin-bottom:5px;
+}
+
+/* MAIN */
+
+.main{
+  margin-left:270px;
+  width:calc(100% - 270px);
+  padding:25px;
+}
+
+.topbar{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:15px;
+  margin-bottom:25px;
+}
+
+.page-title{
+  font-size:27px;
+  font-weight:800;
+}
+
+.page-subtitle{
+  color:var(--muted);
+  font-size:13px;
+  margin-top:5px;
+}
+
+.actions{
+  display:flex;
+  gap:9px;
+  flex-wrap:wrap;
+}
+
+.btn{
+  border-radius:11px;
+  padding:11px 15px;
+  color:white;
+  background:rgba(255,255,255,.07);
+  border:1px solid var(--border);
+  transition:.2s;
+}
+
+.btn:hover{
+  transform:translateY(-1px);
+  background:rgba(255,255,255,.11);
+}
+
+.btn.primary{
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  border:0;
+  box-shadow:0 8px 25px rgba(91,140,255,.22);
+}
+
+.btn.danger{
+  background:rgba(255,85,112,.1);
+  color:#ff8ca0;
+  border-color:rgba(255,85,112,.2);
+}
+
+.btn.success{
+  background:rgba(54,211,153,.1);
+  color:#67e8b5;
+}
+
+/* DASHBOARD */
+
+.stats{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:14px;
+  margin-bottom:22px;
+}
+
+.stat{
+  padding:18px;
+  border:1px solid var(--border);
+  background:var(--panel);
+  border-radius:18px;
+  box-shadow:var(--shadow);
+  position:relative;
+  overflow:hidden;
+}
+
+.stat:after{
+  content:"";
+  position:absolute;
+  width:100px;
+  height:100px;
+  right:-35px;
+  top:-40px;
+  background:var(--accent);
+  filter:blur(50px);
+  opacity:.15;
+}
+
+.stat-icon{
+  font-size:22px;
+}
+
+.stat-value{
+  font-size:27px;
+  font-weight:800;
+  margin-top:12px;
+}
+
+.stat-name{
+  color:var(--muted);
+  font-size:12px;
+}
+
+/* TOOLBAR */
+
+.toolbar{
+  display:flex;
+  gap:10px;
+  align-items:center;
+  margin-bottom:18px;
+  flex-wrap:wrap;
+}
+
+.search{
+  flex:1;
+  min-width:230px;
+  position:relative;
+}
+
+.search input{
+  width:100%;
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:12px;
+  color:white;
+  padding:13px 15px 13px 42px;
+  outline:none;
+}
+
+.search input:focus{
+  border-color:rgba(91,140,255,.55);
+}
+
+.search-icon{
+  position:absolute;
+  left:15px;
+  top:11px;
+  color:var(--muted);
+}
+
+select{
+  background:#151b28;
+  color:white;
+  border:1px solid var(--border);
+  padding:12px;
+  border-radius:11px;
+  outline:none;
+}
+
+/* CARDS */
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(275px,1fr));
+  gap:15px;
+}
+
+.card{
+  border:1px solid var(--border);
+  background:linear-gradient(145deg,rgba(25,32,47,.82),rgba(14,18,27,.9));
+  border-radius:18px;
+  padding:17px;
+  transition:.25s;
+  box-shadow:0 10px 40px rgba(0,0,0,.15);
+}
+
+.card:hover{
+  transform:translateY(-3px);
+  border-color:rgba(91,140,255,.3);
+  box-shadow:0 18px 55px rgba(0,0,0,.3);
+}
+
+.card-head{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+}
+
+.card-title{
+  font-size:17px;
+  font-weight:750;
+}
+
+.card-number{
+  color:var(--accent);
+  font-size:12px;
+  margin-top:5px;
+}
+
+.card-meta{
+  margin-top:15px;
+  display:flex;
+  flex-direction:column;
+  gap:7px;
+}
+
+.meta{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  font-size:12px;
+}
+
+.meta span:first-child{
+  color:var(--muted);
+}
+
+.code{
+  margin-top:14px;
+  background:#080b11;
+  border:1px solid var(--border);
+  padding:11px;
+  border-radius:10px;
+  font-family:monospace;
+  font-size:11px;
+  color:#aebdff;
+  word-break:break-all;
+  max-height:65px;
+  overflow:auto;
+}
+
+.badge{
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+  padding:5px 8px;
+  border-radius:99px;
+  font-size:10px;
+  background:rgba(54,211,153,.1);
+  color:#67e8b5;
+}
+
+.badge.private{
+  background:rgba(255,255,255,.06);
+  color:#9aa6b7;
+}
+
+.card-actions{
+  display:flex;
+  gap:7px;
+  margin-top:15px;
+}
+
+.small-btn{
+  flex:1;
+  padding:9px;
+  border-radius:9px;
+  background:rgba(255,255,255,.06);
+  color:#c7d0de;
+  font-size:12px;
+}
+
+.small-btn:hover{
+  background:rgba(255,255,255,.11);
+}
+
+/* FOLDERS */
+
+.folder-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(240px,1fr));
+  gap:15px;
+}
+
+.folder{
+  position:relative;
+  padding:20px;
+  border:1px solid var(--border);
+  border-radius:18px;
+  background:linear-gradient(145deg,rgba(28,36,54,.82),rgba(12,16,25,.9));
+  cursor:pointer;
+  transition:.25s;
+}
+
+.folder:hover{
+  transform:translateY(-4px) scale(1.01);
+  border-color:rgba(91,140,255,.3);
+}
+
+.folder-icon{
+  font-size:38px;
+  margin-bottom:13px;
+}
+
+.folder-name{
+  font-weight:750;
+}
+
+.folder-info{
+  color:var(--muted);
+  font-size:12px;
+  margin-top:5px;
+}
+
+.folder-menu{
+  position:absolute;
+  top:12px;
+  right:12px;
+}
+
+/* MODAL */
+
+.modal-backdrop{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.67);
+  backdrop-filter:blur(9px);
+  z-index:100;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:18px;
+}
+
+.modal{
+  width:min(650px,100%);
+  max-height:92vh;
+  overflow:auto;
+  background:#111722;
+  border:1px solid var(--border);
+  border-radius:22px;
+  box-shadow:0 30px 100px rgba(0,0,0,.6);
+}
+
+.modal-head{
+  padding:20px 22px;
+  display:flex;
+  justify-content:space-between;
+  border-bottom:1px solid var(--border);
+}
+
+.modal-title{
+  font-size:19px;
+  font-weight:800;
+}
+
+.modal-body{
+  padding:22px;
+}
+
+.modal-foot{
+  padding:17px 22px;
+  border-top:1px solid var(--border);
+  display:flex;
+  justify-content:flex-end;
+  gap:9px;
+}
+
+.close{
+  width:32px;
+  height:32px;
+  border-radius:9px;
+  background:rgba(255,255,255,.06);
+  color:#aaa;
+}
+
+.field{
+  margin-bottom:15px;
+}
+
+.field label{
+  display:block;
+  font-size:12px;
+  color:#aab5c6;
+  margin-bottom:7px;
+}
+
+.field input,
+.field textarea{
+  width:100%;
+  color:white;
+  background:#0a0e16;
+  border:1px solid var(--border);
+  border-radius:11px;
+  padding:12px;
+  outline:none;
+}
+
+.field textarea{
+  min-height:125px;
+  resize:vertical;
+  font-family:monospace;
+}
+
+.field input:focus,
+.field textarea:focus{
+  border-color:rgba(91,140,255,.55);
+}
+
+.file-drop{
+  border:1px dashed rgba(255,255,255,.17);
+  padding:22px;
+  text-align:center;
+  border-radius:13px;
+  background:rgba(255,255,255,.025);
+}
+
+.file-drop input{
+  border:0;
+  padding:0;
+  background:transparent;
+}
+
+/* AUTH */
+
+.auth{
+  min-height:100vh;
+  display:grid;
+  place-items:center;
+  padding:20px;
+}
+
+.auth-box{
+  width:min(430px,100%);
+  padding:32px;
+  border:1px solid var(--border);
+  border-radius:25px;
+  background:rgba(15,20,30,.84);
+  backdrop-filter:blur(25px);
+  box-shadow:0 30px 100px rgba(0,0,0,.5);
+}
+
+.auth-logo{
+  text-align:center;
+  margin-bottom:28px;
+}
+
+.auth-logo-icon{
+  width:65px;
+  height:65px;
+  display:grid;
+  place-items:center;
+  margin:0 auto 14px;
+  border-radius:20px;
+  font-size:32px;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+}
+
+.auth-title{
+  font-size:24px;
+  font-weight:800;
+}
+
+.auth-sub{
+  color:var(--muted);
+  font-size:13px;
+  margin-top:5px;
+}
+
+.auth-tabs{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  padding:4px;
+  background:#080c13;
+  border-radius:11px;
+  margin-bottom:20px;
+}
+
+.auth-tabs button{
+  padding:10px;
+  color:var(--muted);
+  background:transparent;
+  border-radius:8px;
+}
+
+.auth-tabs button.active{
+  color:white;
+  background:#1a2231;
+}
+
+.auth-error{
+  padding:10px;
+  border-radius:9px;
+  font-size:12px;
+  color:#ff9bab;
+  background:rgba(255,85,112,.08);
+  margin-bottom:12px;
+}
+
+.empty{
+  text-align:center;
+  padding:70px 20px;
+  color:var(--muted);
+}
+
+.empty-icon{
+  font-size:50px;
+  opacity:.5;
+  margin-bottom:12px;
+}
+
+.empty-title{
+  color:#dce3ed;
+  font-weight:700;
+  margin-bottom:5px;
+}
+
+/* DRAWING */
+
+.drawing-preview{
+  margin-top:14px;
+  width:100%;
+  max-height:260px;
+  object-fit:contain;
+  background:#080b11;
+  border-radius:12px;
+  border:1px solid var(--border);
+}
+
+.pdf-preview{
+  height:260px;
+  width:100%;
+  border:0;
+  border-radius:12px;
+  margin-top:14px;
+}
+
+/* TOAST */
+
+.toast{
+  position:fixed;
+  right:20px;
+  bottom:20px;
+  z-index:500;
+  padding:13px 17px;
+  border-radius:12px;
+  background:#171e2b;
+  border:1px solid var(--border);
+  box-shadow:var(--shadow);
+  transform:translateY(100px);
+  opacity:0;
+  transition:.3s;
+}
+
+.toast.show{
+  transform:translateY(0);
+  opacity:1;
+}
+
+/* RESPONSIVE */
+
+.mobile-menu{
+  display:none;
+}
+
+@media(max-width:850px){
+  .sidebar{
+    transform:translateX(-100%);
+    transition:.25s;
+  }
+
+  .sidebar.open{
+    transform:translateX(0);
+  }
+
+  .main{
+    margin-left:0;
+    width:100%;
+    padding:18px;
+  }
+
+  .mobile-menu{
+    display:block;
+  }
+
+  .stats{
+    grid-template-columns:repeat(2,1fr);
+  }
+}
+
+@media(max-width:550px){
+  .stats{
+    grid-template-columns:1fr 1fr;
+  }
+
+  .topbar{
+    align-items:flex-start;
+  }
+
+  .page-title{
+    font-size:22px;
+  }
+
+  .grid{
+    grid-template-columns:1fr;
+  }
+
+  .folder-grid{
+    grid-template-columns:1fr;
+  }
+
+  .auth-box{
+    padding:24px;
+  }
+}
+</style>
 </head>
+
 <body>
-<div id="root"></div>
-<script>
-  const KEY = 'partsvault_demo_v1';
-  let db = JSON.parse(localStorage.getItem(KEY) || 'null') || { users: [], folders: [], files: [], session: null };
-  const save = () => localStorage.setItem(KEY, JSON.stringify(db));
-  const id = () => Math.random().toString(36).slice(2,10) + Date.now().toString(36);
-  const user = () => db.users.find(x => x.id === db.session);
 
-  // Экранирование для защиты от XSS
-  function esc(s = '') {
-    return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
-  }
+<!-- AUTH -->
+<div id="authScreen" class="auth">
+  <div class="auth-box">
 
-  function render() {
-    user() ? renderApp() : renderAuth();
-  }
+    <div class="auth-logo">
+      <div class="auth-logo-icon">⚙</div>
+      <div class="auth-title">MiniCAD</div>
+      <div class="auth-sub">Система конструкторской документации</div>
+    </div>
 
-  function renderAuth() {
-    root.innerHTML = `
-      <div class="auth">
-        <div class="authbox">
-          <div class="logo">Parts<span>Vault</span></div>
-          <h1 style="margin-top:12px">Вход / регистрация</h1>
-          <div class="notice">Демо-версия: данные хранятся только в браузере. Для настоящего сайта нужна серверная база данных и авторизация.</div>
-          <div class="form">
-            <div class="field"><label>Имя пользователя</label><input id="login" placeholder="например, nikita"></div>
-            <div class="field"><label>Пароль</label><input id="pass" type="password" placeholder="••••••••"></div>
-            <div class="row">
-              <button class="btn primary" onclick="login()">Войти</button>
-              <button class="btn" onclick="register()">Создать аккаунт</button>
-            </div>
+    <div class="auth-tabs">
+      <button id="loginTab" class="active" onclick="switchAuth('login')">Вход</button>
+      <button id="registerTab" onclick="switchAuth('register')">Регистрация</button>
+    </div>
+
+    <div id="authError" class="auth-error hidden"></div>
+
+    <div class="field">
+      <label>Email</label>
+      <input id="authEmail" type="email" placeholder="name@example.com">
+    </div>
+
+    <div class="field">
+      <label>Пароль</label>
+      <input id="authPassword" type="password" placeholder="Минимум 6 символов">
+    </div>
+
+    <button class="btn primary" style="width:100%" onclick="authSubmit()" id="authButton">
+      Войти
+    </button>
+
+    <div style="text-align:center;margin-top:18px;color:#687386;font-size:11px">
+      Локальный режим • данные хранятся в этом браузере
+    </div>
+
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app" class="app hidden">
+
+  <aside class="sidebar" id="sidebar">
+
+    <div class="logo">
+      <div class="logo-icon">⚙</div>
+      <div>
+        <div class="logo-title">MiniCAD</div>
+        <div class="logo-sub">DOCUMENT CONTROL</div>
+      </div>
+    </div>
+
+    <div class="nav">
+      <button class="active" onclick="showPage('dashboard')" id="navDashboard">
+        📊 &nbsp; Обзор
+      </button>
+
+      <button onclick="showPage('projects')" id="navProjects">
+        📁 &nbsp; Проекты
+      </button>
+
+      <button onclick="showPage('parts')" id="navParts">
+        ⚙️ &nbsp; Все детали
+      </button>
+
+      <button onclick="showPage('public')" id="navPublic">
+        🌐 &nbsp; Общий доступ
+      </button>
+
+      <button onclick="exportData()">
+        💾 &nbsp; Экспорт данных
+      </button>
+
+      <button onclick="document.getElementById('importFile').click()">
+        📥 &nbsp; Импорт данных
+      </button>
+
+      <input id="importFile" type="file" accept=".json"
+             style="display:none" onchange="importData(event)">
+    </div>
+
+    <div class="sidebar-bottom">
+      <div class="user-card">
+        <div class="user-label">ПОЛЬЗОВАТЕЛЬ</div>
+        <div class="user-email" id="sideEmail">—</div>
+        <button class="btn" style="width:100%;margin-top:10px"
+                onclick="logout()">Выйти</button>
+      </div>
+    </div>
+
+  </aside>
+
+  <main class="main">
+
+    <div class="topbar">
+      <div style="display:flex;gap:10px;align-items:center">
+        <button class="btn mobile-menu" onclick="toggleSidebar()">☰</button>
+        <div>
+          <div class="page-title" id="pageTitle">Обзор</div>
+          <div class="page-subtitle" id="pageSubtitle">
+            Управление конструкторской документацией
           </div>
         </div>
       </div>
-    `;
-  }
 
-  function login() {
-    let l = document.getElementById('login').value.trim();
-    let p = document.getElementById('pass').value;
-    let u = db.users.find(x => x.login === l);
-    if (!u || u.pass !== p) return alert('Неверный логин или пароль');
-    db.session = u.id;
-    save();
-    render();
-  }
+      <div class="actions" id="topActions"></div>
+    </div>
 
-  function register() {
-    let l = document.getElementById('login').value.trim();
-    let p = document.getElementById('pass').value;
-    if (!l || !p) return alert('Заполните поля');
-    if (db.users.some(x => x.login === l)) return alert('Такой пользователь уже существует');
-    let u = { id: id(), login: l, pass: p };
-    db.users.push(u);
-    db.session = u.id;
-    save();
-    render();
-  }
+    <!-- DASHBOARD -->
+    <section id="pageDashboard">
 
-  function renderApp() {
-    root.innerHTML = `
-      <div class="app">
-        <header class="top">
-          <div class="logo">Parts<span>Vault</span></div>
-          <div class="user">👤 ${esc(user().login)} <button class="btn" onclick="logout()">Выйти</button></div>
-        </header>
-        <div class="layout">
-          <aside class="side">
-            <button class="active" onclick="showFolders()">📁 Мои папки</button>
-            <button onclick="newFolder()">＋ Новая папка</button>
-            <button onclick="showPublic()">🌐 Открытые папки</button>
-          </aside>
-          <main class="main" id="main"></main>
+      <div class="stats">
+        <div class="stat">
+          <div class="stat-icon">📁</div>
+          <div class="stat-value" id="statProjects">0</div>
+          <div class="stat-name">Проектов</div>
+        </div>
+
+        <div class="stat">
+          <div class="stat-icon">🗂️</div>
+          <div class="stat-value" id="statFolders">0</div>
+          <div class="stat-name">Папок</div>
+        </div>
+
+        <div class="stat">
+          <div class="stat-icon">⚙️</div>
+          <div class="stat-value" id="statParts">0</div>
+          <div class="stat-name">Деталей</div>
+        </div>
+
+        <div class="stat">
+          <div class="stat-icon">🌐</div>
+          <div class="stat-value" id="statPublic">0</div>
+          <div class="stat-name">Общих папок</div>
         </div>
       </div>
-    `;
-    showFolders();
-  }
 
-  function showFolders() {
-    const main = document.getElementById('main');
-    const folders = db.folders.filter(f => f.owner === user().id);
-    main.innerHTML = `
-      <div class="row between">
-        <div><h1>Мои папки</h1><div class="muted">Каталог деталей и кодов</div></div>
-        <button class="btn primary" onclick="newFolder()">＋ Создать папку</button>
-      </div>
-      <div class="grid">
-        ${folders.map(f => folderCard(f)).join('') ||
-          '<div class="empty" style="grid-column:1/-1">Папок пока нет.<br>Создайте первую папку для деталей.</div>'}
-      </div>
-    `;
-  }
-
-  function folderCard(f) {
-    const n = db.files.filter(x => x.folder === f.id).length;
-    return `
       <div class="card">
-        <div class="row between">
-          <h3>📁 ${esc(f.name)}</h3>
-          <span class="badge ${f.public ? '' : 'private'}">${f.public ? 'Открытая' : 'Закрытая'}</span>
+        <div style="font-weight:750;margin-bottom:6px">
+          Добро пожаловать в MiniCAD
         </div>
-        <div class="meta">${n} файл(ов)</div>
-        <div class="row" style="margin-top:15px">
-          <button class="btn primary" onclick="openFolder('${f.id}')">Открыть</button>
-          <button class="btn" onclick="editFolder('${f.id}')">Настройки</button>
+        <div style="color:var(--muted);font-size:13px;line-height:1.6">
+          Создавайте проекты, группируйте детали по папкам,
+          храните номера, производственные коды и чертежи.
+          Все изменения автоматически сохраняются локально.
         </div>
-      </div>
-    `;
-  }
 
-  function newFolder() {
-    modal(`
-      <h2>Новая папка</h2>
-      <div class="form">
-        <div class="field"><label>Название</label><input id="fname" placeholder="Например: Фрезы"></div>
-        <label><input id="fpub" type="checkbox" style="width:auto"> Сделать папку открытой</label>
-        <button class="btn primary" onclick="createFolder()">Создать</button>
-      </div>
-    `);
-  }
-
-  function createFolder() {
-    const name = document.getElementById('fname').value.trim();
-    if (!name) return alert('Введите название');
-    db.folders.push({ id: id(), owner: user().id, name, public: document.getElementById('fpub').checked });
-    save();
-    closeModal();
-    showFolders();
-  }
-
-  function editFolder(fid) {
-    const f = db.folders.find(x => x.id === fid);
-    if (!f) return alert('Папка не найдена');
-    modal(`
-      <h2>Настройки папки</h2>
-      <div class="form">
-        <div class="field"><label>Название</label><input id="fname" value="${esc(f.name)}"></div>
-        <label><input id="fpub" type="checkbox" ${f.public ? 'checked' : ''} style="width:auto"> Открытый доступ</label>
-        <div class="share">Ссылка: ${location.href.split('#')[0]}#folder=${f.id}</div>
-        <div class="row">
-          <button class="btn primary" onclick="updateFolder('${f.id}')">Сохранить</button>
-          <button class="btn danger" onclick="deleteFolder('${f.id}')">Удалить</button>
+        <div style="margin-top:18px;display:flex;gap:9px;flex-wrap:wrap">
+          <button class="btn primary" onclick="openProjectModal()">＋ Новый проект</button>
+          <button class="btn" onclick="showPage('parts')">Открыть детали</button>
         </div>
       </div>
-    `);
-  }
 
-  function updateFolder(fid) {
-    const f = db.folders.find(x => x.id === fid);
-    if (!f) return alert('Папка не найдена');
-    const name = document.getElementById('fname').value.trim();
-    if (name) f.name = name;
-    f.public = document.getElementById('fpub').checked;
-    save();
-    closeModal();
-    showFolders();
-  }
+    </section>
 
-  function deleteFolder(fid) {
-    if (!confirm('Удалить папку и все её файлы?')) return;
-    db.folders = db.folders.filter(x => x.id !== fid);
-    db.files = db.files.filter(x => x.folder !== fid);
-    save();
-    closeModal();
-    showFolders();
-  }
+    <!-- PROJECTS -->
+    <section id="pageProjects" class="hidden">
 
-  function openFolder(fid) {
-    const f = db.folders.find(x => x.id === fid);
-    if (!f) return alert('Папка не найдена');
-    const owner = f.owner === user().id;
-    if (!owner && !f.public) return alert('Эта папка закрыта');
-    const files = db.files.filter(x => x.folder === fid);
-    const main = document.getElementById('main');
-    main.innerHTML = `
-      <div class="row between">
-        <div>
-          <button class="btn" onclick="showFolders()">← Назад</button>
-          <h1 style="margin-top:15px">📁 ${esc(f.name)}</h1>
-          <div class="muted">${f.public ? 'Открытая папка' : 'Закрытая папка'} · ${files.length} файл(ов)</div>
+      <div class="toolbar">
+        <div class="search">
+          <span class="search-icon">⌕</span>
+          <input id="projectSearch"
+                 placeholder="Поиск проектов..."
+                 oninput="renderProjects()">
         </div>
-        ${owner ? `<button class="btn primary" onclick="newFile('${fid}')">＋ Добавить файл</button>` : ''}
-      </div>
-      <div class="files">
-        ${files.map(x => fileRow(x, owner)).join('') || '<div class="empty">В этой папке пока нет файлов.</div>'}
-      </div>
-    `;
-  }
 
-  function fileRow(x, owner) {
-    return `
-      <div class="file">
-        <div><b>📄 ${esc(x.name)}</b><div class="meta">Номер: ${esc(x.number)} · Код: ${esc(x.code)}</div></div>
-        <div class="row">
-          <button class="btn" onclick="downloadFile('${x.id}')">Скачать</button>
-          ${owner ? `<button class="btn" onclick="editFile('${x.id}')">Изменить</button>` : ''}
+        <button class="btn primary" onclick="openProjectModal()">
+          ＋ Проект
+        </button>
+      </div>
+
+      <div id="projectsContainer"></div>
+
+    </section>
+
+    <!-- PARTS -->
+    <section id="pageParts" class="hidden">
+
+      <div class="toolbar">
+        <div class="search">
+          <span class="search-icon">⌕</span>
+          <input id="globalSearch"
+                 placeholder="Поиск по названию или номеру детали..."
+                 oninput="renderParts()">
         </div>
+
+        <select id="sortSelect" onchange="renderParts()">
+          <option value="updated">Обновление: новые</option>
+          <option value="created">Создание: новые</option>
+          <option value="name">Название: А-Я</option>
+          <option value="number">Номер детали</option>
+        </select>
       </div>
-    `;
-  }
 
-  function newFile(fid) {
-    modal(`
-      <h2>Новая деталь</h2>
-      <div class="form">
-        <div class="field"><label>Название детали</label><input id="dname" placeholder="Например: Корпус"></div>
-        <div class="field"><label>Номер детали</label><input id="dnum" placeholder="123-456"></div>
-        <div class="field"><label>Код</label><input id="dcode" placeholder="ABC-789"></div>
-        <button class="btn primary" onclick="createFile('${fid}')">Создать файл</button>
-      </div>
-    `);
-  }
+      <div id="partsContainer"></div>
 
-  function createFile(fid) {
-    const name = document.getElementById('dname').value.trim();
-    const number = document.getElementById('dnum').value.trim();
-    const code = document.getElementById('dcode').value.trim();
-    if (!name || !number || !code) return alert('Заполните все поля');
-    db.files.push({ id: id(), folder: fid, name, number, code });
-    save();
-    closeModal();
-    openFolder(fid);
-  }
+    </section>
 
-  function editFile(idv) {
-    const x = db.files.find(x => x.id === idv);
-    if (!x) return alert('Файл не найден');
-    modal(`
-      <h2>Изменить деталь</h2>
-      <div class="form">
-        <div class="field"><label>Название</label><input id="dname" value="${esc(x.name)}"></div>
-        <div class="field"><label>Номер</label><input id="dnum" value="${esc(x.number)}"></div>
-        <div class="field"><label>Код</label><input id="dcode" value="${esc(x.code)}"></div>
-        <div class="row">
-          <button class="btn primary" onclick="updateFile('${x.id}')">Сохранить</button>
-          <button class="btn danger" onclick="deleteFile('${x.id}')">Удалить</button>
+    <!-- PUBLIC -->
+    <section id="pagePublic" class="hidden">
+
+      <div class="card" style="margin-bottom:18px">
+        <div style="font-weight:750">Общий доступ</div>
+        <div style="font-size:13px;color:var(--muted);margin-top:5px">
+          Папки, которым вы включили режим «Сделать общим».
         </div>
       </div>
-    `);
+
+      <div id="publicContainer"></div>
+
+    </section>
+
+  </main>
+</div>
+
+<!-- MODAL -->
+<div id="modalBackdrop" class="modal-backdrop hidden" onclick="backdropClose(event)">
+  <div class="modal" id="modal"></div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script>
+/* =========================================================
+   MINICAD — SINGLE FILE APPLICATION
+   LocalStorage + IndexedDB
+   ========================================================= */
+
+const STORAGE_KEY = "minicad_database_v1";
+const DB_NAME = "MiniCAD_Files";
+const DB_VERSION = 1;
+
+let db;
+let state = loadState();
+let currentUser = null;
+let currentProjectId = null;
+let currentFolderId = null;
+let authMode = "login";
+
+/* ---------------- DATABASE ---------------- */
+
+function loadState(){
+  try{
+    return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {
+      users:[],
+      projects:[],
+      folders:[],
+      parts:[]
+    };
+  }catch{
+    return {
+      users:[],
+      projects:[],
+      folders:[],
+      parts:[]
+    };
+  }
+}
+
+function saveState(){
+  localStorage.setItem(STORAGE_KEY,JSON.stringify(state));
+}
+
+function initDB(){
+  return new Promise((resolve,reject)=>{
+    const request=indexedDB.open(DB_NAME,DB_VERSION);
+
+    request.onupgradeneeded=e=>{
+      const database=e.target.result;
+
+      if(!database.objectStoreNames.contains("files")){
+        database.createObjectStore("files",{keyPath:"id"});
+      }
+    };
+
+    request.onsuccess=e=>{
+      db=e.target.result;
+      resolve();
+    };
+
+    request.onerror=()=>reject(request.error);
+  });
+}
+
+function saveFile(file){
+  return new Promise((resolve,reject)=>{
+    if(!db){
+      reject("IndexedDB unavailable");
+      return;
+    }
+
+    const transaction=db.transaction("files","readwrite");
+    transaction.objectStore("files").put(file);
+
+    transaction.oncomplete=()=>resolve();
+    transaction.onerror=()=>reject(transaction.error);
+  });
+}
+
+function getFile(id){
+  return new Promise((resolve,reject)=>{
+    if(!db){
+      resolve(null);
+      return;
+    }
+
+    const request=db.transaction("files","readonly")
+      .objectStore("files").get(id);
+
+    request.onsuccess=()=>resolve(request.result);
+    request.onerror=()=>reject(request.error);
+  });
+}
+
+function deleteStoredFile(id){
+  return new Promise(resolve=>{
+    if(!db){
+      resolve();
+      return;
+    }
+
+    const transaction=db.transaction("files","readwrite");
+    transaction.objectStore("files").delete(id);
+    transaction.oncomplete=()=>resolve();
+  });
+}
+
+/* ---------------- HELPERS ---------------- */
+
+function uid(){
+  return Date.now().toString(36)+Math.random().toString(36).slice(2,10);
+}
+
+function now(){
+  return new Date().toISOString();
+}
+
+function escapeHtml(str){
+  return String(str ?? "")
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+}
+
+function formatDate(date){
+  if(!date)return "—";
+  return new Date(date).toLocaleString("ru-RU",{
+    day:"2-digit",
+    month:"2-digit",
+    year:"numeric",
+    hour:"2-digit",
+    minute:"2-digit"
+  });
+}
+
+function getUserProjects(){
+  return state.projects.filter(x=>x.userId===currentUser.id);
+}
+
+function getUserFolders(){
+  const ids=new Set(getUserProjects().map(x=>x.id));
+  return state.folders.filter(x=>ids.has(x.projectId));
+}
+
+function getUserParts(){
+  const folderIds=new Set(getUserFolders().map(x=>x.id));
+  return state.parts.filter(x=>folderIds.has(x.folderId));
+}
+
+/* ---------------- AUTH ---------------- */
+
+function switchAuth(mode){
+  authMode=mode;
+
+  document.getElementById("loginTab")
+    .classList.toggle("active",mode==="login");
+
+  document.getElementById("registerTab")
+    .classList.toggle("active",mode==="register");
+
+  document.getElementById("authButton").textContent=
+    mode==="login" ? "Войти" : "Создать аккаунт";
+
+  document.getElementById("authError").classList.add("hidden");
+}
+
+function authSubmit(){
+
+  const email=document.getElementById("authEmail").value.trim().toLowerCase();
+  const password=document.getElementById("authPassword").value;
+
+  if(!email || !password){
+    authError("Заполните email и пароль");
+    return;
   }
 
-  function updateFile(idv) {
-    const x = db.files.find(x => x.id === idv);
-    if (!x) return alert('Файл не найден');
-    x.name = document.getElementById('dname').value.trim() || x.name;
-    x.number = document.getElementById('dnum').value.trim() || x.number;
-    x.code = document.getElementById('dcode').value.trim() || x.code;
-    save();
+  if(password.length<6){
+    authError("Пароль должен содержать минимум 6 символов");
+    return;
+  }
+
+  if(authMode==="register"){
+
+    if(state.users.some(x=>x.email===email)){
+      authError("Такой пользователь уже существует");
+      return;
+    }
+
+    const user={
+      id:uid(),
+      email,
+      password,
+      createdAt:now()
+    };
+
+    state.users.push(user);
+    saveState();
+
+    currentUser=user;
+    localStorage.setItem("minicad_session",user.id);
+
+    enterApp();
+
+  }else{
+
+    const user=state.users.find(
+      x=>x.email===email && x.password===password
+    );
+
+    if(!user){
+      authError("Неверный email или пароль");
+      return;
+    }
+
+    currentUser=user;
+    localStorage.setItem("minicad_session",user.id);
+
+    enterApp();
+  }
+}
+
+function authError(message){
+  const box=document.getElementById("authError");
+  box.textContent=message;
+  box.classList.remove("hidden");
+}
+
+function logout(){
+  currentUser=null;
+  localStorage.removeItem("minicad_session");
+
+  document.getElementById("app").classList.add("hidden");
+  document.getElementById("authScreen").classList.remove("hidden");
+}
+
+/* ---------------- APP ---------------- */
+
+async function enterApp(){
+
+  document.getElementById("authScreen").classList.add("hidden");
+  document.getElementById("app").classList.remove("hidden");
+
+  document.getElementById("sideEmail").textContent=currentUser.email;
+
+  showPage("dashboard");
+  updateStats();
+}
+
+function boot(){
+
+  initDB();
+
+  const session=localStorage.getItem("minicad_session");
+
+  if(session){
+    const user=state.users.find(x=>x.id===session);
+
+    if(user){
+      currentUser=user;
+      enterApp();
+      return;
+    }
+  }
+
+  document.getElementById("authScreen").classList.remove("hidden");
+}
+
+function showPage(page){
+
+  ["Dashboard","Projects","Parts","Public"].forEach(p=>{
+    document.getElementById("page"+p).classList.add("hidden");
+    document.getElementById("nav"+p)?.classList.remove("active");
+  });
+
+  document.getElementById("page"+
+    page.charAt(0).toUpperCase()+page.slice(1)
+  ).classList.remove("hidden");
+
+  document.getElementById("nav"+
+    page.charAt(0).toUpperCase()+page.slice(1)
+  )?.classList.add("active");
+
+  const titles={
+    dashboard:["Обзор","Управление конструкторской документацией"],
+    projects:["Проекты","Структура проектов и папок"],
+    parts:["Все детали","Глобальный поиск по документации"],
+    public:["Общий доступ","Публичные папки"]
+  };
+
+  document.getElementById("pageTitle").textContent=titles[page][0];
+  document.getElementById("pageSubtitle").textContent=titles[page][1];
+
+  if(page==="dashboard")updateStats();
+  if(page==="projects")renderProjects();
+  if(page==="parts")renderParts();
+  if(page==="public")renderPublic();
+
+  document.getElementById("sidebar").classList.remove("open");
+}
+
+/* ---------------- STATS ---------------- */
+
+function updateStats(){
+
+  document.getElementById("statProjects").textContent=
+    getUserProjects().length;
+
+  document.getElementById("statFolders").textContent=
+    getUserFolders().length;
+
+  document.getElementById("statParts").textContent=
+    getUserParts().length;
+
+  document.getElementById("statPublic").textContent=
+    getUserFolders().filter(x=>x.public).length;
+}
+
+/* ---------------- PROJECTS ---------------- */
+
+function openProjectModal(id=null){
+
+  const project=id
+    ? state.projects.find(x=>x.id===id)
+    : null;
+
+  openModal(`
+    <div class="modal-head">
+      <div class="modal-title">
+        ${project?"Редактирование проекта":"Новый проект"}
+      </div>
+      <button class="close" onclick="closeModal()">×</button>
+    </div>
+
+    <div class="modal-body">
+
+      <div class="field">
+        <label>Название проекта *</label>
+        <input id="projectName"
+          value="${escapeHtml(project?.name||"")}"
+          placeholder="Например: Корпус станка">
+      </div>
+
+      <div class="field">
+        <label>Описание</label>
+        <textarea id="projectDescription"
+          placeholder="Описание проекта...">${escapeHtml(project?.description||"")}</textarea>
+      </div>
+
+    </div>
+
+    <div class="modal-foot">
+      <button class="btn" onclick="closeModal()">Отмена</button>
+      <button class="btn primary"
+        onclick="saveProject('${id||""}')">
+        Сохранить
+      </button>
+    </div>
+  `);
+}
+
+function saveProject(id){
+
+  const name=document.getElementById("projectName").value.trim();
+  const description=document.getElementById("projectDescription").value.trim();
+
+  if(!name){
+    toast("Введите название проекта");
+    return;
+  }
+
+  if(id){
+
+    const p=state.projects.find(x=>x.id===id);
+
+    if(!p)return;
+
+    p.name=name;
+    p.description=description;
+    p.updatedAt=now();
+
+  }else{
+
+    state.projects.push({
+      id:uid(),
+      userId:currentUser.id,
+      name,
+      description,
+      createdAt:now(),
+      updatedAt:now()
+    });
+
+  }
+
+  saveState();
+  closeModal();
+  renderProjects();
+  updateStats();
+  toast("Проект сохранён");
+}
+
+function deleteProject(id){
+
+  const project=state.projects.find(x=>x.id===id);
+
+  if(!project)return;
+
+  if(!confirm(
+    `Удалить проект «${project.name}»?\n\nБудут удалены все папки и детали внутри.`
+  ))return;
+
+  const folders=state.folders.filter(x=>x.projectId===id);
+
+  folders.forEach(folder=>{
+    state.parts
+      .filter(x=>x.folderId===folder.id)
+      .forEach(part=>{
+        if(part.fileId)deleteStoredFile(part.fileId);
+      });
+  });
+
+  const folderIds=new Set(folders.map(x=>x.id));
+
+  state.parts=state.parts.filter(x=>!folderIds.has(x.folderId));
+  state.folders=state.folders.filter(x=>x.projectId!==id);
+  state.projects=state.projects.filter(x=>x.id!==id);
+
+  saveState();
+  renderProjects();
+  updateStats();
+
+  toast("Проект удалён");
+}
+
+function renderProjects(){
+
+  const container=document.getElementById("projectsContainer");
+  const search=(document.getElementById("projectSearch")?.value||"")
+    .toLowerCase();
+
+  let projects=getUserProjects()
+    .filter(x=>x.name.toLowerCase().includes(search))
+    .sort((a,b)=>new Date(b.updatedAt)-new Date(a.updatedAt));
+
+  if(!projects.length){
+
+    container.innerHTML=`
+      <div class="empty">
+        <div class="empty-icon">📁</div>
+        <div class="empty-title">Проектов пока нет</div>
+        <div>Создайте первый проект для начала работы.</div>
+      </div>
+    `;
+
+    return;
+  }
+
+  container.innerHTML=`
+    <div class="grid">
+      ${projects.map(project=>{
+
+        const folders=state.folders
+          .filter(x=>x.projectId===project.id);
+
+        const partCount=state.parts.filter(part=>
+          folders.some(folder=>folder.id===part.folderId)
+        ).length;
+
+        return `
+          <div class="card">
+
+            <div class="card-head">
+              <div>
+                <div style="font-size:32px">📁</div>
+                <div class="card-title" style="margin-top:9px">
+                  ${escapeHtml(project.name)}
+                </div>
+              </div>
+
+              <button class="small-btn"
+                onclick="event.stopPropagation();openProjectMenu('${project.id}')">
+                ⋮
+              </button>
+            </div>
+
+            <div style="color:var(--muted);font-size:12px;margin-top:8px">
+              ${escapeHtml(project.description||"Без описания")}
+            </div>
+
+            <div class="card-meta">
+              <div class="meta">
+                <span>Папок</span>
+                <span>${folders.length}</span>
+              </div>
+
+              <div class="meta">
+                <span>Деталей</span>
+                <span>${partCount}</span>
+              </div>
+
+              <div class="meta">
+                <span>Изменён</span>
+                <span>${formatDate(project.updatedAt)}</span>
+              </div>
+            </div>
+
+            <div class="card-actions">
+              <button class="small-btn"
+                onclick="openProject('${project.id}')">
+                Открыть
+              </button>
+
+              <button class="small-btn"
+                onclick="openProjectModal('${project.id}')">
+                Изменить
+              </button>
+            </div>
+
+          </div>
+        `;
+      }).join("")}
+    </div>
+  `;
+}
+
+function openProjectMenu(id){
+
+  const p=state.projects.find(x=>x.id===id);
+
+  if(!p)return;
+
+  const choice=prompt(
+    `Проект: ${p.name}\n\nВведите:\n1 — удалить проект\n2 — изменить проект`
+  );
+
+  if(choice==="1")deleteProject(id);
+  if(choice==="2")openProjectModal(id);
+}
+
+function openProject(id){
+
+  currentProjectId=id;
+
+  const project=state.projects.find(x=>x.id===id);
+
+  if(!project)return;
+
+  renderProjectFolders(project);
+}
+
+function renderProjectFolders(project){
+
+  const container=document.getElementById("projectsContainer");
+
+  const folders=state.folders
+    .filter(x=>x.projectId===project.id)
+    .sort((a,b)=>a.name.localeCompare(b.name,"ru"));
+
+  document.getElementById("pageTitle").textContent=project.name;
+  document.getElementById("pageSubtitle").textContent=
+    "Папки проекта";
+
+  container.innerHTML=`
+
+    <div class="toolbar">
+
+      <button class="btn" onclick="showPage('projects')">
+        ← Проекты
+      </button>
+
+      <div style="flex:1"></div>
+
+      <button class="btn primary"
+        onclick="openFolderModal('${project.id}')">
+        ＋ Новая папка
+      </button>
+
+    </div>
+
+    ${
+      folders.length
+      ?
+      `<div class="folder-grid">
+        ${folders.map(folder=>{
+
+          const count=state.parts.filter(
+            x=>x.folderId===folder.id
+          ).length;
+
+          return `
+            <div class="folder"
+              onclick="openFolder('${folder.id}')">
+
+              <div class="folder-menu"
+                onclick="event.stopPropagation()">
+
+                <button class="small-btn"
+                  onclick="openFolderMenu('${folder.id}')">
+                  ⋮
+                </button>
+
+              </div>
+
+              <div class="folder-icon">📁</div>
+
+              <div class="folder-name">
+                ${escapeHtml(folder.name)}
+              </div>
+
+              <div class="folder-info">
+                ${count} деталей
+              </div>
+
+              <div style="margin-top:13px">
+                ${
+                  folder.public
+                  ? `<span class="badge">● Общая</span>`
+                  : `<span class="badge private">● Приватная</span>`
+                }
+              </div>
+
+            </div>
+          `;
+        }).join("")}
+      </div>`
+      :
+      `
+      <div class="empty">
+        <div class="empty-icon">📂</div>
+        <div class="empty-title">Папок нет</div>
+        <div>Создайте папку для хранения деталей.</div>
+      </div>
+      `
+    }
+  `;
+}
+
+/* ---------------- FOLDERS ---------------- */
+
+function openFolderModal(projectId,id=null){
+
+  const folder=id
+    ? state.folders.find(x=>x.id===id)
+    : null;
+
+  openModal(`
+    <div class="modal-head">
+      <div class="modal-title">
+        ${folder?"Редактирование папки":"Новая папка"}
+      </div>
+      <button class="close" onclick="closeModal()">×</button>
+    </div>
+
+    <div class="modal-body">
+
+      <div class="field">
+        <label>Название папки *</label>
+        <input id="folderName"
+          value="${escapeHtml(folder?.name||"")}"
+          placeholder="Например: Корпус">
+      </div>
+
+      <div class="field">
+        <label>Описание</label>
+        <textarea id="folderDescription"
+          placeholder="Описание папки...">${escapeHtml(folder?.description||"")}</textarea>
+      </div>
+
+      <div class="field">
+
+        <label>Доступ</label>
+
+        <div style="
+          display:flex;
+          justify-content:space-between;
+          align-items:center;
+          padding:14px;
+          background:#0a0e16;
+          border:1px solid var(--border);
+          border-radius:12px">
+
+          <div>
+            <div style="font-weight:650">
+              Сделать общим
+            </div>
+            <div style="font-size:11px;color:var(--muted);margin-top:3px">
+              Разрешить просмотр содержимого папки
+            </div>
+          </div>
+
+          <label style="position:relative;width:50px;height:27px">
+            <input id="folderPublic"
+              type="checkbox"
+              ${folder?.public?"checked":""}
+              style="opacity:0;width:0;height:0">
+
+            <span style="
+              position:absolute;
+              inset:0;
+              background:#202838;
+              border-radius:99px;
+              cursor:pointer;
+            "></span>
+          </label>
+
+        </div>
+      </div>
+
+    </div>
+
+    <div class="modal-foot">
+      <button class="btn" onclick="closeModal()">Отмена</button>
+      <button class="btn primary"
+        onclick="saveFolder('${projectId}','${id||""}')">
+        Сохранить
+      </button>
+    </div>
+  `);
+}
+
+function saveFolder(projectId,id){
+
+  const name=document.getElementById("folderName").value.trim();
+  const description=document.getElementById("folderDescription").value.trim();
+  const isPublic=document.getElementById("folderPublic").checked;
+
+  if(!name){
+    toast("Введите название папки");
+    return;
+  }
+
+  if(id){
+
+    const f=state.folders.find(x=>x.id===id);
+
+    f.name=name;
+    f.description=description;
+    f.public=isPublic;
+    f.updatedAt=now();
+
+  }else{
+
+    state.folders.push({
+      id:uid(),
+      projectId,
+      name,
+      description,
+      public:isPublic,
+      inviteToken:uid(),
+      createdAt:now(),
+      updatedAt:now()
+    });
+
+  }
+
+  saveState();
+  closeModal();
+
+  const project=state.projects.find(x=>x.id===projectId);
+
+  if(project)renderProjectFolders(project);
+
+  updateStats();
+
+  toast("Папка сохранена");
+}
+
+function openFolderMenu(id){
+
+  const folder=state.folders.find(x=>x.id===id);
+
+  if(!folder)return;
+
+  const choice=prompt(
+    `Папка: ${folder.name}\n\n`+
+    `1 — открыть\n`+
+    `2 — изменить\n`+
+    `3 — удалить\n`+
+    `4 — скопировать ссылку`
+  );
+
+  if(choice==="1")openFolder(id);
+
+  if(choice==="2")
+    openFolderModal(folder.projectId,id);
+
+  if(choice==="3")
+    deleteFolder(id);
+
+  if(choice==="4")
+    copyInviteLink(id);
+}
+
+async function deleteFolder(id){
+
+  const folder=state.folders.find(x=>x.id===id);
+
+  if(!folder)return;
+
+  if(!confirm(
+    `Удалить папку «${folder.name}»?\n\nВсе детали и чертежи внутри будут удалены.`
+  ))return;
+
+  const parts=state.parts.filter(x=>x.folderId===id);
+
+  for(const part of parts){
+
+    if(part.fileId)
+      await deleteStoredFile(part.fileId);
+
+  }
+
+  state.parts=state.parts.filter(x=>x.folderId!==id);
+  state.folders=state.folders.filter(x=>x.id!==id);
+
+  saveState();
+
+  const project=state.projects.find(
+    x=>x.id===folder.projectId
+  );
+
+  if(project)renderProjectFolders(project);
+
+  updateStats();
+
+  toast("Папка удалена");
+}
+
+function openFolder(id){
+
+  currentFolderId=id;
+
+  const folder=state.folders.find(x=>x.id===id);
+
+  if(!folder)return;
+
+  const project=state.projects.find(
+    x=>x.id===folder.projectId
+  );
+
+  renderFolder(folder,project);
+}
+
+function renderFolder(folder,project){
+
+  document.getElementById("pageTitle").textContent=folder.name;
+
+  document.getElementById("pageSubtitle").textContent=
+    `${project?.name||""} / детали`;
+
+  document.getElementById("projectsContainer").innerHTML=`
+
+    <div class="toolbar">
+
+      <button class="btn"
+        onclick="openProject('${project.id}')">
+        ← ${escapeHtml(project.name)}
+      </button>
+
+      <div style="flex:1"></div>
+
+      <button class="btn"
+        onclick="openFolderModal('${project.id}','${folder.id}')">
+        ⚙ Настройки
+      </button>
+
+      <button class="btn primary"
+        onclick="openPartModal('${folder.id}')">
+        ＋ Новая деталь
+      </button>
+
+    </div>
+
+    <div class="toolbar">
+
+      <div class="search">
+        <span class="search-icon">⌕</span>
+        <input id="folderSearch"
+          placeholder="Поиск деталей..."
+          oninput="renderFolderParts()">
+      </div>
+
+      <select id="folderSort" onchange="renderFolderParts()">
+        <option value="updated">Новые сверху</option>
+        <option value="name">Название А-Я</option>
+        <option value="number">Номер</option>
+      </select>
+
+    </div>
+
+    <div id="folderParts"></div>
+  `;
+
+  renderFolderParts();
+}
+
+function renderFolderParts(){
+
+  const folder=state.folders.find(x=>x.id===currentFolderId);
+
+  if(!folder)return;
+
+  const search=(document.getElementById("folderSearch")?.value||"")
+    .toLowerCase();
+
+  const sort=document.getElementById("folderSort")?.value||"updated";
+
+  let parts=state.parts
+    .filter(x=>x.folderId===folder.id)
+    .filter(x=>
+      x.name.toLowerCase().includes(search) ||
+      x.number.toLowerCase().includes(search)
+    );
+
+  if(sort==="name")
+    parts.sort((a,b)=>a.name.localeCompare(b.name,"ru"));
+
+  if(sort==="number")
+    parts.sort((a,b)=>a.number.localeCompare(b.number,"ru"));
+
+  if(sort==="updated")
+    parts.sort((a,b)=>new Date(b.updatedAt)-new Date(a.updatedAt));
+
+  renderPartCards(
+    document.getElementById("folderParts"),
+    parts
+  );
+}
+
+/* ---------------- PARTS ---------------- */
+
+function openPartModal(folderId,partId=null){
+
+  const part=partId
+    ? state.parts.find(x=>x.id===partId)
+    : null;
+
+  openModal(`
+    <div class="modal-head">
+      <div class="modal-title">
+        ${part?"Редактирование детали":"Новая деталь"}
+      </div>
+
+      <button class="close" onclick="closeModal()">×</button>
+    </div>
+
+    <div class="modal-body">
+
+      <div class="field">
+        <label>Название детали *</label>
+        <input id="partName"
+          value="${escapeHtml(part?.name||"")}"
+          placeholder="Например: Корпус подшипника">
+      </div>
+
+      <div class="field">
+        <label>Номер детали *</label>
+        <input id="partNumber"
+          value="${escapeHtml(part?.number||"")}"
+          placeholder="Например: K-001-025">
+      </div>
+
+      <div class="field">
+        <label>Код детали * — минимум 20 символов</label>
+        <textarea id="partCode"
+          placeholder="Введите длинный производственный код...">${escapeHtml(part?.code||"")}</textarea>
+
+        <div id="codeCounter"
+          style="text-align:right;color:var(--muted);font-size:10px;margin-top:4px">
+          ${(part?.code||"").length} / 20
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Чертёж / изображение</label>
+
+        <div class="file-drop">
+
+          <div style="font-size:25px;margin-bottom:8px">
+            📎
+          </div>
+
+          <div style="font-size:12px;color:var(--muted);margin-bottom:12px">
+            JPG, PNG или PDF
+          </div>
+
+          <input id="partFile"
+            type="file"
+            accept=".jpg,.jpeg,.png,.pdf,image/jpeg,image/png,application/pdf"
+            onchange="previewSelectedFile(event)">
+        </div>
+
+        <div id="filePreview"></div>
+
+      </div>
+
+    </div>
+
+    <div class="modal-foot">
+
+      <button class="btn"
+        onclick="closeModal()">
+        Отмена
+      </button>
+
+      <button class="btn primary"
+        onclick="savePart('${folderId}','${partId||""}')">
+        Сохранить деталь
+      </button>
+
+    </div>
+  `);
+
+  document.getElementById("partCode").addEventListener("input",e=>{
+    document.getElementById("codeCounter").textContent=
+      `${e.target.value.length} / 20`;
+  });
+
+  if(part && part.fileId)
+    showExistingFile(part.fileId);
+}
+
+async function showExistingFile(fileId){
+
+  const file=await getFile(fileId);
+
+  if(!file)return;
+
+  renderFilePreview(
+    document.getElementById("filePreview"),
+    file
+  );
+}
+
+function previewSelectedFile(event){
+
+  const file=event.target.files[0];
+
+  if(!file)return;
+
+  if(!isAllowedFile(file)){
+    toast("Разрешены только JPG, PNG и PDF");
+    event.target.value="";
+    return;
+  }
+
+  if(file.size>15*1024*1024){
+    toast("Файл слишком большой. Максимум 15 МБ");
+    event.target.value="";
+    return;
+  }
+
+  renderFilePreview(
+    document.getElementById("filePreview"),
+    file
+  );
+}
+
+function isAllowedFile(file){
+
+  return [
+    "image/jpeg",
+    "image/png",
+    "application/pdf"
+  ].includes(file.type);
+
+}
+
+function renderFilePreview(container,file){
+
+  if(!container)return;
+
+  const url=URL.createObjectURL(file);
+
+  if(file.type==="application/pdf"){
+
+    container.innerHTML=`
+      <iframe class="pdf-preview"
+        src="${url}">
+      </iframe>
+    `;
+
+  }else{
+
+    container.innerHTML=`
+      <img class="drawing-preview"
+        src="${url}">
+    `;
+
+  }
+}
+
+async function savePart(folderId,partId){
+
+  const name=document.getElementById("partName").value.trim();
+  const number=document.getElementById("partNumber").value.trim();
+  const code=document.getElementById("partCode").value.trim();
+  const fileInput=document.getElementById("partFile");
+
+  if(!name){
+    toast("Введите название детали");
+    return;
+  }
+
+  if(!number){
+    toast("Введите номер детали");
+    return;
+  }
+
+  const duplicate=state.parts.find(x=>
+    x.folderId===folderId &&
+    x.number.toLowerCase()===number.toLowerCase() &&
+    x.id!==partId
+  );
+
+  if(duplicate){
+    toast("Такой номер детали уже существует в этой папке");
+    return;
+  }
+
+  if(code.length<20){
+    toast("Код должен содержать минимум 20 символов");
+    return;
+  }
+
+  let existing=partId
+    ? state.parts.find(x=>x.id===partId)
+    : null;
+
+  let fileId=existing?.fileId||null;
+
+  if(fileInput.files.length){
+
+    const file=fileInput.files[0];
+
+    if(!isAllowedFile(file)){
+      toast("Недопустимый формат файла");
+      return;
+    }
+
+    if(file.size>15*1024*1024){
+      toast("Файл слишком большой. Максимум 15 МБ");
+      return;
+    }
+
+    if(fileId)
+      await deleteStoredFile(fileId);
+
+    fileId=uid();
+
+    await saveFile({
+      id:fileId,
+      name:file.name,
+      type:file.type,
+      size:file.size,
+      blob:file,
+      createdAt:now()
+    });
+  }
+
+  if(existing){
+
+    existing.name=name;
+    existing.number=number;
+    existing.code=code;
+    existing.fileId=fileId;
+    existing.updatedAt=now();
+
+  }else{
+
+    state.parts.push({
+      id:uid(),
+      folderId,
+      name,
+      number,
+      code,
+      fileId,
+      createdAt:now(),
+      updatedAt:now()
+    });
+
+  }
+
+  const folder=state.folders.find(x=>x.id===folderId);
+
+  if(folder)
+    folder.updatedAt=now();
+
+  saveState();
+  closeModal();
+
+  if(currentFolderId===folderId)
+    renderFolderParts();
+
+  renderParts();
+  updateStats();
+
+  toast("Деталь сохранена");
+}
+
+function renderPartCards(container,parts){
+
+  if(!container)return;
+
+  if(!parts.length){
+
+    container.innerHTML=`
+      <div class="empty">
+        <div class="empty-icon">⚙️</div>
+        <div class="empty-title">Деталей не найдено</div>
+        <div>Создайте новую карточку детали.</div>
+      </div>
+    `;
+
+    return;
+  }
+
+  container.innerHTML=`
+    <div class="grid">
+      ${parts.map(part=>{
+
+        const folder=state.folders.find(
+          x=>x.id===part.folderId
+        );
+
+        return `
+          <div class="card">
+
+            <div class="card-head">
+
+              <div>
+                <div class="card-title">
+                  ${escapeHtml(part.name)}
+                </div>
+
+                <div class="card-number">
+                  № ${escapeHtml(part.number)}
+                </div>
+              </div>
+
+              ${
+                part.fileId
+                ? `<span class="badge">📎</span>`
+                : ""
+              }
+
+            </div>
+
+            <div class="card-meta">
+
+              <div class="meta">
+                <span>Папка</span>
+                <span>${escapeHtml(folder?.name||"—")}</span>
+              </div>
+
+              <div class="meta">
+                <span>Создано</span>
+                <span>${formatDate(part.createdAt)}</span>
+              </div>
+
+              <div class="meta">
+                <span>Изменено</span>
+                <span>${formatDate(part.updatedAt)}</span>
+              </div>
+
+            </div>
+
+            <div class="code">
+              ${escapeHtml(part.code)}
+            </div>
+
+            <div class="card-actions">
+
+              <button class="small-btn"
+                onclick="viewPart('${part.id}')">
+                👁 Просмотр
+              </button>
+
+              <button class="small-btn"
+                onclick="openPartModal('${part.folderId}','${part.id}')">
+                ✏ Изменить
+              </button>
+
+              <button class="small-btn"
+                onclick="deletePart('${part.id}')">
+                🗑
+              </button>
+
+            </div>
+
+          </div>
+        `;
+      }).join("")}
+    </div>
+  `;
+}
+
+function renderParts(){
+
+  const container=document.getElementById("partsContainer");
+
+  if(!container)return;
+
+  const search=(
+    document.getElementById("globalSearch")?.value||""
+  ).toLowerCase();
+
+  const sort=
+    document.getElementById("sortSelect")?.value||"updated";
+
+  let parts=getUserParts().filter(x=>
+    x.name.toLowerCase().includes(search) ||
+    x.number.toLowerCase().includes(search)
+  );
+
+  if(sort==="name")
+    parts.sort((a,b)=>a.name.localeCompare(b.name,"ru"));
+
+  if(sort==="number")
+    parts.sort((a,b)=>a.number.localeCompare(b.number,"ru"));
+
+  if(sort==="created")
+    parts.sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt));
+
+  if(sort==="updated")
+    parts.sort((a,b)=>new Date(b.updatedAt)-new Date(a.updatedAt));
+
+  renderPartCards(container,parts);
+}
+
+/* ---------------- PART VIEW ---------------- */
+
+async function viewPart(id){
+
+  const part=state.parts.find(x=>x.id===id);
+
+  if(!part)return;
+
+  const folder=state.folders.find(x=>x.id===part.folderId);
+
+  const project=state.projects.find(
+    x=>x.id===folder?.projectId
+  );
+
+  let file=part.fileId
+    ? await getFile(part.fileId)
+    : null;
+
+  openModal(`
+    <div class="modal-head">
+
+      <div>
+        <div class="modal-title">
+          ${escapeHtml(part.name)}
+        </div>
+
+        <div style="font-size:11px;color:var(--accent);margin-top:4px">
+          № ${escapeHtml(part.number)}
+        </div>
+      </div>
+
+      <button class="close"
+        onclick="closeModal()">
+        ×
+      </button>
+
+    </div>
+
+    <div class="modal-body">
+
+      <div class="card" style="margin-bottom:15px">
+
+        <div class="meta">
+          <span>Проект</span>
+          <span>${escapeHtml(project?.name||"—")}</span>
+        </div>
+
+        <div class="meta" style="margin-top:9px">
+          <span>Папка</span>
+          <span>${escapeHtml(folder?.name||"—")}</span>
+        </div>
+
+        <div class="meta" style="margin-top:9px">
+          <span>Обновлено</span>
+          <span>${formatDate(part.updatedAt)}</span>
+        </div>
+
+      </div>
+
+      <div class="field">
+
+        <label>КОД ДЕТАЛИ</label>
+
+        <textarea readonly>${escapeHtml(part.code)}</textarea>
+
+        <button class="btn"
+          style="margin-top:8px"
+          onclick="copyText(${JSON.stringify(part.code)})">
+          📋 Копировать код
+        </button>
+
+      </div>
+
+      ${
+        file
+        ?
+        `
+        <div class="field">
+          <label>ЧЕРТЁЖ</label>
+          <div style="font-size:12px;color:var(--muted)">
+            ${escapeHtml(file.name)}
+            · ${formatSize(file.size)}
+          </div>
+          <div id="viewFile"></div>
+        </div>
+        `
+        :
+        `
+        <div class="empty" style="padding:30px">
+          📎 Чертёж не загружен
+        </div>
+        `
+      }
+
+    </div>
+
+    <div class="modal-foot">
+
+      <button class="btn"
+        onclick="closeModal()">
+        Закрыть
+      </button>
+
+      <button class="btn primary"
+        onclick="openPartModal('${part.folderId}','${part.id}')">
+        ✏ Изменить
+      </button>
+
+    </div>
+  `);
+
+  if(file){
+
+    renderFilePreview(
+      document.getElementById("viewFile"),
+      file
+    );
+
+  }
+}
+
+function formatSize(bytes){
+
+  if(!bytes)return "0 B";
+
+  const units=["B","KB","MB","GB"];
+  let i=0;
+  let n=bytes;
+
+  while(n>=1024 && i<units.length-1){
+    n/=1024;
+    i++;
+  }
+
+  return n.toFixed(i?1:0)+" "+units[i];
+}
+
+async function deletePart(id){
+
+  const part=state.parts.find(x=>x.id===id);
+
+  if(!part)return;
+
+  if(!confirm(
+    `Удалить деталь «${part.name}»?\n\nЧертёж также будет удалён.`
+  ))return;
+
+  if(part.fileId)
+    await deleteStoredFile(part.fileId);
+
+  state.parts=state.parts.filter(x=>x.id!==id);
+
+  saveState();
+
+  renderParts();
+
+  if(currentFolderId===part.folderId)
+    renderFolderParts();
+
+  updateStats();
+
+  toast("Деталь удалена");
+}
+
+/* ---------------- PUBLIC ---------------- */
+
+function renderPublic(){
+
+  const container=document.getElementById("publicContainer");
+
+  const folders=getUserFolders()
+    .filter(x=>x.public);
+
+  if(!folders.length){
+
+    container.innerHTML=`
+      <div class="empty">
+        <div class="empty-icon">🌐</div>
+        <div class="empty-title">Нет общих папок</div>
+        <div>Включите «Сделать общим» в настройках папки.</div>
+      </div>
+    `;
+
+    return;
+  }
+
+  container.innerHTML=`
+    <div class="folder-grid">
+
+      ${folders.map(folder=>{
+
+        const project=state.projects.find(
+          x=>x.id===folder.projectId
+        );
+
+        const count=state.parts.filter(
+          x=>x.folderId===folder.id
+        ).length;
+
+        return `
+          <div class="folder">
+
+            <div class="folder-icon">🌐</div>
+
+            <div class="folder-name">
+              ${escapeHtml(folder.name)}
+            </div>
+
+            <div class="folder-info">
+              ${escapeHtml(project?.name||"")} · ${count} деталей
+            </div>
+
+            <div style="margin-top:15px;display:flex;gap:7px">
+
+              <button class="small-btn"
+                onclick="openFolder('${folder.id}')">
+                Открыть
+              </button>
+
+              <button class="small-btn"
+                onclick="copyInviteLink('${folder.id}')">
+                🔗 Ссылка
+              </button>
+
+            </div>
+
+          </div>
+        `;
+
+      }).join("")}
+
+    </div>
+  `;
+}
+
+async function copyInviteLink(id){
+
+  const folder=state.folders.find(x=>x.id===id);
+
+  if(!folder)return;
+
+  /*
+    В локальном режиме ссылка является локальным
+    идентификатором приглашения.
+    Без backend она не может передавать данные
+    на другое устройство.
+  */
+
+  const url=
+    location.href.split("#")[0]+
+    "#public="+folder.inviteToken;
+
+  await copyText(url);
+
+  toast("Локальная ссылка скопирована");
+}
+
+/* ---------------- IMPORT / EXPORT ---------------- */
+
+async function exportData(){
+
+  const exportObject={
+    app:"MiniCAD",
+    version:1,
+    exportedAt:now(),
+    user:{
+      id:currentUser.id,
+      email:currentUser.email
+    },
+    projects:getUserProjects(),
+    folders:getUserFolders(),
+    parts:getUserParts()
+  };
+
+  const blob=new Blob(
+    [JSON.stringify(exportObject,null,2)],
+    {type:"application/json"}
+  );
+
+  const url=URL.createObjectURL(blob);
+
+  const a=document.createElement("a");
+  a.href=url;
+  a.download=
+    "minicad-backup-"+
+    new Date().toISOString().slice(0,10)+
+    ".json";
+
+  a.click();
+
+  URL.revokeObjectURL(url);
+
+  toast("Резервная копия экспортирована");
+}
+
+function importData(event){
+
+  const file=event.target.files[0];
+
+  if(!file)return;
+
+  const reader=new FileReader();
+
+  reader.onload=()=>{
+
+    try{
+
+      const imported=JSON.parse(reader.result);
+
+      if(
+        !Array.isArray(imported.projects) ||
+        !Array.isArray(imported.folders) ||
+        !Array.isArray(imported.parts)
+      ){
+        throw new Error();
+      }
+
+      /*
+       Импортируем только структуру.
+       Файлы из IndexedDB JSON не содержит.
+      */
+
+      const projectMap={};
+
+      imported.projects.forEach(p=>{
+
+        const newId=uid();
+
+        projectMap[p.id]=newId;
+
+        state.projects.push({
+          ...p,
+          id:newId,
+          userId:currentUser.id
+        });
+
+      });
+
+      const folderMap={};
+
+      imported.folders.forEach(f=>{
+
+        const newId=uid();
+
+        folderMap[f.id]=newId;
+
+        state.folders.push({
+          ...f,
+          id:newId,
+          projectId:projectMap[f.projectId],
+          inviteToken:uid()
+        });
+
+      });
+
+      imported.parts.forEach(p=>{
+
+        state.parts.push({
+          ...p,
+          id:uid(),
+          folderId:folderMap[p.folderId],
+          fileId:null
+        });
+
+      });
+
+      saveState();
+
+      updateStats();
+      renderProjects();
+      renderParts();
+
+      toast("Данные импортированы");
+
+    }catch{
+
+      toast("Не удалось импортировать файл");
+
+    }
+
+  };
+
+  reader.readAsText(file);
+  event.target.value="";
+}
+
+/* ---------------- MODAL ---------------- */
+
+function openModal(html){
+
+  document.getElementById("modal").innerHTML=html;
+  document.getElementById("modalBackdrop")
+    .classList.remove("hidden");
+
+}
+
+function closeModal(){
+
+  document.getElementById("modalBackdrop")
+    .classList.add("hidden");
+
+  document.getElementById("modal").innerHTML="";
+}
+
+function backdropClose(event){
+
+  if(event.target.id==="modalBackdrop")
     closeModal();
-    openFolder(x.folder);
+
+}
+
+/* ---------------- UTILITIES ---------------- */
+
+async function copyText(text){
+
+  try{
+
+    await navigator.clipboard.writeText(text);
+
+  }catch{
+
+    const textarea=document.createElement("textarea");
+
+    textarea.value=text;
+    document.body.appendChild(textarea);
+
+    textarea.select();
+    document.execCommand("copy");
+
+    textarea.remove();
+
   }
 
-  function deleteFile(idv) {
-    const x = db.files.find(x => x.id === idv);
-    if (!x) return alert('Файл не найден');
-    if (!confirm('Удалить файл?')) return;
-    db.files = db.files.filter(y => y.id !== idv);
-    save();
+  toast("Скопировано");
+}
+
+function toast(message){
+
+  const el=document.getElementById("toast");
+
+  el.textContent=message;
+  el.classList.add("show");
+
+  clearTimeout(window.toastTimer);
+
+  window.toastTimer=setTimeout(()=>{
+    el.classList.remove("show");
+  },2500);
+
+}
+
+function toggleSidebar(){
+
+  document.getElementById("sidebar")
+    .classList.toggle("open");
+
+}
+
+/* ---------------- DEMO DATA ---------------- */
+
+/*
+  Можно включить демо-данные, если хочется сразу увидеть
+  интерфейс.
+
+  Сейчас выключено.
+*/
+
+function createDemoData(){
+
+  const project={
+    id:uid(),
+    userId:currentUser.id,
+    name:"Демонстрационный проект",
+    description:"Пример проекта",
+    createdAt:now(),
+    updatedAt:now()
+  };
+
+  state.projects.push(project);
+
+  const folder={
+    id:uid(),
+    projectId:project.id,
+    name:"Корпуса",
+    description:"Пример папки",
+    public:false,
+    inviteToken:uid(),
+    createdAt:now(),
+    updatedAt:now()
+  };
+
+  state.folders.push(folder);
+
+  state.parts.push({
+    id:uid(),
+    folderId:folder.id,
+    name:"Корпус подшипника",
+    number:"K-001",
+    code:"MINICAD-DEMO-CODE-2026-001-ABCDEFG",
+    fileId:null,
+    createdAt:now(),
+    updatedAt:now()
+  });
+
+  saveState();
+
+}
+
+/* ---------------- KEYBOARD ---------------- */
+
+document.addEventListener("keydown",e=>{
+
+  if(e.key==="Escape")
     closeModal();
-    openFolder(x.folder);
-  }
 
-  function downloadFile(idv) {
-    const x = db.files.find(x => x.id === idv);
-    if (!x) return alert('Файл не найден');
-    const text = `Название детали: ${x.name}\nНомер детали: ${x.number}\nКод: ${x.code}\n`;
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(new Blob([text], { type: 'text/plain;charset=utf-8' }));
-    a.download = `${x.name}_${x.number}.txt`;
-    a.click();
-    URL.revokeObjectURL(a.href);
-  }
+});
 
-  function showPublic() {
-    const fs = db.folders.filter(f => f.public);
-    const main = document.getElementById('main');
-    main.innerHTML = `
-      <div><h1>Открытые папки</h1><div class="muted">Папки, доступные другим пользователям</div></div>
-      <div class="grid">
-        ${fs.map(f => folderCardPublic(f)).join('') ||
-          '<div class="empty" style="grid-column:1/-1">Открытых папок нет.</div>'}
-      </div>
-    `;
-  }
+/* ---------------- START ---------------- */
 
-  function folderCardPublic(f) {
-    const n = db.files.filter(x => x.folder === f.id).length;
-    const owner = db.users.find(u => u.id === f.owner);
-    return `
-      <div class="card">
-        <h3>📁 ${esc(f.name)}</h3>
-        <div class="meta">${n} файл(ов) · владелец: ${esc(owner?.login || '')}</div>
-        <button class="btn primary" style="margin-top:15px" onclick="openFolder('${f.id}')">Просмотреть</button>
-      </div>
-    `;
-  }
+boot();
 
-  function modal(content) {
-    const d = document.createElement('div');
-    d.id = 'modal';
-    d.className = 'modal';
-    d.innerHTML = `
-      <div class="modalbox">
-        <div class="row" style="justify-content:flex-end"><button class="btn" onclick="closeModal()">✕</button></div>
-        ${content}
-      </div>
-    `;
-    document.body.appendChild(d);
-  }
-
-  function closeModal() {
-    document.getElementById('modal')?.remove();
-  }
-
-  function logout() {
-    db.session = null;
-    save();
-    render();
-  }
-
-  render();
 </script>
+
 </body>
 </html>
