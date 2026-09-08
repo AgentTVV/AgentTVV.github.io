@@ -684,6 +684,31 @@ button{
     text-overflow:ellipsis;
     white-space:nowrap;
 }
+.folder-main{
+    flex:1;
+    min-width:0;
+    display:flex;
+    align-items:center;
+    gap:10px;
+    border:0;
+    background:transparent;
+    color:inherit;
+    padding:0;
+    text-align:left;
+}
+.folder-more{
+    width:30px;
+    height:30px;
+    flex:0 0 30px;
+    border:1px solid var(--line);
+    border-radius:9px;
+    background:rgba(255,255,255,.035);
+    color:#aeb8c9;
+}
+.folder-more:hover{
+    background:rgba(255,255,255,.09);
+    color:white;
+}
 .folder-count{
     color:#6f7c91;
     font-size:10px;
@@ -1468,12 +1493,22 @@ button{
 
                 </div>
 
-                <button
-                    type="button"
-                    class="btn primary"
-                    onclick="openPartModal()">
-                    ＋ Добавить
-                </button>
+                <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;">
+                    <button
+                        type="button"
+                        id="catalogNewFolderBtn"
+                        class="btn"
+                        onclick="openFolderModal()">
+                        📁 Новая папка
+                    </button>
+                    <button
+                        type="button"
+                        id="catalogAddPartBtn"
+                        class="btn primary"
+                        onclick="openPartModal()">
+                        ＋ Добавить
+                    </button>
+                </div>
 
             </div>
 
@@ -1656,6 +1691,25 @@ button{
 
                 </div>
 
+            </div>
+
+            <div class="card" style="margin-top:15px;">
+                <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:15px;">
+                    <div>
+                        <div style="font-size:17px;font-weight:800;">Управление каталогом</div>
+                        <div style="color:#69758b;font-size:11px;margin-top:4px;">Только администратор может создавать, изменять, перемещать и удалять папки и детали.</div>
+                    </div>
+                    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                        <button type="button" class="btn" onclick="openFolderModal()">📁 Новая папка</button>
+                        <button type="button" class="btn primary" onclick="openPartModal()">＋ Новая деталь</button>
+                    </div>
+                </div>
+                <div style="overflow:auto;">
+                    <table class="admin-table">
+                        <thead><tr><th>Папка</th><th>Деталь</th><th>Номер</th><th>Раздел</th><th>Действия</th></tr></thead>
+                        <tbody id="adminPartsTable"></tbody>
+                    </table>
+                </div>
             </div>
 
         </section>
@@ -1975,6 +2029,7 @@ function ensureFolder(name, category=currentCategory){
             id:uid("folder"),
             category,
             name:cleanName,
+            ownerId:currentUserId || "admin",
             createdAt:now()
         };
         state.folders.push(folder);
@@ -2460,6 +2515,14 @@ window.addEventListener("resize",()=>{
    CATEGORY
 ========================================================= */
 
+function updateCatalogPermissions(){
+    const admin = isAdmin();
+    ["catalogNewFolderBtn","catalogAddPartBtn","folderAddBtn"].forEach(id=>{
+        const el=document.getElementById(id);
+        if(el) el.classList.toggle("hidden", !admin);
+    });
+}
+
 function openCategory(category){
 
     currentCategory =
@@ -2528,6 +2591,7 @@ function openCategory(category){
         ?.classList.add("active");
 
     renderCatalog();
+    updateCatalogPermissions();
 
     closeSidebar();
 }
@@ -2575,66 +2639,38 @@ function renderCatalog(){
 
 function renderFolderList(folders, visibleParts){
 
-    const container =
-        document.getElementById("nameList");
-
-    if(!folders.length){
-
-        container.innerHTML = `
-            <div style="
-                padding:28px 10px;
-                text-align:center;
-                color:#6f7b90;
-                font-size:11px;
-            ">
-                <div style="font-size:27px;margin-bottom:9px;">📁</div>
-                Папок пока нет.
-                <div style="margin-top:7px;">
-                    Добавьте первую деталь —
-                    папка создастся автоматически.
-                </div>
-            </div>
-        `;
-
-        return;
-    }
+    const container = document.getElementById("nameList");
 
     container.innerHTML = `
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;padding:5px 4px 10px;">
+            <div style="color:#68748a;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1px;">ПАПКИ</div>
+            <button type="button" id="folderAddBtn" class="btn" style="padding:7px 9px;font-size:11px;" onclick="openFolderModal()">＋</button>
+        </div>
         <div class="folder-list">
-            ${folders.map(folder=>{
-                const count =
-                    visibleParts.filter(
-                        p=>p.folderId === folder.id
-                    ).length;
-
+            ${folders.length ? folders.map(folder=>{
+                const count = visibleParts.filter(p=>p.folderId === folder.id).length;
+                const canManage = isAdmin();
                 return `
-                    <button
-                        type="button"
-                        class="folder-item ${
-                            selectedPartName === folder.id
-                            ? "active"
-                            : ""
-                        }"
-                        onclick="selectFolder('${folder.id}')">
-
+                    <div class="folder-item ${selectedPartName === folder.id ? "active" : ""}">
                         <div class="folder-row">
-                            <span class="folder-icon">📁</span>
-
-                            <span class="folder-title">
-                                ${escapeHtml(folder.name)}
-                            </span>
-
-                            <span class="folder-count">
-                                ${count}
-                            </span>
+                            <button type="button" class="folder-main" onclick="selectFolder('${folder.id}')">
+                                <span class="folder-icon">📁</span>
+                                <span class="folder-title">${escapeHtml(folder.name)}</span>
+                                <span class="folder-count">${count}</span>
+                            </button>
+                            ${canManage ? `
+                                <button type="button" class="folder-more" title="Действия" onclick="event.stopPropagation();openFolderActions('${folder.id}')">⋮</button>
+                            ` : ""}
                         </div>
-
-                        <div class="folder-hint">
-                            ${count === 1 ? "1 деталь" : `${count} деталей`}
-                        </div>
-                    </button>
+                        <div class="folder-hint">${count === 1 ? "1 деталь" : `${count} деталей`}</div>
+                    </div>
                 `;
-            }).join("")}
+            }).join("") : `
+                <div style="padding:25px 10px;text-align:center;color:#6f7b90;font-size:11px;">
+                    <div style="font-size:27px;margin-bottom:9px;">📁</div>
+                    Папок пока нет.
+                </div>
+            `}
         </div>
     `;
 }
@@ -2818,13 +2854,15 @@ function renderVariantCard(part){
                     : ""
                 }
 
-                <button
-                    type="button"
-                    class="btn"
-                    title="Переместить"
-                    onclick="openMovePartModal('${part.id}')">
-                    ↗
-                </button>
+                ${isAdmin() ? `
+                    <button
+                        type="button"
+                        class="btn"
+                        title="Переместить"
+                        onclick="openMovePartModal('${part.id}')">
+                        ↗
+                    </button>
+                  ` : ""}
 
             </div>
 
@@ -2833,10 +2871,122 @@ function renderVariantCard(part){
 }
 
 /* =========================================================
+   FOLDER MANAGEMENT
+========================================================= */
+
+function openFolderModal(folderId=null){
+    if(!isAdmin()){ toast("Только администратор может управлять папками.","error"); return; }
+    const folder = folderId ? findFolder(folderId) : null;
+
+    if(folder && !isAdmin() && folder.ownerId !== currentUserId){
+        toast("Нет доступа к этой папке.","error");
+        return;
+    }
+
+    showModal(`
+        <div class="modal-header">
+            <div class="modal-title">${folder ? "Переименовать папку" : "Новая папка"}</div>
+            <button type="button" class="modal-close" onclick="closeModal()">×</button>
+        </div>
+        <div class="modal-body">
+            <div class="field">
+                <label>Название папки</label>
+                <input id="folderName" class="input" maxlength="120" value="${folder ? escapeHtml(folder.name) : ""}" placeholder="Например: Корпус">
+            </div>
+            <div class="field">
+                <label>Раздел</label>
+                <select id="folderCategory" class="select" ${folder ? "disabled" : ""}>
+                    <option value="programs" ${currentCategory === "programs" ? "selected" : ""}>Программы</option>
+                    <option value="tools" ${currentCategory === "tools" ? "selected" : ""}>Инструмент</option>
+                    <option value="other" ${currentCategory === "other" ? "selected" : ""}>Прочее</option>
+                </select>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn" onclick="closeModal()">Отмена</button>
+            <button type="button" class="btn primary" onclick="saveFolder(${folder ? `'${folder.id}'` : "null"})">${folder ? "Сохранить" : "Создать"}</button>
+        </div>
+    `);
+    setTimeout(()=>document.getElementById("folderName")?.focus(),50);
+}
+
+function saveFolder(folderId=null){
+    if(!isAdmin()){ toast("Только администратор может управлять папками.","error"); return; }
+    const name = normalizeFolderName(document.getElementById("folderName")?.value);
+    const category = document.getElementById("folderCategory")?.value || currentCategory;
+    if(!name){ toast("Введите название папки.","error"); return; }
+
+    if(folderId){
+        const folder = findFolder(folderId);
+        if(!folder) return;
+        if(!isAdmin() && folder.ownerId !== currentUserId){ toast("Нет доступа.","error"); return; }
+        const duplicate = state.folders.find(f => f.id !== folder.id && f.category === folder.category && normalizeFolderName(f.name).toLowerCase() === name.toLowerCase());
+        if(duplicate){ toast("Папка с таким названием уже существует.","error"); return; }
+        folder.name = name;
+        folder.updatedAt = now();
+        saveState();
+        closeModal();
+        selectedPartName = folder.id;
+        renderCatalog();
+        toast("Папка переименована.","success");
+        return;
+    }
+
+    if(findFolderByName(name, category)){ toast("Папка с таким названием уже существует.","error"); return; }
+    const folder = {id:uid("folder"), category, name, ownerId:currentUserId, createdAt:now(), updatedAt:now()};
+    state.folders.push(folder);
+    saveState();
+    closeModal();
+    currentCategory = category;
+    selectedPartName = folder.id;
+    openCategory(category);
+    toast("Папка создана.","success");
+}
+
+function openFolderActions(folderId){
+    if(!isAdmin()){ toast("Только администратор может управлять папками.","error"); return; }
+    const folder = findFolder(folderId);
+    if(!folder) return;
+    if(!isAdmin() && folder.ownerId !== currentUserId){ toast("Нет доступа.","error"); return; }
+
+    showModal(`
+        <div class="modal-header">
+            <div class="modal-title">📁 ${escapeHtml(folder.name)}</div>
+            <button type="button" class="modal-close" onclick="closeModal()">×</button>
+        </div>
+        <div class="modal-body">
+            <button type="button" class="btn full" onclick="closeModal();openFolderModal('${folder.id}')">✎ Переименовать</button>
+            <div style="height:8px"></div>
+            <button type="button" class="btn danger full" onclick="deleteFolder('${folder.id}')">🗑 Удалить папку</button>
+            <div style="color:#68758b;font-size:10px;line-height:1.5;margin-top:12px;">Удалить папку можно только если внутри нет деталей. Сначала переместите детали в другую папку.</div>
+        </div>
+    `);
+}
+
+function deleteFolder(folderId){
+    if(!isAdmin()){ toast("Только администратор может управлять папками.","error"); return; }
+    const folder = findFolder(folderId);
+    if(!folder) return;
+    if(!isAdmin() && folder.ownerId !== currentUserId){ toast("Нет доступа.","error"); return; }
+
+    const count = state.parts.filter(p=>p.folderId === folderId).length;
+    if(count){ toast(`Нельзя удалить папку: внутри ${count} ${count===1?"деталь":"деталей"}. Переместите их сначала.`,"error"); return; }
+
+    state.folders = state.folders.filter(f=>f.id !== folderId);
+    if(selectedPartName === folderId) selectedPartName = null;
+    saveState();
+    closeModal();
+    renderCatalog();
+    toast("Папка удалена.","success");
+}
+
+/* =========================================================
    PART MODAL
 ========================================================= */
 
 function openPartModal(partId=null){
+
+    if(!isAdmin()){ toast("Только администратор может изменять каталог.","error"); return; }
 
     editingPartId =
         partId;
@@ -3216,6 +3366,8 @@ function previewDrawing(event){
 
 async function savePart(){
 
+    if(!isAdmin()){ toast("Только администратор может изменять каталог.","error"); return; }
+
     const category =
         document.getElementById("partCategory").value;
 
@@ -3383,6 +3535,8 @@ async function savePart(){
 
 function openMovePartModal(partId){
 
+    if(!isAdmin()){ toast("Только администратор может перемещать детали.","error"); return; }
+
     const part =
         state.parts.find(p=>p.id === partId);
 
@@ -3532,6 +3686,8 @@ function openMovePartModal(partId){
 }
 
 function movePart(partId){
+
+    if(!isAdmin()){ toast("Только администратор может перемещать детали.","error"); return; }
 
     const part =
         state.parts.find(p=>p.id === partId);
@@ -3969,6 +4125,8 @@ async function downloadDrawing(partId){
 
 async function deletePart(partId){
 
+    if(!isAdmin()){ toast("Только администратор может удалять детали.","error"); return; }
+
     const part =
         state.parts.find(
             p =>
@@ -3977,19 +4135,6 @@ async function deletePart(partId){
         );
 
     if(!part) return;
-
-    if(
-        !isAdmin() &&
-        part.userId !== currentUserId
-    ){
-
-        toast(
-            "Нет доступа.",
-            "error"
-        );
-
-        return;
-    }
 
     if(
         !confirm(
@@ -4221,6 +4366,31 @@ function renderAdminPanel(){
                 `
             )
             .join("");
+
+    const partsTable = document.getElementById("adminPartsTable");
+    if(partsTable){
+        const sortedParts = [...parts].sort((a,b)=>{
+            const af = (findFolder(a.folderId)?.name || "");
+            const bf = (findFolder(b.folderId)?.name || "");
+            return af.localeCompare(bf,"ru",{numeric:true,sensitivity:"base"}) ||
+                   String(a.number||"").localeCompare(String(b.number||""),"ru",{numeric:true,sensitivity:"base"});
+        });
+        partsTable.innerHTML = sortedParts.length ? sortedParts.map(part=>`
+            <tr>
+                <td>📁 ${escapeHtml(findFolder(part.folderId)?.name || "Без папки")}</td>
+                <td>${escapeHtml(part.name)}</td>
+                <td>${escapeHtml(part.number)}</td>
+                <td>${escapeHtml(categoryName(part.category))}</td>
+                <td>
+                    <div style="display:flex;gap:6px;flex-wrap:wrap;">
+                        <button type="button" class="btn" style="padding:7px 10px;font-size:10px;" onclick="openPartModal('${part.id}')">✎ Изменить</button>
+                        <button type="button" class="btn" style="padding:7px 10px;font-size:10px;" onclick="openMovePartModal('${part.id}')">↗ Папка</button>
+                        <button type="button" class="btn danger" style="padding:7px 10px;font-size:10px;" onclick="deletePart('${part.id}')">🗑</button>
+                    </div>
+                </td>
+            </tr>
+        `).join("") : `<tr><td colspan="5" style="color:#69758b;text-align:center;padding:22px;">Каталог пока пуст.</td></tr>`;
+    }
 }
 
 
