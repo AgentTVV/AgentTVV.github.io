@@ -4,25 +4,25 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#080b14">
-<title>MiniCAD — Конструкторская документация</title>
+<title>MiniCAD — Производственная система</title>
 
 <style>
 :root{
     --bg:#070a12;
     --bg2:#0d1220;
-    --panel:rgba(17,23,38,.78);
-    --panel2:rgba(22,29,47,.88);
+    --panel:rgba(16,22,36,.82);
+    --panel2:#141b2c;
     --line:rgba(255,255,255,.09);
-    --line2:rgba(255,255,255,.14);
-    --text:#f4f7ff;
-    --muted:#8994aa;
+    --line2:rgba(255,255,255,.15);
+    --text:#f5f7fc;
+    --muted:#8792a7;
     --blue:#5b8cff;
     --purple:#7b61ff;
     --green:#35d49a;
     --red:#ff5574;
     --orange:#ffad5c;
-    --shadow:0 20px 60px rgba(0,0,0,.38);
-    --radius:20px;
+    --shadow:0 25px 70px rgba(0,0,0,.4);
+    --radius:19px;
 }
 
 *{
@@ -31,13 +31,11 @@
 
 html,body{
     margin:0;
-    padding:0;
-    width:100%;
     min-height:100%;
     background:
-        radial-gradient(circle at 10% 10%,rgba(91,140,255,.14),transparent 30%),
-        radial-gradient(circle at 90% 15%,rgba(123,97,255,.13),transparent 30%),
-        radial-gradient(circle at 50% 100%,rgba(53,212,154,.07),transparent 35%),
+        radial-gradient(circle at 10% 10%,rgba(91,140,255,.12),transparent 30%),
+        radial-gradient(circle at 90% 10%,rgba(123,97,255,.12),transparent 30%),
+        radial-gradient(circle at 50% 100%,rgba(53,212,154,.06),transparent 35%),
         var(--bg);
     color:var(--text);
     font-family:
@@ -66,19 +64,19 @@ button{
 }
 
 .hidden{
-    display:none !important;
+    display:none!important;
 }
 
-/* =========================
+/* =====================================================
    AUTH
-========================= */
+===================================================== */
 
 #authPage{
     min-height:100vh;
     display:flex;
     align-items:center;
     justify-content:center;
-    padding:24px;
+    padding:20px;
     position:relative;
     overflow:hidden;
 }
@@ -86,78 +84,76 @@ button{
 .auth-orb{
     position:absolute;
     border-radius:50%;
-    filter:blur(50px);
-    opacity:.35;
+    filter:blur(70px);
     pointer-events:none;
+    opacity:.3;
 }
 
 .auth-orb.one{
     width:350px;
     height:350px;
-    background:#4b6fff;
-    top:-120px;
+    background:#4d70ff;
     left:-120px;
+    top:-100px;
 }
 
 .auth-orb.two{
-    width:300px;
-    height:300px;
-    background:#7b4dff;
-    right:-100px;
+    width:350px;
+    height:350px;
+    background:#764dff;
+    right:-120px;
     bottom:-100px;
 }
 
 .auth-card{
-    width:100%;
-    max-width:470px;
-    padding:38px;
-    border:1px solid var(--line2);
-    background:rgba(12,17,29,.78);
-    backdrop-filter:blur(30px);
-    -webkit-backdrop-filter:blur(30px);
-    border-radius:28px;
-    box-shadow:
-        0 40px 100px rgba(0,0,0,.5),
-        inset 0 1px 0 rgba(255,255,255,.06);
     position:relative;
     z-index:2;
+    width:100%;
+    max-width:450px;
+    padding:36px;
+    border-radius:27px;
+    background:rgba(11,16,28,.82);
+    border:1px solid var(--line2);
+    backdrop-filter:blur(30px);
+    -webkit-backdrop-filter:blur(30px);
+    box-shadow:
+        0 40px 100px rgba(0,0,0,.55),
+        inset 0 1px 0 rgba(255,255,255,.05);
 }
 
 .logo{
     display:flex;
     align-items:center;
-    gap:13px;
-    margin-bottom:30px;
+    gap:12px;
 }
 
 .logo-mark{
     width:48px;
     height:48px;
-    border-radius:15px;
     display:flex;
     align-items:center;
     justify-content:center;
+    border-radius:15px;
     background:linear-gradient(135deg,var(--blue),var(--purple));
-    box-shadow:0 12px 35px rgba(91,140,255,.35);
-    font-size:22px;
+    box-shadow:0 12px 35px rgba(91,140,255,.3);
+    font-size:23px;
     font-weight:900;
 }
 
 .logo-title{
+    font-weight:850;
     font-size:21px;
-    font-weight:800;
 }
 
 .logo-sub{
     color:var(--muted);
-    font-size:12px;
-    margin-top:2px;
+    font-size:11px;
+    margin-top:3px;
 }
 
 .auth-title{
-    font-size:29px;
-    font-weight:850;
-    margin:0 0 8px;
+    margin:30px 0 8px;
+    font-size:30px;
 }
 
 .auth-description{
@@ -166,38 +162,14 @@ button{
     margin:0 0 25px;
 }
 
-.auth-tabs{
-    display:flex;
-    gap:6px;
-    padding:5px;
-    background:rgba(255,255,255,.035);
-    border:1px solid var(--line);
-    border-radius:13px;
-    margin-bottom:22px;
-}
-
-.auth-tab{
-    flex:1;
-    border:0;
-    background:transparent;
-    color:var(--muted);
-    border-radius:9px;
-    padding:10px;
-}
-
-.auth-tab.active{
-    color:white;
-    background:rgba(255,255,255,.08);
-}
-
 .field{
-    margin-bottom:15px;
+    margin-bottom:16px;
 }
 
 .field label{
     display:block;
+    color:#b9c2d2;
     font-size:13px;
-    color:#b7c0d0;
     margin-bottom:8px;
 }
 
@@ -205,18 +177,19 @@ button{
 .textarea,
 .select{
     width:100%;
-    border:1px solid var(--line);
     background:rgba(255,255,255,.045);
     color:white;
-    outline:none;
+    border:1px solid var(--line);
     border-radius:12px;
+    outline:none;
     padding:13px 14px;
-    transition:.2s;
 }
 
 .textarea{
-    min-height:150px;
+    min-height:190px;
     resize:vertical;
+    font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+    font-size:12px;
 }
 
 .input:focus,
@@ -228,10 +201,10 @@ button{
 
 .btn{
     border:1px solid var(--line);
-    color:white;
-    background:rgba(255,255,255,.05);
     border-radius:12px;
-    padding:11px 16px;
+    background:rgba(255,255,255,.045);
+    color:white;
+    padding:11px 15px;
     transition:.2s;
     display:inline-flex;
     align-items:center;
@@ -240,208 +213,269 @@ button{
 }
 
 .btn:hover{
+    background:rgba(255,255,255,.085);
     transform:translateY(-1px);
-    background:rgba(255,255,255,.09);
-    border-color:var(--line2);
 }
 
 .btn.primary{
-    border:0;
     background:linear-gradient(135deg,var(--blue),var(--purple));
+    border:0;
     box-shadow:0 10px 30px rgba(91,140,255,.2);
 }
 
-.btn.success{
-    background:rgba(53,212,154,.12);
-    border-color:rgba(53,212,154,.25);
-    color:#73e9bb;
+.btn.danger{
+    color:#ff8097;
+    background:rgba(255,85,116,.08);
+    border-color:rgba(255,85,116,.2);
 }
 
-.btn.danger{
-    background:rgba(255,85,116,.1);
-    border-color:rgba(255,85,116,.22);
-    color:#ff8097;
+.btn.success{
+    color:#70e7b8;
+    background:rgba(53,212,154,.08);
+    border-color:rgba(53,212,154,.2);
 }
 
 .btn.full{
     width:100%;
 }
 
-.error{
-    color:#ff8299;
+.auth-error{
+    color:#ff8098;
+    min-height:20px;
     font-size:13px;
-    min-height:18px;
     margin:8px 0;
 }
 
-/* =========================
+/* =====================================================
    APP
-========================= */
+===================================================== */
 
 #app{
     min-height:100vh;
-    display:flex;
+}
+
+.sidebar-overlay{
+    display:none;
 }
 
 .sidebar{
-    width:260px;
-    min-height:100vh;
     position:fixed;
+    z-index:80;
     left:0;
     top:0;
     bottom:0;
-    z-index:50;
-    padding:22px 16px;
-    background:rgba(9,13,23,.78);
-    backdrop-filter:blur(25px);
-    -webkit-backdrop-filter:blur(25px);
+    width:275px;
+    padding:20px 15px;
+    background:rgba(8,12,21,.91);
+    backdrop-filter:blur(30px);
+    -webkit-backdrop-filter:blur(30px);
     border-right:1px solid var(--line);
+    box-shadow:20px 0 70px rgba(0,0,0,.25);
+    transition:transform .28s ease;
+    touch-action:pan-y;
 }
 
-.sidebar-logo{
-    padding:4px 8px 25px;
+.sidebar.closed{
+    transform:translateX(-105%);
 }
 
-.nav{
+.sidebar-header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    padding:2px 7px 20px;
+}
+
+.sidebar-close{
+    width:34px;
+    height:34px;
+    border-radius:10px;
+    border:1px solid var(--line);
+    color:#aeb8ca;
+    background:rgba(255,255,255,.04);
+}
+
+.sidebar-section-title{
+    padding:8px 10px 7px;
+    color:#68748a;
+    font-size:10px;
+    font-weight:800;
+    text-transform:uppercase;
+    letter-spacing:1px;
+}
+
+.sidebar-nav{
     display:flex;
     flex-direction:column;
-    gap:6px;
+    gap:5px;
 }
 
-.nav-btn{
+.side-btn{
     width:100%;
-    border:1px solid transparent;
-    color:#aab3c5;
-    background:transparent;
-    padding:12px 13px;
-    border-radius:13px;
-    text-align:left;
     display:flex;
     align-items:center;
     gap:11px;
+    padding:12px 12px;
+    border:1px solid transparent;
+    background:transparent;
+    color:#aab4c7;
+    border-radius:12px;
+    text-align:left;
     transition:.2s;
 }
 
-.nav-btn:hover{
-    background:rgba(255,255,255,.04);
+.side-btn:hover{
     color:white;
+    background:rgba(255,255,255,.045);
 }
 
-.nav-btn.active{
-    background:linear-gradient(
-        135deg,
-        rgba(91,140,255,.17),
-        rgba(123,97,255,.1)
-    );
+.side-btn.active{
+    color:white;
+    background:
+        linear-gradient(
+            135deg,
+            rgba(91,140,255,.18),
+            rgba(123,97,255,.11)
+        );
     border-color:rgba(91,140,255,.18);
-    color:white;
 }
 
-.nav-icon{
-    width:22px;
+.side-icon{
+    width:23px;
     text-align:center;
 }
 
 .sidebar-bottom{
     position:absolute;
-    bottom:20px;
-    left:16px;
-    right:16px;
+    left:15px;
+    right:15px;
+    bottom:16px;
 }
 
 .user-mini{
     padding:12px;
-    border-radius:15px;
+    border-radius:14px;
     background:rgba(255,255,255,.035);
     border:1px solid var(--line);
-    margin-bottom:8px;
+    margin-bottom:7px;
+}
+
+.user-role{
+    color:#667289;
+    font-size:9px;
+    text-transform:uppercase;
+    margin-bottom:5px;
 }
 
 .user-email{
-    font-size:12px;
-    color:#aeb8cb;
+    color:#bdc6d7;
+    font-size:11px;
     overflow:hidden;
     text-overflow:ellipsis;
     white-space:nowrap;
 }
 
 .main{
-    width:calc(100% - 260px);
-    margin-left:260px;
     min-height:100vh;
-    padding:25px;
+    margin-left:275px;
+    padding:20px;
+    transition:margin-left .28s ease;
+}
+
+.sidebar.closed + .main{
+    margin-left:0;
 }
 
 .topbar{
-    min-height:66px;
+    height:55px;
     display:flex;
     align-items:center;
     justify-content:space-between;
     gap:15px;
-    margin-bottom:20px;
+    margin-bottom:15px;
+}
+
+.topbar-left{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    min-width:0;
+}
+
+.menu-open{
+    width:42px;
+    height:42px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:12px;
+    border:1px solid var(--line);
+    background:rgba(255,255,255,.05);
+    color:white;
 }
 
 .breadcrumb{
-    display:flex;
-    align-items:center;
-    flex-wrap:wrap;
-    gap:7px;
     color:var(--muted);
     font-size:13px;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
 }
 
 .breadcrumb strong{
     color:white;
 }
 
-.mobile-menu{
-    display:none;
+.storage-status{
+    color:#667289;
+    font-size:10px;
 }
 
-/* =========================
+/* =====================================================
    DASHBOARD
-========================= */
+===================================================== */
 
 .hero{
-    padding:32px;
+    border-radius:24px;
+    padding:30px;
     border:1px solid var(--line);
-    border-radius:25px;
     background:
         linear-gradient(
             135deg,
             rgba(91,140,255,.12),
-            rgba(123,97,255,.05) 55%,
-            rgba(255,255,255,.02)
+            rgba(123,97,255,.05),
+            rgba(255,255,255,.015)
         );
     box-shadow:var(--shadow);
-    position:relative;
+    margin-bottom:18px;
     overflow:hidden;
-    margin-bottom:20px;
+    position:relative;
 }
 
 .hero:after{
     content:"";
     position:absolute;
-    width:260px;
-    height:260px;
-    right:-90px;
-    top:-120px;
+    width:250px;
+    height:250px;
+    right:-100px;
+    top:-130px;
     border-radius:50%;
-    background:rgba(91,140,255,.12);
+    background:rgba(91,140,255,.1);
     filter:blur(20px);
 }
 
 .hero h1{
-    font-size:34px;
-    margin:0 0 9px;
+    margin:0 0 8px;
+    font-size:31px;
     position:relative;
     z-index:1;
 }
 
 .hero p{
-    color:var(--muted);
     margin:0;
-    max-width:650px;
+    max-width:750px;
+    color:var(--muted);
     line-height:1.6;
     position:relative;
     z-index:1;
@@ -450,39 +484,38 @@ button{
 .stats{
     display:grid;
     grid-template-columns:repeat(4,1fr);
-    gap:15px;
-    margin-bottom:20px;
+    gap:13px;
+    margin-bottom:18px;
 }
 
 .stat{
-    padding:20px;
-    background:var(--panel);
+    padding:18px;
     border:1px solid var(--line);
-    border-radius:19px;
+    border-radius:17px;
+    background:var(--panel);
     box-shadow:var(--shadow);
 }
 
-.stat-value{
-    font-size:28px;
+.stat-number{
+    font-size:27px;
     font-weight:850;
 }
 
 .stat-label{
     color:var(--muted);
-    font-size:12px;
-    margin-top:5px;
+    font-size:11px;
+    margin-top:4px;
 }
 
-/* =========================
+/* =====================================================
    TOOLBAR
-========================= */
+===================================================== */
 
 .toolbar{
     display:flex;
-    gap:10px;
     align-items:center;
-    justify-content:space-between;
-    margin-bottom:18px;
+    gap:10px;
+    margin-bottom:17px;
 }
 
 .search{
@@ -490,320 +523,269 @@ button{
     flex:1;
 }
 
-.search-icon{
+.search span{
     position:absolute;
     left:13px;
     top:50%;
     transform:translateY(-50%);
-    color:var(--muted);
+    color:#748097;
 }
 
 .search input{
     width:100%;
-    height:45px;
-    padding:0 14px 0 39px;
-    border:1px solid var(--line);
-    background:rgba(255,255,255,.04);
-    color:white;
+    height:44px;
     border-radius:12px;
+    padding:0 13px 0 38px;
+    background:rgba(255,255,255,.04);
+    border:1px solid var(--line);
     outline:none;
+    color:white;
 }
 
 .search input:focus{
     border-color:rgba(91,140,255,.55);
 }
 
-/* =========================
-   CARDS
-========================= */
+/* =====================================================
+   CATEGORIES
+===================================================== */
 
-.grid{
-    display:grid;
-    grid-template-columns:repeat(auto-fill,minmax(260px,1fr));
-    gap:15px;
-}
-
-.card{
-    background:var(--panel);
-    border:1px solid var(--line);
-    border-radius:19px;
-    padding:18px;
-    box-shadow:var(--shadow);
-    transition:.2s;
-    position:relative;
-    overflow:hidden;
-}
-
-.card:hover{
-    transform:translateY(-3px);
-    border-color:rgba(91,140,255,.23);
-}
-
-.card-top{
-    display:flex;
-    justify-content:space-between;
-    gap:10px;
-}
-
-.card-icon{
-    width:45px;
-    height:45px;
-    border-radius:13px;
-    background:linear-gradient(
-        135deg,
-        rgba(91,140,255,.2),
-        rgba(123,97,255,.14)
-    );
+.category-header{
     display:flex;
     align-items:center;
-    justify-content:center;
-    font-size:21px;
+    justify-content:space-between;
+    gap:15px;
+    margin-bottom:17px;
 }
 
-.card-title{
-    margin-top:15px;
-    font-weight:750;
-    font-size:16px;
-    overflow-wrap:anywhere;
+.category-title{
+    font-size:24px;
+    font-weight:850;
 }
 
-.card-meta{
+.category-description{
     color:var(--muted);
     font-size:12px;
-    margin-top:6px;
+    margin-top:4px;
 }
 
-.card-actions{
-    display:flex;
-    gap:7px;
-    margin-top:16px;
-}
-
-.card-actions .btn{
-    flex:1;
-    padding:9px 10px;
-    font-size:12px;
-}
-
-.menu-btn{
-    width:34px;
-    height:34px;
-    border-radius:10px;
-    border:1px solid var(--line);
-    background:rgba(255,255,255,.04);
-    color:#adb7ca;
-}
-
-/* =========================
-   PART
-========================= */
-
-.part-grid{
+.parts-layout{
     display:grid;
-    grid-template-columns:repeat(auto-fill,minmax(310px,1fr));
+    grid-template-columns:280px 1fr;
     gap:15px;
 }
 
-.part-card{
+.name-list{
+    border:1px solid var(--line);
+    background:var(--panel);
+    border-radius:18px;
+    padding:8px;
+    height:fit-content;
+    max-height:calc(100vh - 160px);
+    overflow:auto;
+}
+
+.name-item{
+    width:100%;
+    text-align:left;
+    border:1px solid transparent;
+    border-radius:12px;
+    background:transparent;
+    color:#aeb8c9;
+    padding:12px;
+    margin-bottom:4px;
+    transition:.2s;
+}
+
+.name-item:hover{
+    background:rgba(255,255,255,.045);
+    color:white;
+}
+
+.name-item.active{
+    color:white;
+    background:
+        linear-gradient(
+            135deg,
+            rgba(91,140,255,.17),
+            rgba(123,97,255,.1)
+        );
+    border-color:rgba(91,140,255,.18);
+}
+
+.name-item-title{
+    font-weight:700;
+    font-size:13px;
+}
+
+.name-item-count{
+    color:#68758b;
+    font-size:10px;
+    margin-top:4px;
+}
+
+.variants{
+    min-width:0;
+}
+
+.variant-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(260px,1fr));
+    gap:13px;
+}
+
+.variant-card{
     background:var(--panel);
     border:1px solid var(--line);
-    border-radius:20px;
-    padding:18px;
+    border-radius:18px;
+    padding:17px;
     box-shadow:var(--shadow);
+    transition:.2s;
 }
 
-.part-number{
-    color:#83a7ff;
-    font-size:12px;
-    font-weight:700;
-    letter-spacing:.5px;
+.variant-card:hover{
+    transform:translateY(-2px);
+    border-color:rgba(91,140,255,.25);
 }
 
-.part-name{
-    font-size:18px;
+.variant-number{
+    color:#83a5ff;
+    font-size:11px;
     font-weight:800;
-    margin-top:7px;
+    letter-spacing:.4px;
+}
+
+.variant-name{
+    font-size:17px;
+    font-weight:800;
+    margin-top:6px;
     overflow-wrap:anywhere;
 }
 
-.code-preview{
+.variant-meta{
+    color:var(--muted);
+    font-size:10px;
+    margin-top:7px;
+}
+
+.gcode-mini{
     margin-top:13px;
-    padding:12px;
-    border-radius:12px;
-    background:#070a11;
+    background:#060911;
     border:1px solid var(--line);
-    color:#aab7cf;
-    font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;
-    font-size:11px;
+    border-radius:12px;
+    padding:11px;
+    color:#aeb9cd;
+    font:10px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace;
     white-space:pre-wrap;
-    max-height:90px;
+    max-height:76px;
     overflow:hidden;
 }
 
-.part-footer{
+.badges{
     display:flex;
-    justify-content:space-between;
-    align-items:center;
-    gap:10px;
-    margin-top:15px;
+    flex-wrap:wrap;
+    gap:6px;
+    margin-top:12px;
 }
 
-.file-badge{
+.badge{
     display:inline-flex;
     align-items:center;
-    gap:6px;
-    padding:6px 9px;
+    gap:5px;
     border-radius:8px;
-    background:rgba(255,255,255,.05);
-    color:#aeb8ca;
-    font-size:11px;
+    padding:5px 8px;
+    background:rgba(255,255,255,.045);
+    border:1px solid var(--line);
+    color:#98a4b8;
+    font-size:10px;
 }
 
-.public-badge{
-    color:#65e5b0;
-    background:rgba(53,212,154,.08);
-    border:1px solid rgba(53,212,154,.16);
+/* =====================================================
+   EMPTY
+===================================================== */
+
+.empty{
+    padding:45px 20px;
+    border:1px dashed var(--line2);
+    border-radius:19px;
+    text-align:center;
+    color:var(--muted);
+    background:rgba(255,255,255,.018);
 }
 
-/* =========================
+.empty-icon{
+    font-size:34px;
+    margin-bottom:10px;
+}
+
+/* =====================================================
    MODAL
-========================= */
+===================================================== */
 
 .modal-backdrop{
     position:fixed;
     inset:0;
-    background:rgba(0,0,0,.68);
-    backdrop-filter:blur(9px);
-    -webkit-backdrop-filter:blur(9px);
-    z-index:100;
+    z-index:200;
     display:flex;
     align-items:center;
     justify-content:center;
-    padding:18px;
+    padding:15px;
+    background:rgba(0,0,0,.7);
+    backdrop-filter:blur(9px);
 }
 
 .modal{
     width:100%;
-    max-width:620px;
-    max-height:92vh;
+    max-width:650px;
+    max-height:94vh;
     overflow:auto;
-    background:#101624;
+    border-radius:22px;
+    background:#111827;
     border:1px solid var(--line2);
-    border-radius:23px;
-    box-shadow:0 40px 100px rgba(0,0,0,.6);
+    box-shadow:0 40px 100px rgba(0,0,0,.65);
+}
+
+.modal.large{
+    max-width:950px;
 }
 
 .modal-header{
-    padding:21px 22px;
+    padding:19px 21px;
     border-bottom:1px solid var(--line);
     display:flex;
-    align-items:center;
     justify-content:space-between;
-    gap:10px;
+    gap:15px;
 }
 
 .modal-title{
     font-size:19px;
-    font-weight:800;
+    font-weight:850;
 }
 
 .modal-close{
     width:35px;
     height:35px;
     border-radius:10px;
-    border:1px solid var(--line);
     background:rgba(255,255,255,.04);
-    color:#abb5c7;
+    border:1px solid var(--line);
+    color:#aeb8ca;
 }
 
 .modal-body{
-    padding:22px;
+    padding:21px;
 }
 
 .modal-footer{
-    padding:17px 22px;
+    padding:15px 21px;
     border-top:1px solid var(--line);
     display:flex;
     justify-content:flex-end;
-    gap:9px;
+    gap:8px;
+    flex-wrap:wrap;
 }
-
-/* =========================
-   SHARE SWITCH
-========================= */
-
-.share-row{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:20px;
-    padding:15px;
-    border-radius:15px;
-    background:rgba(255,255,255,.035);
-    border:1px solid var(--line);
-    margin-top:15px;
-}
-
-.share-info strong{
-    display:block;
-    font-size:14px;
-}
-
-.share-info span{
-    display:block;
-    color:var(--muted);
-    font-size:11px;
-    margin-top:4px;
-    line-height:1.5;
-}
-
-.share-switch{
-    width:58px;
-    height:32px;
-    flex:0 0 58px;
-    padding:3px;
-    border:1px solid rgba(255,255,255,.12);
-    border-radius:30px;
-    background:#202838;
-    position:relative;
-    transition:.25s;
-    box-shadow:inset 0 1px 3px rgba(0,0,0,.25);
-}
-
-.share-switch:before{
-    content:"";
-    width:24px;
-    height:24px;
-    border-radius:50%;
-    position:absolute;
-    left:3px;
-    top:3px;
-    background:#8b95a7;
-    transition:.25s;
-    box-shadow:0 2px 7px rgba(0,0,0,.35);
-}
-
-.share-switch.on{
-    background:linear-gradient(135deg,var(--blue),var(--purple));
-    border-color:transparent;
-    box-shadow:0 6px 22px rgba(91,140,255,.28);
-}
-
-.share-switch.on:before{
-    transform:translateX(25px);
-    background:#fff;
-}
-
-.share-switch:focus-visible{
-    outline:3px solid rgba(91,140,255,.3);
-}
-
-/* =========================
-   FILE
-========================= */
 
 .file-drop{
-    border:1px dashed rgba(255,255,255,.17);
+    border:1px dashed var(--line2);
     border-radius:15px;
     padding:20px;
     text-align:center;
@@ -812,7 +794,7 @@ button{
 }
 
 .file-drop:hover{
-    border-color:rgba(91,140,255,.45);
+    border-color:rgba(91,140,255,.5);
 }
 
 .file-drop input{
@@ -821,75 +803,140 @@ button{
 
 .file-preview{
     margin-top:12px;
-    border:1px solid var(--line);
     border-radius:13px;
     overflow:hidden;
-    background:#080b13;
+    border:1px solid var(--line);
+    background:#070a11;
 }
 
 .file-preview img{
-    display:block;
     max-width:100%;
-    max-height:260px;
+    max-height:350px;
+    display:block;
     margin:auto;
 }
 
 .file-preview iframe{
     width:100%;
-    height:330px;
+    height:420px;
     border:0;
 }
 
-/* =========================
-   EMPTY
-========================= */
-
-.empty{
-    border:1px dashed var(--line2);
-    background:rgba(255,255,255,.02);
-    border-radius:20px;
-    padding:45px 20px;
-    text-align:center;
-    color:var(--muted);
+.code-view{
+    margin:0;
+    white-space:pre-wrap;
+    overflow:auto;
+    max-height:400px;
+    padding:15px;
+    border-radius:13px;
+    background:#05070d;
+    border:1px solid var(--line);
+    color:#c3ccdc;
+    font:12px/1.6 ui-monospace,SFMono-Regular,Menlo,monospace;
 }
 
-.empty-icon{
-    font-size:35px;
-    margin-bottom:12px;
+/* =====================================================
+   ADMIN
+===================================================== */
+
+.admin-table{
+    width:100%;
+    border-collapse:collapse;
 }
 
-/* =========================
+.admin-table th{
+    color:#6f7c92;
+    text-align:left;
+    font-size:10px;
+    font-weight:700;
+    padding:11px;
+    border-bottom:1px solid var(--line);
+}
+
+.admin-table td{
+    padding:12px 11px;
+    border-bottom:1px solid var(--line);
+    color:#c0c8d8;
+    font-size:12px;
+}
+
+.admin-table tr:last-child td{
+    border-bottom:0;
+}
+
+.role-admin{
+    color:#8daaff;
+}
+
+.role-user{
+    color:#72e3b5;
+}
+
+/* =====================================================
+   CONTEXT MENU
+===================================================== */
+
+.context-menu{
+    position:fixed;
+    z-index:500;
+    min-width:180px;
+    background:#151d2e;
+    border:1px solid var(--line2);
+    border-radius:12px;
+    padding:5px;
+    box-shadow:0 20px 50px rgba(0,0,0,.5);
+}
+
+.context-menu button{
+    width:100%;
+    padding:10px;
+    background:transparent;
+    border:0;
+    border-radius:8px;
+    text-align:left;
+    color:#c5cddd;
+}
+
+.context-menu button:hover{
+    background:rgba(255,255,255,.06);
+}
+
+.context-menu .danger{
+    color:#ff8198;
+}
+
+/* =====================================================
    TOAST
-========================= */
+===================================================== */
 
 #toastContainer{
     position:fixed;
-    right:20px;
-    bottom:20px;
-    z-index:500;
+    right:18px;
+    bottom:18px;
+    z-index:600;
     display:flex;
     flex-direction:column;
-    gap:9px;
+    gap:8px;
 }
 
 .toast{
     min-width:250px;
-    max-width:360px;
+    max-width:370px;
     padding:13px 15px;
-    background:#151c2c;
-    border:1px solid var(--line2);
     border-radius:13px;
-    box-shadow:0 20px 50px rgba(0,0,0,.4);
+    background:#151d2e;
+    border:1px solid var(--line2);
+    box-shadow:0 20px 50px rgba(0,0,0,.45);
+    font-size:12px;
     animation:toastIn .25s ease;
-    font-size:13px;
 }
 
 .toast.success{
-    border-color:rgba(53,212,154,.3);
+    border-color:rgba(53,212,154,.25);
 }
 
 .toast.error{
-    border-color:rgba(255,85,116,.3);
+    border-color:rgba(255,85,116,.25);
 }
 
 @keyframes toastIn{
@@ -903,94 +950,70 @@ button{
     }
 }
 
-/* =========================
-   CONTEXT MENU
-========================= */
-
-.context-menu{
-    position:fixed;
-    z-index:300;
-    min-width:180px;
-    background:#151c2b;
-    border:1px solid var(--line2);
-    border-radius:13px;
-    box-shadow:0 20px 50px rgba(0,0,0,.45);
-    padding:6px;
-}
-
-.context-menu button{
-    width:100%;
-    border:0;
-    background:transparent;
-    color:#c8d0df;
-    padding:10px;
-    border-radius:8px;
-    text-align:left;
-}
-
-.context-menu button:hover{
-    background:rgba(255,255,255,.06);
-    color:white;
-}
-
-.context-menu .danger{
-    color:#ff8098;
-}
-
-/* =========================
+/* =====================================================
    RESPONSIVE
-========================= */
+===================================================== */
 
 @media(max-width:900px){
+
     .sidebar{
         transform:translateX(-105%);
-        transition:.25s;
-        box-shadow:30px 0 80px rgba(0,0,0,.4);
     }
 
     .sidebar.open{
         transform:translateX(0);
     }
 
+    .sidebar.closed{
+        transform:translateX(-105%);
+    }
+
+    .sidebar-overlay{
+        position:fixed;
+        z-index:70;
+        inset:0;
+        background:rgba(0,0,0,.45);
+        backdrop-filter:blur(2px);
+    }
+
+    .sidebar.open + .sidebar-overlay{
+        display:block;
+    }
+
     .main{
-        width:100%;
-        margin-left:0;
+        margin-left:0!important;
         padding:15px;
-    }
-
-    .mobile-menu{
-        display:flex;
-        width:42px;
-        height:42px;
-        border-radius:12px;
-        border:1px solid var(--line);
-        background:rgba(255,255,255,.05);
-        color:white;
-        align-items:center;
-        justify-content:center;
-    }
-
-    .topbar{
-        margin-bottom:14px;
     }
 
     .stats{
         grid-template-columns:repeat(2,1fr);
     }
+
+    .parts-layout{
+        grid-template-columns:1fr;
+    }
+
+    .name-list{
+        max-height:none;
+        display:flex;
+        overflow-x:auto;
+        gap:5px;
+    }
+
+    .name-item{
+        min-width:160px;
+        margin:0;
+    }
 }
 
 @media(max-width:600px){
-    .auth-card{
-        padding:25px 19px;
-        border-radius:22px;
-    }
 
     .hero{
-        padding:23px;
+        padding:22px;
     }
 
     .hero h1{
-        font-size:27px;
+        font-size:25px;
     }
 
     .toolbar{
@@ -1002,18 +1025,21 @@ button{
         width:100%;
     }
 
-    .grid,
-    .part-grid{
+    .variant-grid{
         grid-template-columns:1fr;
     }
 
+    .auth-card{
+        padding:25px 19px;
+    }
+
     .modal-backdrop{
-        padding:8px;
+        padding:7px;
     }
 
     .modal{
-        max-height:96vh;
-        border-radius:19px;
+        max-height:97vh;
+        border-radius:18px;
     }
 
     .modal-body{
@@ -1021,13 +1047,13 @@ button{
     }
 
     .modal-footer{
-        padding:14px 17px;
+        padding:13px 17px;
     }
 
     #toastContainer{
-        left:12px;
-        right:12px;
-        bottom:12px;
+        left:10px;
+        right:10px;
+        bottom:10px;
     }
 
     .toast{
@@ -1040,9 +1066,9 @@ button{
 
 <body>
 
-<!-- =========================
+<!-- =====================================================
      AUTH
-========================= -->
+===================================================== -->
 
 <section id="authPage">
 
@@ -1052,72 +1078,73 @@ button{
     <div class="auth-card">
 
         <div class="logo">
-            <div class="logo-mark">⌬</div>
-            <div>
-                <div class="logo-title">MiniCAD</div>
-                <div class="logo-sub">Конструкторская документация</div>
+
+            <div class="logo-mark">
+                ⌬
             </div>
+
+            <div>
+                <div class="logo-title">
+                    MiniCAD
+                </div>
+
+                <div class="logo-sub">
+                    Производственная система
+                </div>
+            </div>
+
         </div>
 
-        <h1 class="auth-title" id="authTitle">Добро пожаловать</h1>
+        <h1 class="auth-title">
+            Вход в систему
+        </h1>
 
         <p class="auth-description">
-            Локальная система хранения проектов, деталей,
-            кодов и чертежей.
+            Введите выданные администратором
+            данные для доступа к каталогу.
         </p>
 
-        <div class="auth-tabs">
-            <button
-                type="button"
-                class="auth-tab active"
-                id="loginTab"
-                onclick="switchAuth('login')">
-                Вход
-            </button>
-
-            <button
-                type="button"
-                class="auth-tab"
-                id="registerTab"
-                onclick="switchAuth('register')">
-                Регистрация
-            </button>
-        </div>
-
-        <form onsubmit="authSubmit(event)">
+        <form onsubmit="login(event)">
 
             <div class="field">
-                <label>Email</label>
+
+                <label>
+                    Логин
+                </label>
+
                 <input
-                    id="authEmail"
+                    id="loginInput"
                     class="input"
-                    type="email"
-                    required
                     autocomplete="username"
-                    placeholder="name@example.com">
+                    required
+                    placeholder="Введите логин">
+
             </div>
 
             <div class="field">
-                <label>Пароль</label>
+
+                <label>
+                    Пароль
+                </label>
+
                 <input
-                    id="authPassword"
+                    id="passwordInput"
                     class="input"
                     type="password"
-                    required
-                    minlength="4"
                     autocomplete="current-password"
-                    placeholder="••••••••">
+                    required
+                    placeholder="Введите пароль">
+
             </div>
 
             <div
-                id="authError"
-                class="error">
+                id="loginError"
+                class="auth-error">
             </div>
 
             <button
-                class="btn primary full"
                 type="submit"
-                id="authSubmitButton">
+                class="btn primary full">
                 Войти
             </button>
 
@@ -1125,111 +1152,178 @@ button{
 
         <div
             style="
-                margin-top:20px;
-                color:#69758b;
-                font-size:11px;
-                line-height:1.5;
                 text-align:center;
+                margin-top:20px;
+                color:#5f6b81;
+                font-size:10px;
+                line-height:1.5;
             ">
-            Работает без сервера и базы данных.
-            Данные сохраняются в браузере.
+            Аккаунты выдаются только администратором.
         </div>
 
     </div>
+
 </section>
 
 
-<!-- =========================
+<!-- =====================================================
      APP
-========================= -->
+===================================================== -->
 
-<section id="app" class="hidden">
+<section
+    id="app"
+    class="hidden">
 
-    <aside class="sidebar" id="sidebar">
+    <aside
+        id="sidebar"
+        class="sidebar">
 
-        <div class="sidebar-logo">
+        <div class="sidebar-header">
+
             <div class="logo">
-                <div class="logo-mark">⌬</div>
-                <div>
-                    <div class="logo-title">MiniCAD</div>
-                    <div class="logo-sub">Document System</div>
+
+                <div class="logo-mark">
+                    ⌬
                 </div>
+
+                <div>
+                    <div class="logo-title">
+                        MiniCAD
+                    </div>
+
+                    <div class="logo-sub">
+                        Production
+                    </div>
+                </div>
+
             </div>
+
+            <button
+                type="button"
+                class="sidebar-close"
+                onclick="closeSidebar()">
+                ‹
+            </button>
+
         </div>
 
-        <nav class="nav">
+
+        <div class="sidebar-section-title">
+            Каталог
+        </div>
+
+        <nav class="sidebar-nav">
 
             <button
                 type="button"
-                class="nav-btn active"
-                id="navDashboard"
-                onclick="goDashboard()">
-                <span class="nav-icon">⌂</span>
-                Главная
+                id="navPrograms"
+                class="side-btn active"
+                onclick="openCategory('programs')">
+
+                <span class="side-icon">
+                    ⚙
+                </span>
+
+                <span>
+                    Программы
+                </span>
+
             </button>
 
             <button
                 type="button"
-                class="nav-btn"
-                id="navProjects"
-                onclick="goProjects()">
-                <span class="nav-icon">▦</span>
-                Проекты
+                id="navTools"
+                class="side-btn"
+                onclick="openCategory('tools')">
+
+                <span class="side-icon">
+                    🔧
+                </span>
+
+                <span>
+                    Инструмент
+                </span>
+
             </button>
 
             <button
                 type="button"
-                class="nav-btn"
-                id="navSearch"
-                onclick="focusGlobalSearch()">
-                <span class="nav-icon">⌕</span>
-                Поиск
-            </button>
+                id="navOther"
+                class="side-btn"
+                onclick="openCategory('other')">
 
-            <button
-                type="button"
-                class="nav-btn"
-                onclick="exportData()">
-                <span class="nav-icon">⇩</span>
-                Экспорт
-            </button>
+                <span class="side-icon">
+                    ◈
+                </span>
 
-            <button
-                type="button"
-                class="nav-btn"
-                onclick="document.getElementById('importFile').click()">
-                <span class="nav-icon">⇧</span>
-                Импорт
-            </button>
+                <span>
+                    Прочее
+                </span>
 
-            <input
-                id="importFile"
-                type="file"
-                accept=".json"
-                style="display:none"
-                onchange="importData(event)">
+            </button>
 
         </nav>
+
+
+        <div
+            id="adminNavigation"
+            class="hidden">
+
+            <div
+                class="sidebar-section-title"
+                style="margin-top:18px;">
+                Управление
+            </div>
+
+            <nav class="sidebar-nav">
+
+                <button
+                    type="button"
+                    class="side-btn"
+                    id="navAdmin"
+                    onclick="openAdminPanel()">
+
+                    <span class="side-icon">
+                        🛡
+                    </span>
+
+                    <span>
+                        Администратор
+                    </span>
+
+                </button>
+
+            </nav>
+
+        </div>
+
 
         <div class="sidebar-bottom">
 
             <div class="user-mini">
-                <div style="font-size:11px;color:#69758b;margin-bottom:5px;">
-                    ТЕКУЩИЙ ПОЛЬЗОВАТЕЛЬ
+
+                <div class="user-role">
+                    Текущий пользователь
                 </div>
 
                 <div
-                    class="user-email"
-                    id="currentUserEmail">
+                    id="currentUserName"
+                    class="user-email">
                 </div>
+
             </div>
 
             <button
                 type="button"
-                class="nav-btn"
+                class="side-btn"
                 onclick="logout()">
-                <span class="nav-icon">↪</span>
+
+                <span class="side-icon">
+                    ↪
+                </span>
+
                 Выйти
+
             </button>
 
         </div>
@@ -1237,242 +1331,260 @@ button{
     </aside>
 
 
+    <!-- затемнение за панелью -->
+    <div
+        id="sidebarOverlay"
+        class="sidebar-overlay"
+        onclick="closeSidebar()">
+    </div>
+
+
     <main class="main">
 
         <div class="topbar">
 
-            <div style="display:flex;align-items:center;gap:12px;min-width:0;">
+            <div class="topbar-left">
 
                 <button
                     type="button"
-                    class="mobile-menu"
-                    onclick="toggleSidebar()">
+                    class="menu-open"
+                    onclick="openSidebar()">
                     ☰
                 </button>
 
                 <div
-                    class="breadcrumb"
-                    id="breadcrumb">
-                    <strong>Главная</strong>
+                    id="breadcrumb"
+                    class="breadcrumb">
+                    <strong>
+                        Программы
+                    </strong>
                 </div>
 
             </div>
 
             <div
-                style="font-size:11px;color:#647087;"
-                id="storageStatus">
+                id="storageStatus"
+                class="storage-status">
                 Локальное хранилище
             </div>
 
         </div>
 
 
-        <!-- =========================
-             DASHBOARD
-        ========================= -->
-
-        <section id="pageDashboard">
-
-            <div class="hero">
-
-                <h1>Конструкторская документация</h1>
-
-                <p>
-                    Управляйте проектами, папками, деталями,
-                    кодами и чертежами в едином интерфейсе.
-                    Никакой базы данных — всё хранится локально.
-                </p>
-
-            </div>
-
-            <div class="stats">
-
-                <div class="stat">
-                    <div
-                        class="stat-value"
-                        id="statProjects">
-                        0
-                    </div>
-                    <div class="stat-label">
-                        Проектов
-                    </div>
-                </div>
-
-                <div class="stat">
-                    <div
-                        class="stat-value"
-                        id="statFolders">
-                        0
-                    </div>
-                    <div class="stat-label">
-                        Папок
-                    </div>
-                </div>
-
-                <div class="stat">
-                    <div
-                        class="stat-value"
-                        id="statParts">
-                        0
-                    </div>
-                    <div class="stat-label">
-                        Деталей
-                    </div>
-                </div>
-
-                <div class="stat">
-                    <div
-                        class="stat-value"
-                        id="statPublic">
-                        0
-                    </div>
-                    <div class="stat-label">
-                        Общих папок
-                    </div>
-                </div>
-
-            </div>
-
-            <div class="toolbar">
-
-                <div class="search">
-                    <span class="search-icon">⌕</span>
-
-                    <input
-                        id="globalSearch"
-                        placeholder="Поиск детали или номера..."
-                        oninput="renderGlobalSearch()">
-                </div>
-
-                <button
-                    type="button"
-                    class="btn primary"
-                    onclick="openProjectModal()">
-                    ＋ Проект
-                </button>
-
-            </div>
-
-            <div id="globalSearchResults"></div>
-
-        </section>
-
-
-        <!-- =========================
-             PROJECTS
-        ========================= -->
+        <!-- =================================================
+             DASHBOARD / CATEGORY
+        ================================================= -->
 
         <section
-            id="pageProjects"
-            class="hidden">
+            id="pageCatalog">
 
-            <!-- ЭТОТ TOOLBAR ТЕПЕРЬ ОТДЕЛЬНО -->
-            <div
-                id="projectsToolbar"
-                class="toolbar">
+            <div class="category-header">
 
-                <div class="search">
-                    <span class="search-icon">⌕</span>
+                <div>
 
-                    <input
-                        id="projectSearch"
-                        placeholder="Поиск проектов..."
-                        oninput="renderProjects()">
-                </div>
+                    <div
+                        id="categoryTitle"
+                        class="category-title">
+                        Программы
+                    </div>
 
-                <button
-                    type="button"
-                    class="btn primary"
-                    onclick="openProjectModal()">
-                    ＋ Проект
-                </button>
+                    <div
+                        id="categoryDescription"
+                        class="category-description">
+                        Управляющие программы и G-код.
+                    </div>
 
-            </div>
-
-            <div id="projectsContainer"></div>
-
-        </section>
-
-
-        <!-- =========================
-             PROJECT
-        ========================= -->
-
-        <section
-            id="pageProject"
-            class="hidden">
-
-            <div
-                id="projectToolbar"
-                class="toolbar">
-
-                <div class="search">
-                    <span class="search-icon">⌕</span>
-
-                    <input
-                        id="folderSearch"
-                        placeholder="Поиск папок..."
-                        oninput="renderCurrentProject()">
-                </div>
-
-                <button
-                    type="button"
-                    class="btn primary"
-                    onclick="openFolderModal()">
-                    ＋ Папка
-                </button>
-
-            </div>
-
-            <div id="projectContainer"></div>
-
-        </section>
-
-
-        <!-- =========================
-             FOLDER
-        ========================= -->
-
-        <section
-            id="pageFolder"
-            class="hidden">
-
-            <div
-                id="folderToolbar"
-                class="toolbar">
-
-                <div class="search">
-                    <span class="search-icon">⌕</span>
-
-                    <input
-                        id="partSearch"
-                        placeholder="Поиск деталей или номеров..."
-                        oninput="renderCurrentFolder()">
                 </div>
 
                 <button
                     type="button"
                     class="btn primary"
                     onclick="openPartModal()">
-                    ＋ Деталь
+                    ＋ Добавить
                 </button>
 
             </div>
 
-            <div id="folderContainer"></div>
+
+            <div class="toolbar">
+
+                <div class="search">
+
+                    <span>
+                        ⌕
+                    </span>
+
+                    <input
+                        id="partSearch"
+                        placeholder="Поиск по номеру, названию или G-коду..."
+                        oninput="renderCatalog()">
+
+                </div>
+
+            </div>
+
+
+            <div class="parts-layout">
+
+                <div
+                    id="nameList"
+                    class="name-list">
+                </div>
+
+                <div
+                    id="variantsContainer"
+                    class="variants">
+                </div>
+
+            </div>
 
         </section>
 
 
-        <!-- =========================
-             PUBLIC
-        ========================= -->
+        <!-- =================================================
+             ADMIN
+        ================================================= -->
 
         <section
-            id="pagePublic"
+            id="pageAdmin"
             class="hidden">
 
-            <div id="publicContainer"></div>
+            <div class="category-header">
+
+                <div>
+
+                    <div class="category-title">
+                        Панель администратора
+                    </div>
+
+                    <div class="category-description">
+                        Управление пользователями и системой.
+                    </div>
+
+                </div>
+
+                <button
+                    type="button"
+                    class="btn primary"
+                    onclick="openUserModal()">
+                    ＋ Создать аккаунт
+                </button>
+
+            </div>
+
+
+            <div class="stats">
+
+                <div class="stat">
+
+                    <div
+                        id="adminUserCount"
+                        class="stat-number">
+                        0
+                    </div>
+
+                    <div class="stat-label">
+                        Пользователей
+                    </div>
+
+                </div>
+
+                <div class="stat">
+
+                    <div
+                        id="adminPartCount"
+                        class="stat-number">
+                        0
+                    </div>
+
+                    <div class="stat-label">
+                        Деталей
+                    </div>
+
+                </div>
+
+                <div class="stat">
+
+                    <div
+                        id="adminProgramCount"
+                        class="stat-number">
+                        0
+                    </div>
+
+                    <div class="stat-label">
+                        Программ
+                    </div>
+
+                </div>
+
+                <div class="stat">
+
+                    <div
+                        id="adminToolCount"
+                        class="stat-number">
+                        0
+                    </div>
+
+                    <div class="stat-label">
+                        Инструментов
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="card">
+
+                <div
+                    style="
+                        font-size:17px;
+                        font-weight:800;
+                        margin-bottom:15px;
+                    ">
+                    Пользователи
+                </div>
+
+                <div
+                    style="
+                        overflow:auto;
+                    ">
+
+                    <table class="admin-table">
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    Логин
+                                </th>
+
+                                <th>
+                                    Роль
+                                </th>
+
+                                <th>
+                                    Создан
+                                </th>
+
+                                <th>
+                                    Действия
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+                        <tbody
+                            id="usersTable">
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
 
         </section>
 
@@ -1481,14 +1593,14 @@ button{
 </section>
 
 
-<!-- =========================
+<!-- =====================================================
      MODAL
-========================= -->
+===================================================== -->
 
 <div
     id="modalBackdrop"
     class="modal-backdrop hidden"
-    onclick="backdropClose(event)">
+    onclick="modalBackdropClick(event)">
 
     <div
         id="modal"
@@ -1498,53 +1610,156 @@ button{
 </div>
 
 
-<!-- =========================
-     TOAST
-========================= -->
-
-<div id="toastContainer"></div>
+<div
+    id="toastContainer">
+</div>
 
 
 <script>
 
 /* =========================================================
-   STORAGE
+   DATABASE
 ========================================================= */
 
-const STATE_KEY = "minicad_database_v4";
-const SESSION_KEY = "minicad_current_user_v4";
-const IDB_NAME = "MiniCAD_Files_v4";
+const STORAGE_KEY = "minicad_production_v6";
+const SESSION_KEY = "minicad_session_v6";
+
+const IDB_NAME = "minicad_production_files_v6";
 const IDB_STORE = "files";
 
+let db = null;
+
 let state = loadState();
-let currentUser = localStorage.getItem(SESSION_KEY) || null;
 
-let currentProjectId = null;
-let currentFolderId = null;
+let currentUserId =
+    localStorage.getItem(SESSION_KEY) || null;
 
-let editingProjectId = null;
-let editingFolderId = null;
+let currentCategory = "programs";
+
+let selectedPartName = null;
+
+let selectedFile = null;
+
 let editingPartId = null;
 
-let selectedDrawing = null;
+let editingUserId = null;
 
 
 /* =========================================================
-   BASIC HELPERS
+   INITIAL STATE
+========================================================= */
+
+function createInitialState(){
+
+    return {
+        users:[
+            {
+                id:"admin",
+                login:"admin",
+                password:"admin",
+                role:"admin",
+                createdAt:new Date().toISOString()
+            }
+        ],
+
+        parts:[]
+    };
+}
+
+function loadState(){
+
+    try{
+
+        const raw =
+            localStorage.getItem(
+                STORAGE_KEY
+            );
+
+        if(raw){
+
+            const parsed =
+                JSON.parse(raw);
+
+            if(
+                parsed &&
+                Array.isArray(parsed.users) &&
+                Array.isArray(parsed.parts)
+            ){
+
+                /*
+                  На случай обновления старой версии.
+                */
+
+                if(
+                    !parsed.users.some(
+                        u =>
+                            u.login === "admin"
+                    )
+                ){
+
+                    parsed.users.push({
+                        id:"admin",
+                        login:"admin",
+                        password:"admin",
+                        role:"admin",
+                        createdAt:
+                            new Date().toISOString()
+                    });
+                }
+
+                return parsed;
+            }
+        }
+
+    }catch(error){
+
+        console.error(error);
+    }
+
+    const fresh =
+        createInitialState();
+
+    localStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify(fresh)
+    );
+
+    return fresh;
+}
+
+function saveState(){
+
+    localStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify(state)
+    );
+}
+
+
+/* =========================================================
+   HELPERS
 ========================================================= */
 
 function uid(prefix="id"){
-    return prefix + "_" +
+
+    return (
+        prefix +
+        "_" +
         Date.now().toString(36) +
         "_" +
-        Math.random().toString(36).slice(2,9);
+        Math.random()
+            .toString(36)
+            .slice(2,9)
+    );
 }
 
 function now(){
+
     return new Date().toISOString();
 }
 
 function escapeHtml(value){
+
     return String(value ?? "")
         .replaceAll("&","&amp;")
         .replaceAll("<","&lt;")
@@ -1554,66 +1769,73 @@ function escapeHtml(value){
 }
 
 function formatDate(date){
-    if(!date) return "—";
 
-    return new Date(date).toLocaleString(
-        "ru-RU",
-        {
-            day:"2-digit",
-            month:"2-digit",
-            year:"numeric",
-            hour:"2-digit",
-            minute:"2-digit"
-        }
-    );
-}
-
-function formatSize(bytes){
-    if(!bytes) return "";
-
-    if(bytes < 1024)
-        return bytes + " Б";
-
-    if(bytes < 1024*1024)
-        return (bytes/1024).toFixed(1) + " КБ";
-
-    return (bytes/1024/1024).toFixed(1) + " МБ";
-}
-
-function saveState(){
-    localStorage.setItem(
-        STATE_KEY,
-        JSON.stringify(state)
-    );
-
-    updateStats();
-}
-
-function loadState(){
-
-    try{
-
-        const raw = localStorage.getItem(STATE_KEY);
-
-        if(raw){
-
-            const parsed = JSON.parse(raw);
-
-            if(parsed && typeof parsed === "object"){
-                return parsed;
-            }
-        }
-
-    }catch(error){
-        console.error(error);
+    if(!date){
+        return "—";
     }
 
-    return {
-        users:[],
-        projects:[],
-        folders:[],
-        parts:[]
-    };
+    return new Date(date)
+        .toLocaleString(
+            "ru-RU",
+            {
+                day:"2-digit",
+                month:"2-digit",
+                year:"numeric",
+                hour:"2-digit",
+                minute:"2-digit"
+            }
+        );
+}
+
+function getCurrentUser(){
+
+    return state.users.find(
+        u =>
+            u.id === currentUserId
+    );
+}
+
+function isAdmin(){
+
+    return (
+        getCurrentUser()?.role ===
+        "admin"
+    );
+}
+
+function getUserParts(){
+
+    return state.parts.filter(
+        p =>
+            p.userId === currentUserId
+    );
+}
+
+function getAllParts(){
+
+    return state.parts;
+}
+
+function categoryName(category){
+
+    if(category === "programs")
+        return "Программы";
+
+    if(category === "tools")
+        return "Инструмент";
+
+    return "Прочее";
+}
+
+function categoryDescription(category){
+
+    if(category === "programs")
+        return "Управляющие программы и G-код.";
+
+    if(category === "tools")
+        return "Инструмент и оснастка.";
+
+    return "Дополнительные материалы и данные.";
 }
 
 
@@ -1621,151 +1843,161 @@ function loadState(){
    INDEXED DB
 ========================================================= */
 
-let idb = null;
-
 function initDB(){
 
-    return new Promise((resolve,reject)=>{
+    return new Promise(
+        (resolve,reject)=>{
 
-        const request = indexedDB.open(IDB_NAME,1);
+            const request =
+                indexedDB.open(
+                    IDB_NAME,
+                    1
+                );
 
-        request.onupgradeneeded = function(){
+            request.onupgradeneeded =
+                function(){
 
-            const db = request.result;
+                    const database =
+                        request.result;
 
-            if(!db.objectStoreNames.contains(IDB_STORE)){
-                db.createObjectStore(IDB_STORE);
+                    if(
+                        !database.objectStoreNames.contains(
+                            IDB_STORE
+                        )
+                    ){
+
+                        database.createObjectStore(
+                            IDB_STORE
+                        );
+                    }
+                };
+
+            request.onsuccess =
+                function(){
+
+                    db =
+                        request.result;
+
+                    resolve(db);
+                };
+
+            request.onerror =
+                function(){
+
+                    reject(
+                        request.error
+                    );
+                };
+        }
+    );
+}
+
+function saveBlob(fileId,blob){
+
+    return new Promise(
+        (resolve,reject)=>{
+
+            if(!db){
+                resolve();
+                return;
             }
-        };
 
-        request.onsuccess = function(){
+            const tx =
+                db.transaction(
+                    IDB_STORE,
+                    "readwrite"
+                );
 
-            idb = request.result;
-            resolve(idb);
-        };
+            tx.objectStore(
+                IDB_STORE
+            ).put(
+                blob,
+                fileId
+            );
 
-        request.onerror = function(){
-            reject(request.error);
-        };
-    });
-}
+            tx.oncomplete =
+                resolve;
 
-function saveFile(file){
-
-    return new Promise((resolve,reject)=>{
-
-        if(!idb){
-            reject(new Error("IndexedDB not ready"));
-            return;
+            tx.onerror =
+                ()=>reject(
+                    tx.error
+                );
         }
-
-        const tx = idb.transaction(IDB_STORE,"readwrite");
-
-        tx.objectStore(IDB_STORE).put(
-            file,
-            file.id
-        );
-
-        tx.oncomplete = resolve;
-        tx.onerror = ()=>reject(tx.error);
-    });
+    );
 }
 
-function getFile(id){
+function getBlob(fileId){
 
-    return new Promise((resolve,reject)=>{
+    return new Promise(
+        (resolve,reject)=>{
 
-        if(!id){
-            resolve(null);
-            return;
+            if(!db){
+
+                resolve(null);
+
+                return;
+            }
+
+            const tx =
+                db.transaction(
+                    IDB_STORE,
+                    "readonly"
+                );
+
+            const request =
+                tx.objectStore(
+                    IDB_STORE
+                ).get(fileId);
+
+            request.onsuccess =
+                ()=>{
+                    resolve(
+                        request.result || null
+                    );
+                };
+
+            request.onerror =
+                ()=>{
+                    reject(
+                        request.error
+                    );
+                };
         }
+    );
+}
 
-        if(!idb){
-            resolve(null);
-            return;
+function deleteBlob(fileId){
+
+    return new Promise(
+        (resolve,reject)=>{
+
+            if(!db){
+
+                resolve();
+
+                return;
+            }
+
+            const tx =
+                db.transaction(
+                    IDB_STORE,
+                    "readwrite"
+                );
+
+            tx.objectStore(
+                IDB_STORE
+            ).delete(fileId);
+
+            tx.oncomplete =
+                resolve;
+
+            tx.onerror =
+                ()=>{
+                    reject(
+                        tx.error
+                    );
+                };
         }
-
-        const tx = idb.transaction(IDB_STORE,"readonly");
-
-        const req = tx.objectStore(IDB_STORE).get(id);
-
-        req.onsuccess = ()=>resolve(req.result || null);
-        req.onerror = ()=>reject(req.error);
-    });
-}
-
-function deleteFile(id){
-
-    return new Promise((resolve,reject)=>{
-
-        if(!id || !idb){
-            resolve();
-            return;
-        }
-
-        const tx = idb.transaction(IDB_STORE,"readwrite");
-
-        tx.objectStore(IDB_STORE).delete(id);
-
-        tx.oncomplete = resolve;
-        tx.onerror = ()=>reject(tx.error);
-    });
-}
-
-
-/* =========================================================
-   DATA FILTERS
-========================================================= */
-
-function getProjects(){
-
-    return state.projects.filter(
-        p => p.userId === currentUser
-    );
-}
-
-function getFolders(projectId=null){
-
-    return state.folders.filter(
-        f =>
-            f.userId === currentUser &&
-            (!projectId || f.projectId === projectId)
-    );
-}
-
-function getParts(folderId=null){
-
-    return state.parts.filter(
-        p =>
-            p.userId === currentUser &&
-            (!folderId || p.folderId === folderId)
-    );
-}
-
-function getProject(id){
-
-    return state.projects.find(
-        p =>
-            p.id === id &&
-            p.userId === currentUser
-    );
-}
-
-function getFolder(id){
-
-    return state.folders.find(
-        f =>
-            f.id === id &&
-            f.userId === currentUser
-    );
-}
-
-function getPart(id){
-
-    return state.parts.find(
-        p =>
-            p.id === id &&
-            p.userId === currentUser
     );
 }
 
@@ -1774,121 +2006,49 @@ function getPart(id){
    AUTH
 ========================================================= */
 
-function switchAuth(mode){
-
-    const login = mode === "login";
-
-    document.getElementById("loginTab")
-        .classList.toggle("active",login);
-
-    document.getElementById("registerTab")
-        .classList.toggle("active",!login);
-
-    document.getElementById("authTitle").textContent =
-        login ? "Добро пожаловать" : "Создать аккаунт";
-
-    document.getElementById("authSubmitButton").textContent =
-        login ? "Войти" : "Создать аккаунт";
-
-    document.getElementById("authError").textContent = "";
-
-    document
-        .getElementById("authSubmitButton")
-        .dataset.mode = mode;
-}
-
-function authSubmit(event){
+function login(event){
 
     event.preventDefault();
 
-    const email =
+    const loginValue =
         document
-            .getElementById("authEmail")
+            .getElementById("loginInput")
             .value
-            .trim()
-            .toLowerCase();
+            .trim();
 
     const password =
         document
-            .getElementById("authPassword")
+            .getElementById("passwordInput")
             .value;
 
-    const mode =
+    const error =
         document
-            .getElementById("authSubmitButton")
-            .dataset.mode || "login";
+            .getElementById("loginError");
 
-    const errorEl =
-        document.getElementById("authError");
-
-    errorEl.textContent = "";
-
-    if(!email || !password){
-        errorEl.textContent = "Заполните все поля.";
-        return;
-    }
-
-    if(mode === "register"){
-
-        const exists =
-            state.users.some(
-                u => u.email === email
-            );
-
-        if(exists){
-            errorEl.textContent =
-                "Пользователь с таким email уже существует.";
-            return;
-        }
-
-        const user = {
-            id:uid("user"),
-            email,
-            password,
-            createdAt:now()
-        };
-
-        state.users.push(user);
-
-        saveState();
-
-        currentUser = user.id;
-
-        localStorage.setItem(
-            SESSION_KEY,
-            currentUser
-        );
-
-        enterApp();
-
-        toast(
-            "Аккаунт создан",
-            "success"
-        );
-
-        return;
-    }
+    error.textContent = "";
 
     const user =
         state.users.find(
             u =>
-                u.email === email &&
+                u.login.toLowerCase() ===
+                loginValue.toLowerCase() &&
                 u.password === password
         );
 
     if(!user){
 
-        errorEl.textContent =
-            "Неверный email или пароль.";
+        error.textContent =
+            "Неверный логин или пароль.";
 
         return;
     }
 
-    currentUser = user.id;
+    currentUserId =
+        user.id;
 
     localStorage.setItem(
         SESSION_KEY,
-        currentUser
+        currentUserId
     );
 
     enterApp();
@@ -1896,7 +2056,7 @@ function authSubmit(event){
 
 function logout(){
 
-    currentUser = null;
+    currentUserId = null;
 
     localStorage.removeItem(
         SESSION_KEY
@@ -1910,16 +2070,25 @@ function logout(){
         .getElementById("authPage")
         .classList.remove("hidden");
 
-    currentProjectId = null;
-    currentFolderId = null;
+    closeSidebar();
 }
 
 
 /* =========================================================
-   APP
+   ENTER APP
 ========================================================= */
 
 function enterApp(){
+
+    const user =
+        getCurrentUser();
+
+    if(!user){
+
+        logout();
+
+        return;
+    }
 
     document
         .getElementById("authPage")
@@ -1929,721 +2098,414 @@ function enterApp(){
         .getElementById("app")
         .classList.remove("hidden");
 
-    const user =
-        state.users.find(
-            u => u.id === currentUser
+    document
+        .getElementById("currentUserName")
+        .textContent =
+        user.login +
+        (
+            user.role === "admin"
+            ? " · Администратор"
+            : ""
         );
 
     document
-        .getElementById("currentUserEmail")
-        .textContent =
-        user ? user.email : "";
+        .getElementById("adminNavigation")
+        .classList.toggle(
+            "hidden",
+            !isAdmin()
+        );
 
-    goDashboard();
+    currentCategory =
+        "programs";
+
+    selectedPartName = null;
+
+    openCategory(
+        "programs"
+    );
+
+    closeSidebar();
 }
 
-function boot(){
 
-    initDB()
-        .catch(error=>{
-            console.error(error);
+/* =========================================================
+   SIDEBAR
+========================================================= */
 
-            toast(
-                "IndexedDB недоступна. Чертежи могут не сохраняться.",
-                "error"
-            );
-        });
+function openSidebar(){
 
-    if(currentUser){
+    const sidebar =
+        document.getElementById(
+            "sidebar"
+        );
 
-        const userExists =
-            state.users.some(
-                u => u.id === currentUser
-            );
+    sidebar.classList.add("open");
 
-        if(userExists){
-            enterApp();
+    sidebar.classList.remove("closed");
+
+    document
+        .getElementById(
+            "sidebarOverlay"
+        )
+        .style.display =
+        window.innerWidth <= 900
+        ? "block"
+        : "none";
+}
+
+function closeSidebar(){
+
+    const sidebar =
+        document.getElementById(
+            "sidebar"
+        );
+
+    sidebar.classList.remove("open");
+
+    if(window.innerWidth <= 900){
+
+        sidebar.classList.add(
+            "closed"
+        );
+    }
+}
+
+function toggleSidebar(){
+
+    const sidebar =
+        document.getElementById(
+            "sidebar"
+        );
+
+    if(
+        sidebar.classList.contains(
+            "open"
+        )
+    ){
+
+        closeSidebar();
+
+    }else{
+
+        openSidebar();
+    }
+}
+
+
+/* =========================================================
+   SWIPE SIDEBAR
+========================================================= */
+
+let swipeStartX = null;
+let swipeStartY = null;
+
+document.addEventListener(
+    "pointerdown",
+    event=>{
+
+        if(
+            event.pointerType !== "touch" &&
+            event.pointerType !== "pen"
+        ){
             return;
         }
-    }
 
-    switchAuth("login");
-}
+        swipeStartX =
+            event.clientX;
 
-window.addEventListener(
-    "load",
-    boot
+        swipeStartY =
+            event.clientY;
+    },
+    {passive:true}
+);
+
+document.addEventListener(
+    "pointerup",
+    event=>{
+
+        if(
+            swipeStartX === null
+        ){
+            return;
+        }
+
+        const dx =
+            event.clientX -
+            swipeStartX;
+
+        const dy =
+            event.clientY -
+            swipeStartY;
+
+        const sidebar =
+            document.getElementById(
+                "sidebar"
+            );
+
+        /*
+          Свайп влево.
+        */
+        if(
+            dx < -70 &&
+            Math.abs(dx) >
+            Math.abs(dy) * 1.3
+        ){
+
+            if(
+                sidebar.classList.contains(
+                    "open"
+                )
+            ){
+
+                closeSidebar();
+            }
+        }
+
+        /*
+          Свайп вправо от левого края.
+        */
+        if(
+            dx > 70 &&
+            Math.abs(dx) >
+            Math.abs(dy) * 1.3 &&
+            swipeStartX < 45
+        ){
+
+            openSidebar();
+        }
+
+        swipeStartX = null;
+        swipeStartY = null;
+    },
+    {passive:true}
 );
 
 
 /* =========================================================
-   NAVIGATION
+   CATEGORY
 ========================================================= */
 
-function hideAllPages(){
+function openCategory(category){
 
-    [
-        "pageDashboard",
-        "pageProjects",
-        "pageProject",
-        "pageFolder",
-        "pagePublic"
-    ].forEach(id=>{
+    currentCategory =
+        category;
 
-        document
-            .getElementById(id)
-            .classList.add("hidden");
-    });
-}
-
-function setNav(active){
+    selectedPartName =
+        null;
 
     document
-        .querySelectorAll(".nav-btn")
-        .forEach(btn=>{
-            btn.classList.remove("active");
-        });
-
-    if(active){
-
-        const el =
-            document.getElementById(active);
-
-        if(el){
-            el.classList.add("active");
-        }
-    }
-}
-
-function goDashboard(){
-
-    hideAllPages();
-
-    document
-        .getElementById("pageDashboard")
-        .classList.remove("hidden");
-
-    setNav("navDashboard");
-
-    currentProjectId = null;
-    currentFolderId = null;
-
-    document
-        .getElementById("breadcrumb")
-        .innerHTML =
-        "<strong>Главная</strong>";
-
-    renderGlobalSearch();
-    updateStats();
-
-    closeSidebar();
-}
-
-function goProjects(){
-
-    hideAllPages();
-
-    document
-        .getElementById("pageProjects")
-        .classList.remove("hidden");
-
-    setNav("navProjects");
-
-    currentProjectId = null;
-    currentFolderId = null;
-
-    document
-        .getElementById("projectsToolbar")
-        .style.display = "flex";
-
-    document
-        .getElementById("breadcrumb")
-        .innerHTML =
-        "<strong>Проекты</strong>";
-
-    renderProjects();
-
-    closeSidebar();
-}
-
-function openProject(projectId){
-
-    const project = getProject(projectId);
-
-    if(!project) return;
-
-    currentProjectId = projectId;
-    currentFolderId = null;
-
-    hideAllPages();
-
-    document
-        .getElementById("pageProject")
-        .classList.remove("hidden");
-
-    setNav("navProjects");
-
-    /*
-      ВАЖНО:
-      Здесь мы специально скрываем
-      поиск проектов.
-    */
-    document
-        .getElementById("projectsToolbar")
-        .style.display = "none";
-
-    document
-        .getElementById("projectToolbar")
-        .style.display = "flex";
-
-    document
-        .getElementById("breadcrumb")
-        .innerHTML = `
-            <button
-                type="button"
-                class="btn"
-                onclick="goProjects()">
-                Проекты
-            </button>
-            <span>›</span>
-            <strong>${escapeHtml(project.name)}</strong>
-        `;
-
-    renderCurrentProject();
-
-    closeSidebar();
-}
-
-function openFolder(folderId){
-
-    const folder = getFolder(folderId);
-
-    if(!folder) return;
-
-    const project = getProject(folder.projectId);
-
-    if(!project) return;
-
-    currentProjectId = project.id;
-    currentFolderId = folder.id;
-
-    hideAllPages();
-
-    document
-        .getElementById("pageFolder")
-        .classList.remove("hidden");
-
-    setNav("navProjects");
-
-    /*
-      На странице деталей
-      поиск проектов гарантированно отсутствует.
-    */
-    document
-        .getElementById("projectsToolbar")
-        .style.display = "none";
-
-    document
-        .getElementById("projectToolbar")
-        .style.display = "none";
-
-    document
-        .getElementById("folderToolbar")
-        .style.display = "flex";
-
-    document
-        .getElementById("breadcrumb")
-        .innerHTML = `
-            <button
-                type="button"
-                class="btn"
-                onclick="openProject('${project.id}')">
-                ${escapeHtml(project.name)}
-            </button>
-
-            <span>›</span>
-
-            <strong>${escapeHtml(folder.name)}</strong>
-        `;
-
-    renderCurrentFolder();
-
-    closeSidebar();
-}
-
-
-/* =========================================================
-   PROJECTS
-========================================================= */
-
-function renderProjects(){
-
-    /*
-      При отображении списка проектов
-      поиск проектов должен быть виден.
-    */
-    document
-        .getElementById("projectsToolbar")
-        .style.display = "flex";
-
-    const container =
-        document.getElementById("projectsContainer");
-
-    const query =
-        (
-            document
-                .getElementById("projectSearch")
-                ?.value || ""
+        .getElementById(
+            "pageCatalog"
         )
-        .trim()
-        .toLowerCase();
-
-    let projects = getProjects();
-
-    if(query){
-
-        projects =
-            projects.filter(
-                p =>
-                    p.name
-                        .toLowerCase()
-                        .includes(query) ||
-                    (p.description || "")
-                        .toLowerCase()
-                        .includes(query)
-            );
-    }
-
-    projects.sort(
-        (a,b)=>
-            a.name.localeCompare(
-                b.name,
-                "ru",
-                {numeric:true}
-            )
-    );
-
-    if(!projects.length){
-
-        container.innerHTML = `
-            <div class="empty">
-                <div class="empty-icon">▦</div>
-
-                <div>
-                    ${query
-                        ? "Проекты не найдены"
-                        : "Проектов пока нет"}
-                </div>
-
-                <div style="margin-top:14px;">
-                    <button
-                        type="button"
-                        class="btn primary"
-                        onclick="openProjectModal()">
-                        ＋ Создать проект
-                    </button>
-                </div>
-            </div>
-        `;
-
-        return;
-    }
-
-    container.innerHTML = `
-        <div class="grid">
-            ${projects.map(project=>{
-
-                const folderCount =
-                    getFolders(project.id).length;
-
-                const partCount =
-                    getFolders(project.id)
-                        .reduce(
-                            (sum,folder)=>
-                                sum +
-                                getParts(folder.id).length,
-                            0
-                        );
-
-                return `
-                    <div class="card">
-
-                        <div class="card-top">
-
-                            <div class="card-icon">
-                                ▦
-                            </div>
-
-                            <button
-                                type="button"
-                                class="menu-btn"
-                                onclick="openProjectMenu(
-                                    event,
-                                    '${project.id}'
-                                )">
-                                ⋮
-                            </button>
-
-                        </div>
-
-                        <div class="card-title">
-                            ${escapeHtml(project.name)}
-                        </div>
-
-                        <div class="card-meta">
-                            ${folderCount} папок ·
-                            ${partCount} деталей
-                        </div>
-
-                        <div
-                            class="card-meta"
-                            style="margin-top:10px;">
-                            ${project.description
-                                ? escapeHtml(
-                                    project.description
-                                )
-                                : "Без описания"}
-                        </div>
-
-                        <div class="card-actions">
-
-                            <button
-                                type="button"
-                                class="btn primary"
-                                onclick="openProject(
-                                    '${project.id}'
-                                )">
-                                Открыть
-                            </button>
-
-                            <button
-                                type="button"
-                                class="btn"
-                                onclick="openProjectModal(
-                                    '${project.id}'
-                                )">
-                                Изменить
-                            </button>
-
-                        </div>
-
-                    </div>
-                `;
-            }).join("")}
-        </div>
-    `;
-}
-
-function openProjectModal(projectId=null){
-
-    editingProjectId = projectId;
-
-    const project =
-        projectId
-            ? getProject(projectId)
-            : null;
-
-    showModal(`
-        <div class="modal-header">
-
-            <div class="modal-title">
-                ${project
-                    ? "Редактировать проект"
-                    : "Новый проект"}
-            </div>
-
-            <button
-                type="button"
-                class="modal-close"
-                onclick="closeModal()">
-                ×
-            </button>
-
-        </div>
-
-        <div class="modal-body">
-
-            <div class="field">
-
-                <label>
-                    Название проекта *
-                </label>
-
-                <input
-                    id="projectName"
-                    class="input"
-                    value="${escapeHtml(
-                        project?.name || ""
-                    )}"
-                    placeholder="Например: Корпус станка">
-
-            </div>
-
-            <div class="field">
-
-                <label>
-                    Описание
-                </label>
-
-                <textarea
-                    id="projectDescription"
-                    class="textarea"
-                    style="min-height:110px"
-                    placeholder="Описание проекта...">${escapeHtml(
-                        project?.description || ""
-                    )}</textarea>
-
-            </div>
-
-        </div>
-
-        <div class="modal-footer">
-
-            <button
-                type="button"
-                class="btn"
-                onclick="closeModal()">
-                Отмена
-            </button>
-
-            <button
-                type="button"
-                class="btn primary"
-                onclick="saveProject()">
-                Сохранить
-            </button>
-
-        </div>
-    `);
-}
-
-function saveProject(){
-
-    const name =
-        document
-            .getElementById("projectName")
-            .value
-            .trim();
-
-    const description =
-        document
-            .getElementById("projectDescription")
-            .value
-            .trim();
-
-    if(!name){
-
-        toast(
-            "Введите название проекта",
-            "error"
+        .classList.remove(
+            "hidden"
         );
 
-        return;
-    }
-
-    if(editingProjectId){
-
-        const project =
-            getProject(editingProjectId);
-
-        if(!project) return;
-
-        project.name = name;
-        project.description = description;
-        project.updatedAt = now();
-
-        toast(
-            "Проект обновлен",
-            "success"
+    document
+        .getElementById(
+            "pageAdmin"
+        )
+        .classList.add(
+            "hidden"
         );
 
-    }else{
+    document
+        .getElementById(
+            "categoryTitle"
+        )
+        .textContent =
+        categoryName(category);
 
-        state.projects.push({
+    document
+        .getElementById(
+            "categoryDescription"
+        )
+        .textContent =
+        categoryDescription(category);
 
-            id:uid("project"),
+    document
+        .getElementById(
+            "breadcrumb"
+        )
+        .innerHTML =
+        `<strong>${categoryName(category)}</strong>`;
 
-            userId:currentUser,
-
-            name,
-
-            description,
-
-            createdAt:now(),
-
-            updatedAt:now()
-        });
-
-        toast(
-            "Проект создан",
-            "success"
-        );
-    }
-
-    saveState();
-
-    closeModal();
-
-    renderProjects();
-    updateStats();
-}
-
-function deleteProject(projectId){
-
-    const project = getProject(projectId);
-
-    if(!project) return;
-
-    if(!confirm(
-        `Удалить проект "${project.name}"?\n\n` +
-        "Все папки и детали внутри будут удалены."
-    )){
-        return;
-    }
-
-    const folders =
-        getFolders(projectId);
-
-    for(const folder of folders){
-
-        const parts =
-            getParts(folder.id);
-
-        for(const part of parts){
-
-            if(part.fileId){
-                deleteFile(part.fileId);
-            }
-        }
-    }
-
-    state.parts =
-        state.parts.filter(
-            p =>
-                !folders.some(
-                    f => f.id === p.folderId
+    document
+        .querySelectorAll(
+            ".side-btn"
+        )
+        .forEach(
+            btn =>
+                btn.classList.remove(
+                    "active"
                 )
         );
 
-    state.folders =
-        state.folders.filter(
-            f => f.projectId !== projectId
-        );
+    const navId =
+        category === "programs"
+        ? "navPrograms"
+        : category === "tools"
+        ? "navTools"
+        : "navOther";
 
-    state.projects =
-        state.projects.filter(
-            p => p.id !== projectId
-        );
+    document
+        .getElementById(navId)
+        ?.classList.add("active");
 
-    saveState();
+    renderCatalog();
 
-    closeContextMenu();
-
-    goProjects();
-
-    toast(
-        "Проект удален",
-        "success"
-    );
-}
-
-function openProjectMenu(event,projectId){
-
-    event.stopPropagation();
-
-    showContextMenu(
-        event.clientX,
-        event.clientY,
-        [
-            {
-                text:"Открыть",
-                action:()=>openProject(projectId)
-            },
-            {
-                text:"Изменить",
-                action:()=>openProjectModal(projectId)
-            },
-            {
-                text:"Удалить",
-                danger:true,
-                action:()=>deleteProject(projectId)
-            }
-        ]
-    );
+    closeSidebar();
 }
 
 
 /* =========================================================
-   FOLDERS
+   CATALOG
 ========================================================= */
 
-function renderCurrentProject(){
+function renderCatalog(){
 
-    const project =
-        getProject(currentProjectId);
+    const search =
+        document
+            .getElementById(
+                "partSearch"
+            )
+            .value
+            .trim()
+            .toLowerCase();
 
-    if(!project) return;
+    let parts =
+        getUserParts()
+            .filter(
+                p =>
+                    p.category ===
+                    currentCategory
+            );
 
-    const container =
-        document.getElementById(
-            "projectContainer"
-        );
+    /*
+      Поиск по:
+      - названию
+      - номеру
+      - G-коду
+    */
+    if(search){
 
-    const query =
-        (
-            document
-                .getElementById("folderSearch")
-                ?.value || ""
-        )
-        .trim()
-        .toLowerCase();
+        parts =
+            parts.filter(
+                p =>
 
-    let folders =
-        getFolders(currentProjectId);
-
-    if(query){
-
-        folders =
-            folders.filter(
-                f =>
-                    f.name
+                    p.name
                         .toLowerCase()
-                        .includes(query)
+                        .includes(search)
+
+                    ||
+
+                    p.number
+                        .toLowerCase()
+                        .includes(search)
+
+                    ||
+
+                    p.code
+                        .toLowerCase()
+                        .includes(search)
             );
     }
 
-    folders.sort(
-        (a,b)=>
-            a.name.localeCompare(
-                b.name,
-                "ru",
-                {numeric:true}
-            )
+    /*
+      Группируем по названию детали.
+    */
+    const groups = {};
+
+    parts.forEach(part=>{
+
+        const key =
+            part.name
+                .trim()
+                .toLowerCase();
+
+        if(!groups[key]){
+            groups[key] = {
+                name:part.name,
+                parts:[]
+            };
+        }
+
+        groups[key]
+            .parts
+            .push(part);
+    });
+
+    const names =
+        Object.values(groups)
+            .sort(
+                (a,b)=>
+                    a.name.localeCompare(
+                        b.name,
+                        "ru",
+                        {numeric:true}
+                    )
+            );
+
+    renderNameList(
+        names
     );
 
-    if(!folders.length){
+    /*
+      Если ничего не выбрано —
+      выбираем первый вид детали.
+    */
+    if(
+        !selectedPartName &&
+        names.length
+    ){
+
+        selectedPartName =
+            names[0].name;
+    }
+
+    /*
+      Если после поиска выбранная
+      деталь исчезла.
+    */
+    if(
+        selectedPartName &&
+        !names.some(
+            g =>
+                g.name ===
+                selectedPartName
+        )
+    ){
+
+        selectedPartName =
+            names.length
+            ? names[0].name
+            : null;
+    }
+
+    renderVariants(
+        names
+    );
+}
+
+function renderNameList(groups){
+
+    const container =
+        document.getElementById(
+            "nameList"
+        );
+
+    if(!groups.length){
 
         container.innerHTML = `
-            <div class="empty">
+            <div
+                style="
+                    padding:25px 10px;
+                    text-align:center;
+                    color:#6f7b90;
+                    font-size:11px;
+                ">
 
-                <div class="empty-icon">
-                    📁
-                </div>
-
-                <div>
-                    ${query
-                        ? "Папки не найдены"
-                        : "В проекте пока нет папок"}
-                </div>
-
-                <div style="margin-top:14px;">
-                    <button
-                        type="button"
-                        class="btn primary"
-                        onclick="openFolderModal()">
-                        ＋ Создать папку
-                    </button>
-                </div>
+                Детали не найдены.
 
             </div>
         `;
@@ -2651,551 +2513,66 @@ function renderCurrentProject(){
         return;
     }
 
-    container.innerHTML = `
-        <div class="grid">
-
-            ${folders.map(folder=>{
-
-                const count =
-                    getParts(folder.id).length;
-
-                return `
-                    <div class="card">
-
-                        <div class="card-top">
-
-                            <div class="card-icon">
-                                ${folder.public
-                                    ? "🌐"
-                                    : "📁"}
-                            </div>
-
-                            <button
-                                type="button"
-                                class="menu-btn"
-                                onclick="openFolderMenu(
-                                    event,
-                                    '${folder.id}'
-                                )">
-                                ⋮
-                            </button>
-
-                        </div>
-
-                        <div class="card-title">
-                            ${escapeHtml(folder.name)}
-                        </div>
-
-                        <div class="card-meta">
-                            ${count} деталей
-                        </div>
-
-                        <div
-                            style="
-                                display:flex;
-                                gap:7px;
-                                margin-top:10px;
-                                flex-wrap:wrap;
-                            ">
-
-                            ${
-                                folder.public
-                                ? `
-                                    <span class="
-                                        file-badge
-                                        public-badge
-                                    ">
-                                        🌐 Общая
-                                    </span>
-                                  `
-                                : `
-                                    <span class="
-                                        file-badge
-                                    ">
-                                        🔒 Приватная
-                                    </span>
-                                  `
-                            }
-
-                        </div>
-
-                        <div class="card-actions">
-
-                            <button
-                                type="button"
-                                class="btn primary"
-                                onclick="openFolder(
-                                    '${folder.id}'
-                                )">
-                                Открыть
-                            </button>
-
-                            <button
-                                type="button"
-                                class="btn"
-                                onclick="openFolderModal(
-                                    '${folder.id}'
-                                )">
-                                Изменить
-                            </button>
-
-                        </div>
-
-                    </div>
-                `;
-            }).join("")}
-
-        </div>
-    `;
-}
-
-function openFolderModal(folderId=null){
-
-    editingFolderId = folderId;
-
-    const folder =
-        folderId
-            ? getFolder(folderId)
-            : null;
-
-    const isPublic =
-        !!folder?.public;
-
-    showModal(`
-        <div class="modal-header">
-
-            <div class="modal-title">
-                ${folder
-                    ? "Редактировать папку"
-                    : "Новая папка"}
-            </div>
-
-            <button
-                type="button"
-                class="modal-close"
-                onclick="closeModal()">
-                ×
-            </button>
-
-        </div>
-
-        <div class="modal-body">
-
-            <div class="field">
-
-                <label>
-                    Название папки *
-                </label>
-
-                <input
-                    id="folderName"
-                    class="input"
-                    value="${escapeHtml(
-                        folder?.name || ""
-                    )}"
-                    placeholder="Например: Детали корпуса">
-
-            </div>
-
-
-            <!-- ИСПРАВЛЕННЫЙ ПЕРЕКЛЮЧАТЕЛЬ -->
-
-            <div class="share-row">
-
-                <div class="share-info">
-
-                    <strong>
-                        Сделать общим
-                    </strong>
-
-                    <span>
-                        Открытая папка будет доступна
-                        по специальной ссылке.
-                    </span>
-
-                </div>
+    container.innerHTML =
+        groups
+            .map(group=>`
 
                 <button
                     type="button"
-                    id="folderPublicSwitch"
-                    class="share-switch ${isPublic ? "on" : ""}"
-                    aria-label="Сделать папку общей"
-                    aria-pressed="${isPublic ? "true" : "false"}"
-                    onclick="toggleFolderPublicSwitch()">
+                    class="
+                        name-item
+                        ${
+                            selectedPartName ===
+                            group.name
+                            ? "active"
+                            : ""
+                        }
+                    "
+                    onclick="
+                        selectPartGroup(
+                            ${JSON.stringify(
+                                group.name
+                            )}
+                        )
+                    ">
+
+                    <div class="name-item-title">
+                        ${escapeHtml(
+                            group.name
+                        )}
+                    </div>
+
+                    <div class="name-item-count">
+                        ${group.parts.length}
+                        ${
+                            group.parts.length === 1
+                            ? " вариант"
+                            : " вариантов"
+                        }
+                    </div>
+
                 </button>
 
-            </div>
-
-
-            <div
-                id="shareLinkBox"
-                style="
-                    margin-top:12px;
-                    display:${isPublic ? "block" : "none"};
-                ">
-
-                <div
-                    style="
-                        color:#7f8ba2;
-                        font-size:11px;
-                        margin-bottom:6px;
-                    ">
-                    Ссылка приглашения
-                </div>
-
-                <div
-                    style="
-                        display:flex;
-                        gap:7px;
-                    ">
-
-                    <input
-                        id="folderInvitePreview"
-                        class="input"
-                        readonly
-                        value="${folder
-                            ? createPublicLink(folder)
-                            : "Ссылка появится после сохранения"}">
-
-                    ${
-                        folder
-                        ? `
-                            <button
-                                type="button"
-                                class="btn"
-                                onclick="copyInviteLink(
-                                    '${folder.id}'
-                                )">
-                                Копировать
-                            </button>
-                          `
-                        : ""
-                    }
-
-                </div>
-
-            </div>
-
-        </div>
-
-        <div class="modal-footer">
-
-            ${
-                folder
-                ? `
-                    <button
-                        type="button"
-                        class="btn danger"
-                        style="margin-right:auto"
-                        onclick="deleteFolder(
-                            '${folder.id}'
-                        )">
-                        Удалить
-                    </button>
-                  `
-                : ""
-            }
-
-            <button
-                type="button"
-                class="btn"
-                onclick="closeModal()">
-                Отмена
-            </button>
-
-            <button
-                type="button"
-                class="btn primary"
-                onclick="saveFolder()">
-                Сохранить
-            </button>
-
-        </div>
-    `);
+            `)
+            .join("");
 }
 
+function selectPartGroup(name){
 
-/*
-  Надежный toggle.
-  Мы не используем скрытый checkbox.
-*/
-function toggleFolderPublicSwitch(){
+    selectedPartName =
+        name;
 
-    const button =
-        document.getElementById(
-            "folderPublicSwitch"
-        );
-
-    if(!button) return;
-
-    const enabled =
-        button.classList.toggle("on");
-
-    button.setAttribute(
-        "aria-pressed",
-        enabled ? "true" : "false"
-    );
-
-    const linkBox =
-        document.getElementById(
-            "shareLinkBox"
-        );
-
-    if(linkBox){
-        linkBox.style.display =
-            enabled ? "block" : "none";
-    }
+    renderCatalog();
 }
 
-function saveFolder(){
-
-    const name =
-        document
-            .getElementById("folderName")
-            .value
-            .trim();
-
-    if(!name){
-
-        toast(
-            "Введите название папки",
-            "error"
-        );
-
-        return;
-    }
-
-    const switchEl =
-        document.getElementById(
-            "folderPublicSwitch"
-        );
-
-    const isPublic =
-        !!switchEl?.classList.contains("on");
-
-    if(editingFolderId){
-
-        const folder =
-            getFolder(editingFolderId);
-
-        if(!folder) return;
-
-        folder.name = name;
-        folder.public = isPublic;
-        folder.updatedAt = now();
-
-        toast(
-            isPublic
-                ? "Папка стала общей"
-                : "Папка стала приватной",
-            "success"
-        );
-
-    }else{
-
-        state.folders.push({
-
-            id:uid("folder"),
-
-            userId:currentUser,
-
-            projectId:currentProjectId,
-
-            name,
-
-            public:isPublic,
-
-            inviteToken:uid("invite"),
-
-            createdAt:now(),
-
-            updatedAt:now()
-        });
-
-        toast(
-            isPublic
-                ? "Общая папка создана"
-                : "Папка создана",
-            "success"
-        );
-    }
-
-    saveState();
-
-    closeModal();
-
-    renderCurrentProject();
-
-    updateStats();
-}
-
-function deleteFolder(folderId){
-
-    const folder =
-        getFolder(folderId);
-
-    if(!folder) return;
-
-    if(!confirm(
-        `Удалить папку "${folder.name}"?\n\n` +
-        "Все детали внутри будут удалены."
-    )){
-        return;
-    }
-
-    const parts =
-        getParts(folderId);
-
-    for(const part of parts){
-
-        if(part.fileId){
-            deleteFile(part.fileId);
-        }
-    }
-
-    state.parts =
-        state.parts.filter(
-            p => p.folderId !== folderId
-        );
-
-    state.folders =
-        state.folders.filter(
-            f => f.id !== folderId
-        );
-
-    saveState();
-
-    closeModal();
-
-    if(currentFolderId === folderId){
-        openProject(currentProjectId);
-    }else{
-        renderCurrentProject();
-    }
-
-    toast(
-        "Папка удалена",
-        "success"
-    );
-}
-
-function openFolderMenu(event,folderId){
-
-    event.stopPropagation();
-
-    const folder =
-        getFolder(folderId);
-
-    if(!folder) return;
-
-    showContextMenu(
-        event.clientX,
-        event.clientY,
-        [
-            {
-                text:"Открыть",
-                action:()=>openFolder(folderId)
-            },
-            {
-                text:
-                    folder.public
-                    ? "Сделать приватной"
-                    : "Сделать общей",
-                action:()=>toggleFolderPublic(folderId)
-            },
-            {
-                text:"Изменить",
-                action:()=>openFolderModal(folderId)
-            },
-            {
-                text:"Удалить",
-                danger:true,
-                action:()=>deleteFolder(folderId)
-            }
-        ]
-    );
-}
-
-function toggleFolderPublic(folderId){
-
-    const folder =
-        getFolder(folderId);
-
-    if(!folder) return;
-
-    folder.public = !folder.public;
-    folder.updatedAt = now();
-
-    saveState();
-
-    renderCurrentProject();
-
-    toast(
-        folder.public
-            ? "Папка теперь общая"
-            : "Папка теперь приватная",
-        "success"
-    );
-}
-
-
-/* =========================================================
-   PARTS
-========================================================= */
-
-function renderCurrentFolder(){
-
-    const folder =
-        getFolder(currentFolderId);
-
-    if(!folder) return;
-
-    const project =
-        getProject(folder.projectId);
-
-    if(!project) return;
+function renderVariants(groups){
 
     const container =
         document.getElementById(
-            "folderContainer"
+            "variantsContainer"
         );
 
-    const query =
-        (
-            document
-                .getElementById("partSearch")
-                ?.value || ""
-        )
-        .trim()
-        .toLowerCase();
-
-    let parts =
-        getParts(folder.id);
-
-    if(query){
-
-        parts =
-            parts.filter(
-                part =>
-                    part.name
-                        .toLowerCase()
-                        .includes(query) ||
-                    part.number
-                        .toLowerCase()
-                        .includes(query)
-            );
-    }
-
-    parts.sort(
-        (a,b)=>
-            a.name.localeCompare(
-                b.name,
-                "ru",
-                {numeric:true}
-            )
-    );
-
-    if(!parts.length){
+    if(!groups.length){
 
         container.innerHTML = `
             <div class="empty">
@@ -3205,9 +2582,7 @@ function renderCurrentFolder(){
                 </div>
 
                 <div>
-                    ${query
-                        ? "Детали не найдены"
-                        : "В папке пока нет деталей"}
+                    В категории пока нет деталей.
                 </div>
 
                 <div style="margin-top:14px;">
@@ -3225,128 +2600,204 @@ function renderCurrentFolder(){
         return;
     }
 
+    const group =
+        groups.find(
+            g =>
+                g.name ===
+                selectedPartName
+        );
+
+    if(!group){
+
+        return;
+    }
+
+    const parts =
+        [...group.parts]
+            .sort(
+                (a,b)=>
+                    a.number.localeCompare(
+                        b.number,
+                        "ru",
+                        {
+                            numeric:true
+                        }
+                    )
+            );
+
     container.innerHTML = `
-        <div class="part-grid">
 
-            ${parts.map(part=>{
+        <div
+            style="
+                margin-bottom:12px;
+                color:#8d99ae;
+                font-size:11px;
+            ">
+            ${escapeHtml(
+                group.name
+            )}
+            ·
+            ${parts.length}
+            вариантов
+        </div>
 
-                const preview =
-                    part.code
-                        ? escapeHtml(
-                            part.code
-                        ).slice(0,350)
-                        : "Код не указан";
+        <div class="variant-grid">
 
-                return `
-                    <div class="part-card">
-
-                        <div class="part-number">
-                            № ${escapeHtml(
-                                part.number
-                            )}
-                        </div>
-
-                        <div class="part-name">
-                            ${escapeHtml(
-                                part.name
-                            )}
-                        </div>
-
-                        <div class="code-preview">
-                            ${preview}
-                        </div>
-
-                        <div class="part-footer">
-
-                            <div>
-
-                                ${
-                                    part.fileName
-                                    ? `
-                                        <span class="file-badge">
-                                            📎
-                                            ${escapeHtml(
-                                                part.fileName
-                                            )}
-                                        </span>
-                                      `
-                                    : `
-                                        <span class="file-badge">
-                                            Без чертежа
-                                        </span>
-                                      `
-                                }
-
-                            </div>
-
-                            <div
-                                style="
-                                    color:#66738b;
-                                    font-size:10px;
-                                ">
-                                ${formatDate(
-                                    part.updatedAt
-                                )}
-                            </div>
-
-                        </div>
-
-                        <div class="card-actions">
-
-                            <button
-                                type="button"
-                                class="btn primary"
-                                onclick="viewPart(
-                                    '${part.id}'
-                                )">
-                                Открыть
-                            </button>
-
-                            <button
-                                type="button"
-                                class="btn"
-                                onclick="openPartModal(
-                                    '${part.id}'
-                                )">
-                                Изменить
-                            </button>
-
-                            <button
-                                type="button"
-                                class="btn danger"
-                                onclick="deletePart(
-                                    '${part.id}'
-                                )">
-                                ×
-                            </button>
-
-                        </div>
-
-                    </div>
-                `;
-            }).join("")}
+            ${parts
+                .map(part=>
+                    renderVariantCard(part)
+                )
+                .join("")}
 
         </div>
     `;
 }
 
+function renderVariantCard(part){
+
+    const preview =
+        part.code
+            .split("\n")
+            .slice(0,4)
+            .join("\n");
+
+    return `
+
+        <div class="variant-card">
+
+            <div class="variant-number">
+                № ${escapeHtml(
+                    part.number
+                )}
+            </div>
+
+            <div class="variant-name">
+                ${escapeHtml(
+                    part.name
+                )}
+            </div>
+
+            <div class="variant-meta">
+                Обновлено:
+                ${formatDate(
+                    part.updatedAt
+                )}
+            </div>
+
+            <div class="gcode-mini">
+                ${escapeHtml(
+                    preview
+                )}
+            </div>
+
+            <div class="badges">
+
+                ${
+                    part.drawingName
+                    ? `
+                        <span class="badge">
+                            📐 Чертёж
+                        </span>
+                      `
+                    : ""
+                }
+
+                <span class="badge">
+                    G-код
+                </span>
+
+            </div>
+
+            <div
+                style="
+                    display:flex;
+                    gap:7px;
+                    margin-top:14px;
+                ">
+
+                <button
+                    type="button"
+                    class="btn primary"
+                    style="flex:1"
+                    onclick="
+                        openPartViewer(
+                            '${part.id}'
+                        )
+                    ">
+                    Открыть
+                </button>
+
+                <button
+                    type="button"
+                    class="btn"
+                    onclick="
+                        openPartModal(
+                            '${part.id}'
+                        )
+                    ">
+                    ✎
+                </button>
+
+            </div>
+
+        </div>
+    `;
+}
+
+
+/* =========================================================
+   PART MODAL
+========================================================= */
+
 function openPartModal(partId=null){
 
-    editingPartId = partId;
-    selectedDrawing = null;
+    editingPartId =
+        partId;
+
+    selectedFile = null;
 
     const part =
         partId
-            ? getPart(partId)
-            : null;
+        ? state.parts.find(
+            p =>
+                p.id ===
+                partId
+          )
+        : null;
+
+    /*
+      Если редактирует обычный пользователь —
+      только свои детали.
+    */
+    if(
+        part &&
+        !isAdmin() &&
+        part.userId !== currentUserId
+    ){
+
+        toast(
+            "Нет доступа.",
+            "error"
+        );
+
+        return;
+    }
+
+    const category =
+        part?.category ||
+        currentCategory;
 
     showModal(`
         <div class="modal-header">
 
             <div class="modal-title">
-                ${part
+
+                ${
+                    part
                     ? "Редактировать деталь"
-                    : "Новая деталь"}
+                    : "Новая деталь"
+                }
+
             </div>
 
             <button
@@ -3358,7 +2809,53 @@ function openPartModal(partId=null){
 
         </div>
 
+
         <div class="modal-body">
+
+            <div class="field">
+
+                <label>
+                    Раздел
+                </label>
+
+                <select
+                    id="partCategory"
+                    class="select">
+
+                    <option
+                        value="programs"
+                        ${
+                            category === "programs"
+                            ? "selected"
+                            : ""
+                        }>
+                        Программы
+                    </option>
+
+                    <option
+                        value="tools"
+                        ${
+                            category === "tools"
+                            ? "selected"
+                            : ""
+                        }>
+                        Инструмент
+                    </option>
+
+                    <option
+                        value="other"
+                        ${
+                            category === "other"
+                            ? "selected"
+                            : ""
+                        }>
+                        Прочее
+                    </option>
+
+                </select>
+
+            </div>
+
 
             <div class="field">
 
@@ -3369,12 +2866,14 @@ function openPartModal(partId=null){
                 <input
                     id="partName"
                     class="input"
+                    required
                     value="${escapeHtml(
                         part?.name || ""
                     )}"
-                    placeholder="Например: Фланец">
+                    placeholder="Например: Шпилька">
 
             </div>
+
 
             <div class="field">
 
@@ -3385,41 +2884,35 @@ function openPartModal(partId=null){
                 <input
                     id="partNumber"
                     class="input"
+                    required
                     value="${escapeHtml(
                         part?.number || ""
                     )}"
-                    placeholder="Например: 001-025">
+                    placeholder="Например: М8-100">
 
             </div>
+
 
             <div class="field">
 
                 <label>
-                    Код детали *
+                    G-код *
                 </label>
 
                 <textarea
                     id="partCode"
                     class="textarea"
-                    placeholder="Введите код детали...">${escapeHtml(
+                    placeholder="Вставьте G-код программы...">${escapeHtml(
                         part?.code || ""
                     )}</textarea>
 
-                <div
-                    style="
-                        margin-top:5px;
-                        color:#69758b;
-                        font-size:10px;
-                    ">
-                    Минимум 20 символов.
-                </div>
-
             </div>
+
 
             <div class="field">
 
                 <label>
-                    Чертеж JPG / PNG / PDF
+                    Чертёж
                 </label>
 
                 <label class="file-drop">
@@ -3428,26 +2921,26 @@ function openPartModal(partId=null){
                         id="drawingInput"
                         type="file"
                         accept=".jpg,.jpeg,.png,.pdf,image/jpeg,image/png,application/pdf"
-                        onchange="previewSelectedFile(event)">
+                        onchange="previewDrawing(event)">
 
-                    <div style="font-size:25px;">
-                        ${part?.fileName
-                            ? "📎"
-                            : "☁"}
+                    <div style="font-size:28px;">
+                        📐
                     </div>
 
                     <div
                         style="
                             margin-top:8px;
-                            color:#c0c8d7;
+                            color:#bdc6d7;
                         ">
+
                         ${
-                            part?.fileName
+                            part?.drawingName
                             ? escapeHtml(
-                                part.fileName
+                                part.drawingName
                             )
-                            : "Нажмите для выбора файла"
+                            : "Выбрать чертёж"
                         }
+
                     </div>
 
                     <div
@@ -3456,16 +2949,21 @@ function openPartModal(partId=null){
                             font-size:10px;
                             margin-top:5px;
                         ">
+
                         JPG, PNG или PDF
+
                     </div>
 
                 </label>
 
-                <div id="selectedFilePreview"></div>
+                <div
+                    id="drawingPreview">
+                </div>
 
             </div>
 
         </div>
+
 
         <div class="modal-footer">
 
@@ -3476,9 +2974,11 @@ function openPartModal(partId=null){
                         type="button"
                         class="btn danger"
                         style="margin-right:auto"
-                        onclick="deletePart(
-                            '${part.id}'
-                        )">
+                        onclick="
+                            deletePart(
+                                '${part.id}'
+                            )
+                        ">
                         Удалить
                     </button>
                   `
@@ -3503,41 +3003,48 @@ function openPartModal(partId=null){
     `);
 }
 
-function previewSelectedFile(event){
+function previewDrawing(event){
 
     const file =
         event.target.files?.[0];
 
-    selectedDrawing = file || null;
+    selectedFile =
+        file || null;
 
-    const preview =
+    const container =
         document.getElementById(
-            "selectedFilePreview"
+            "drawingPreview"
         );
 
     if(!file){
 
-        preview.innerHTML = "";
+        container.innerHTML = "";
+
         return;
     }
 
-    const allowed =
-        [
-            "image/jpeg",
-            "image/png",
-            "application/pdf"
-        ];
+    const allowed = [
+        "image/jpeg",
+        "image/png",
+        "application/pdf"
+    ];
 
-    if(!allowed.includes(file.type)){
+    if(
+        !allowed.includes(
+            file.type
+        )
+    ){
 
         toast(
-            "Разрешены только JPG, PNG и PDF.",
+            "Разрешены JPG, PNG и PDF.",
             "error"
         );
 
         event.target.value = "";
-        selectedDrawing = null;
-        preview.innerHTML = "";
+
+        selectedFile = null;
+
+        container.innerHTML = "";
 
         return;
     }
@@ -3545,9 +3052,12 @@ function previewSelectedFile(event){
     const url =
         URL.createObjectURL(file);
 
-    if(file.type === "application/pdf"){
+    if(
+        file.type ===
+        "application/pdf"
+    ){
 
-        preview.innerHTML = `
+        container.innerHTML = `
             <div class="file-preview">
 
                 <iframe
@@ -3559,12 +3069,12 @@ function previewSelectedFile(event){
 
     }else{
 
-        preview.innerHTML = `
+        container.innerHTML = `
             <div class="file-preview">
 
                 <img
                     src="${url}"
-                    alt="Предпросмотр">
+                    alt="Чертёж">
 
             </div>
         `;
@@ -3573,28 +3083,41 @@ function previewSelectedFile(event){
 
 async function savePart(){
 
+    const category =
+        document
+            .getElementById(
+                "partCategory"
+            )
+            .value;
+
     const name =
         document
-            .getElementById("partName")
+            .getElementById(
+                "partName"
+            )
             .value
             .trim();
 
     const number =
         document
-            .getElementById("partNumber")
+            .getElementById(
+                "partNumber"
+            )
             .value
             .trim();
 
     const code =
         document
-            .getElementById("partCode")
+            .getElementById(
+                "partCode"
+            )
             .value
             .trim();
 
     if(!name){
 
         toast(
-            "Введите название детали",
+            "Введите название детали.",
             "error"
         );
 
@@ -3604,17 +3127,17 @@ async function savePart(){
     if(!number){
 
         toast(
-            "Введите номер детали",
+            "Введите номер детали.",
             "error"
         );
 
         return;
     }
 
-    if(code.length < 20){
+    if(!code){
 
         toast(
-            "Код должен содержать минимум 20 символов.",
+            "Введите G-код.",
             "error"
         );
 
@@ -3622,22 +3145,24 @@ async function savePart(){
     }
 
     /*
-      Проверяем уникальность номера
-      внутри текущей папки.
+      Номер должен быть уникальным
+      в рамках одного названия и категории.
     */
     const duplicate =
-        getParts(currentFolderId)
-            .find(
-                p =>
-                    p.number.toLowerCase() ===
+        state.parts.find(
+            p =>
+                p.category === category &&
+                p.name.toLowerCase() ===
+                    name.toLowerCase() &&
+                p.number.toLowerCase() ===
                     number.toLowerCase() &&
-                    p.id !== editingPartId
-            );
+                p.id !== editingPartId
+        );
 
     if(duplicate){
 
         toast(
-            "Деталь с таким номером уже существует в этой папке.",
+            "Такая деталь с этим номером уже существует.",
             "error"
         );
 
@@ -3646,18 +3171,40 @@ async function savePart(){
 
     let part =
         editingPartId
-            ? getPart(editingPartId)
-            : null;
+        ? state.parts.find(
+            p =>
+                p.id ===
+                editingPartId
+          )
+        : null;
 
-    if(!part){
+    if(part){
+
+        part.category =
+            category;
+
+        part.name =
+            name;
+
+        part.number =
+            number;
+
+        part.code =
+            code;
+
+        part.updatedAt =
+            now();
+
+    }else{
 
         part = {
 
             id:uid("part"),
 
-            userId:currentUser,
+            userId:
+                currentUserId,
 
-            folderId:currentFolderId,
+            category,
 
             name,
 
@@ -3665,128 +3212,150 @@ async function savePart(){
 
             code,
 
-            fileId:null,
+            drawingId:null,
 
-            fileName:null,
+            drawingName:null,
 
-            fileType:null,
+            drawingType:null,
 
-            fileSize:null,
+            createdAt:
+                now(),
 
-            createdAt:now(),
-
-            updatedAt:now()
+            updatedAt:
+                now()
         };
 
-        state.parts.push(part);
-
-    }else{
-
-        part.name = name;
-        part.number = number;
-        part.code = code;
-        part.updatedAt = now();
+        state.parts.push(
+            part
+        );
     }
 
     /*
-      Новый чертеж.
+      Сохраняем чертёж.
     */
-    if(selectedDrawing){
+    if(selectedFile){
 
-        if(part.fileId){
+        if(part.drawingId){
 
-            await deleteFile(
-                part.fileId
+            await deleteBlob(
+                part.drawingId
             );
         }
 
-        const fileId =
-            uid("file");
+        const drawingId =
+            uid("drawing");
 
-        await saveFile({
+        await saveBlob(
+            drawingId,
+            selectedFile
+        );
 
-            id:fileId,
+        part.drawingId =
+            drawingId;
 
-            blob:selectedDrawing,
+        part.drawingName =
+            selectedFile.name;
 
-            name:selectedDrawing.name,
-
-            type:selectedDrawing.type,
-
-            size:selectedDrawing.size,
-
-            createdAt:now()
-        });
-
-        part.fileId = fileId;
-        part.fileName = selectedDrawing.name;
-        part.fileType = selectedDrawing.type;
-        part.fileSize = selectedDrawing.size;
+        part.drawingType =
+            selectedFile.type;
     }
 
     saveState();
 
     closeModal();
 
-    renderCurrentFolder();
+    currentCategory =
+        category;
 
-    updateStats();
+    selectedPartName =
+        name;
+
+    /*
+      Если после сохранения
+      категория изменилась —
+      обновляем интерфейс.
+    */
+    openCategory(
+        category
+    );
 
     toast(
         editingPartId
-            ? "Деталь обновлена"
-            : "Деталь создана",
+        ? "Деталь обновлена."
+        : "Деталь добавлена.",
         "success"
     );
-
-    selectedDrawing = null;
 }
 
-async function viewPart(partId){
+
+/* =========================================================
+   VIEW PART
+========================================================= */
+
+async function openPartViewer(partId){
 
     const part =
-        getPart(partId);
+        state.parts.find(
+            p =>
+                p.id ===
+                partId
+        );
 
-    if(!part) return;
+    if(!part){
 
-    let drawingHtml =
+        toast(
+            "Деталь не найдена.",
+            "error"
+        );
+
+        return;
+    }
+
+    let drawing =
         `
         <div class="empty">
-            Чертеж отсутствует
+            Чертёж не прикреплён.
         </div>
         `;
 
-    if(part.fileId){
+    if(part.drawingId){
 
-        const file =
-            await getFile(part.fileId);
+        const blob =
+            await getBlob(
+                part.drawingId
+            );
 
-        if(file){
+        if(blob){
 
             const url =
                 URL.createObjectURL(
-                    file.blob
+                    blob
                 );
 
-            if(file.type === "application/pdf"){
+            if(
+                part.drawingType ===
+                "application/pdf"
+            ){
 
-                drawingHtml = `
+                drawing = `
                     <div class="file-preview">
+
                         <iframe
                             src="${url}">
                         </iframe>
+
                     </div>
                 `;
 
             }else{
 
-                drawingHtml = `
+                drawing = `
                     <div class="file-preview">
+
                         <img
                             src="${url}"
-                            alt="${escapeHtml(
-                                part.name
-                            )}">
+                            alt="Чертёж">
+
                     </div>
                 `;
             }
@@ -3801,20 +3370,36 @@ async function viewPart(partId){
 
                 <div
                     style="
+                        color:#82a4ff;
                         font-size:11px;
-                        color:#7598ff;
+                        font-weight:800;
                     ">
-                    № ${escapeHtml(
-                        part.number
+                    ${escapeHtml(
+                        categoryName(
+                            part.category
+                        )
                     )}
                 </div>
 
                 <div
                     class="modal-title"
-                    style="margin-top:4px;">
+                    style="margin-top:5px;">
+
                     ${escapeHtml(
                         part.name
                     )}
+
+                    <span
+                        style="
+                            color:#8492aa;
+                            font-weight:500;
+                        ">
+                        ·
+                        ${escapeHtml(
+                            part.number
+                        )}
+                    </span>
+
                 </div>
 
             </div>
@@ -3828,71 +3413,88 @@ async function viewPart(partId){
 
         </div>
 
+
         <div class="modal-body">
 
             <div
                 style="
-                    color:#8e9ab0;
-                    font-size:11px;
+                    font-size:10px;
+                    color:#718097;
+                    font-weight:800;
                     margin-bottom:7px;
+                    text-transform:uppercase;
                 ">
-                КОД ДЕТАЛИ
+                Чертёж
             </div>
 
-            <pre
-                style="
-                    margin:0;
-                    white-space:pre-wrap;
-                    overflow-wrap:anywhere;
-                    background:#070a11;
-                    border:1px solid var(--line);
-                    border-radius:13px;
-                    padding:15px;
-                    color:#c4cee0;
-                    font:12px/1.6 ui-monospace,SFMono-Regular,Menlo,monospace;
-                ">${escapeHtml(
-                    part.code
-                )}</pre>
+            ${drawing}
+
 
             <div
                 style="
-                    margin-top:22px;
-                    color:#8e9ab0;
-                    font-size:11px;
-                    margin-bottom:7px;
+                    font-size:10px;
+                    color:#718097;
+                    font-weight:800;
+                    margin:22px 0 7px;
+                    text-transform:uppercase;
                 ">
-                ЧЕРТЕЖ
+                G-код
             </div>
 
-            ${drawingHtml}
+            <pre class="code-view">${escapeHtml(
+                part.code
+            )}</pre>
 
         </div>
 
+
         <div class="modal-footer">
 
+            <button
+                type="button"
+                class="btn"
+                onclick="
+                    downloadGCode(
+                        '${part.id}'
+                    )
+                ">
+                ⇩ Скачать файл
+            </button>
+
             ${
-                part.fileId
+                part.drawingId
                 ? `
                     <button
                         type="button"
                         class="btn"
-                        onclick="downloadPartFile(
-                            '${part.id}'
-                        )">
-                        ⇩ Скачать чертеж
+                        onclick="
+                            downloadDrawing(
+                                '${part.id}'
+                            )
+                        ">
+                        ⇩ Скачать чертёж
                     </button>
                   `
                 : ""
             }
 
-            <button
-                type="button"
-                class="btn"
-                onclick="openPartModal(
-                    '${part.id}'
-                )">
-                Изменить
-            </button>
+            ${
+                isAdmin() ||
+                part.userId === currentUserId
+                ? `
+                    <button
+                        type="button"
+                        class="btn"
+                        onclick="
+                            openPartModal(
+                                '${part.id}'
+                            )
+                        ">
+                        ✎ Изменить
+                    </button>
+                  `
+                : ""
+            }
 
             <button
                 type="button"
@@ -3906,29 +3508,68 @@ async function viewPart(partId){
     `);
 }
 
-async function downloadPartFile(partId){
+
+/* =========================================================
+   DOWNLOAD G-CODE
+========================================================= */
+
+function safeFileName(value){
+
+    return String(value)
+        .replace(/[<>:"/\\|?*]/g,"_")
+        .replace(/\s+/g," ")
+        .trim();
+}
+
+function downloadGCode(partId){
 
     const part =
-        getPart(partId);
+        state.parts.find(
+            p =>
+                p.id ===
+                partId
+        );
 
-    if(!part?.fileId) return;
+    if(!part) return;
 
-    const file =
-        await getFile(part.fileId);
+    /*
+      Название:
+      Название детали-номер.nc
 
-    if(!file) return;
+      Например:
+      Шпилька-М8-100.nc
+    */
+    const filename =
+        safeFileName(
+            part.name +
+            "-" +
+            part.number
+        ) +
+        ".nc";
+
+    const blob =
+        new Blob(
+            [
+                part.code
+            ],
+            {
+                type:
+                    "text/plain;charset=utf-8"
+            }
+        );
 
     const url =
         URL.createObjectURL(
-            file.blob
+            blob
         );
 
     const a =
         document.createElement("a");
 
     a.href = url;
+
     a.download =
-        file.name || "drawing";
+        filename;
 
     document.body.appendChild(a);
 
@@ -3937,450 +3578,60 @@ async function downloadPartFile(partId){
     a.remove();
 
     setTimeout(
-        ()=>URL.revokeObjectURL(url),
+        ()=>{
+            URL.revokeObjectURL(
+                url
+            );
+        },
         1000
     );
-}
-
-async function deletePart(partId){
-
-    const part =
-        getPart(partId);
-
-    if(!part) return;
-
-    if(!confirm(
-        `Удалить деталь "${part.name}"?`
-    )){
-        return;
-    }
-
-    if(part.fileId){
-
-        await deleteFile(
-            part.fileId
-        );
-    }
-
-    state.parts =
-        state.parts.filter(
-            p => p.id !== partId
-        );
-
-    saveState();
-
-    closeModal();
-
-    renderCurrentFolder();
 
     toast(
-        "Деталь удалена",
+        "Файл " + filename + " скачан.",
         "success"
     );
 }
 
 
 /* =========================================================
-   GLOBAL SEARCH
+   DOWNLOAD DRAWING
 ========================================================= */
 
-function renderGlobalSearch(){
+async function downloadDrawing(partId){
 
-    const input =
-        document.getElementById(
-            "globalSearch"
+    const part =
+        state.parts.find(
+            p =>
+                p.id ===
+                partId
         );
 
-    const container =
-        document.getElementById(
-            "globalSearchResults"
-        );
-
-    if(!input || !container) return;
-
-    const query =
-        input.value
-            .trim()
-            .toLowerCase();
-
-    if(!query){
-
-        container.innerHTML = "";
+    if(
+        !part ||
+        !part.drawingId
+    ){
         return;
     }
 
-    const results =
-        state.parts.filter(
-            part =>
-                part.userId === currentUser &&
-                (
-                    part.name
-                        .toLowerCase()
-                        .includes(query) ||
-                    part.number
-                        .toLowerCase()
-                        .includes(query)
-                )
+    const blob =
+        await getBlob(
+            part.drawingId
         );
 
-    if(!results.length){
-
-        container.innerHTML = `
-            <div class="empty">
-                Ничего не найдено.
-            </div>
-        `;
-
-        return;
-    }
-
-    container.innerHTML = `
-
-        <div
-            style="
-                color:#7f8ba0;
-                font-size:12px;
-                margin-bottom:10px;
-            ">
-            Найдено: ${results.length}
-        </div>
-
-        <div class="part-grid">
-
-            ${results.map(part=>{
-
-                const folder =
-                    getFolder(part.folderId);
-
-                const project =
-                    folder
-                        ? getProject(
-                            folder.projectId
-                        )
-                        : null;
-
-                return `
-                    <div class="part-card">
-
-                        <div class="part-number">
-                            № ${escapeHtml(
-                                part.number
-                            )}
-                        </div>
-
-                        <div class="part-name">
-                            ${escapeHtml(
-                                part.name
-                            )}
-                        </div>
-
-                        <div class="card-meta">
-                            ${
-                                project
-                                ? escapeHtml(
-                                    project.name
-                                )
-                                : ""
-                            }
-                            ${project && folder ? " › " : ""}
-                            ${
-                                folder
-                                ? escapeHtml(
-                                    folder.name
-                                )
-                                : ""
-                            }
-                        </div>
-
-                        <div class="card-actions">
-
-                            <button
-                                type="button"
-                                class="btn primary"
-                                onclick="
-                                    openFolder(
-                                        '${folder?.id || ""}'
-                                    );
-                                    setTimeout(
-                                        ()=>viewPart(
-                                            '${part.id}'
-                                        ),
-                                        100
-                                    );
-                                ">
-                                Открыть
-                            </button>
-
-                        </div>
-
-                    </div>
-                `;
-            }).join("")}
-
-        </div>
-    `;
-}
-
-function focusGlobalSearch(){
-
-    goDashboard();
-
-    const input =
-        document.getElementById(
-            "globalSearch"
-        );
-
-    if(input){
-
-        setTimeout(
-            ()=>{
-                input.focus();
-            },
-            100
-        );
-    }
-}
-
-
-/* =========================================================
-   PUBLIC LINKS
-========================================================= */
-
-function createPublicLink(folder){
-
-    if(!folder.inviteToken){
-
-        folder.inviteToken =
-            uid("invite");
-
-        saveState();
-    }
-
-    return (
-        location.origin +
-        location.pathname +
-        "#public=" +
-        folder.inviteToken
-    );
-}
-
-function copyInviteLink(folderId){
-
-    const folder =
-        getFolder(folderId);
-
-    if(!folder) return;
-
-    const link =
-        createPublicLink(folder);
-
-    navigator.clipboard
-        ?.writeText(link)
-        .then(
-            ()=>toast(
-                "Ссылка скопирована",
-                "success"
-            )
-        )
-        .catch(
-            ()=>prompt(
-                "Скопируйте ссылку:",
-                link
-            )
-        );
-}
-
-function openPublicFolderByToken(token){
-
-    const folder =
-        state.folders.find(
-            f =>
-                f.inviteToken === token &&
-                f.public
-        );
-
-    if(!folder){
+    if(!blob){
 
         toast(
-            "Общая папка не найдена.",
+            "Чертёж не найден.",
             "error"
         );
 
         return;
     }
 
-    const project =
-        state.projects.find(
-            p => p.id === folder.projectId
-        );
-
-    const parts =
-        state.parts.filter(
-            p => p.folderId === folder.id
-        );
-
-    document
-        .getElementById("authPage")
-        .classList.add("hidden");
-
-    document
-        .getElementById("app")
-        .classList.remove("hidden");
-
-    hideAllPages();
-
-    document
-        .getElementById("pagePublic")
-        .classList.remove("hidden");
-
-    document
-        .getElementById("breadcrumb")
-        .innerHTML = `
-            <strong>Публичный доступ</strong>
-        `;
-
-    document
-        .getElementById("storageStatus")
-        .textContent =
-        "Только просмотр";
-
-    document
-        .getElementById("pagePublic")
-        .innerHTML = `
-
-        <div class="hero">
-
-            <h1>
-                ${escapeHtml(
-                    folder.name
-                )}
-            </h1>
-
-            <p>
-                Публичная папка
-                ${
-                    project
-                    ? "проекта «" +
-                        escapeHtml(
-                            project.name
-                        ) +
-                        "»"
-                    : ""
-                }
-            </p>
-
-        </div>
-
-        ${
-            parts.length
-            ? `
-                <div class="part-grid">
-
-                    ${parts.map(part=>`
-
-                        <div class="part-card">
-
-                            <div class="part-number">
-                                № ${escapeHtml(
-                                    part.number
-                                )}
-                            </div>
-
-                            <div class="part-name">
-                                ${escapeHtml(
-                                    part.name
-                                )}
-                            </div>
-
-                            <div class="code-preview">
-                                ${escapeHtml(
-                                    part.code
-                                )}
-                            </div>
-
-                            ${
-                                part.fileName
-                                ? `
-                                    <div
-                                        class="file-badge"
-                                        style="margin-top:12px;">
-                                        📎
-                                        ${escapeHtml(
-                                            part.fileName
-                                        )}
-                                    </div>
-                                  `
-                                : ""
-                            }
-
-                        </div>
-
-                    `).join("")}
-
-                </div>
-              `
-            : `
-                <div class="empty">
-                    В папке пока нет деталей.
-                </div>
-              `
-        }
-
-    `;
-
-    /*
-      В локальном режиме ссылка работает
-      только там, где сохранено это локальное
-      хранилище.
-    */
-}
-
-
-/* =========================================================
-   EXPORT / IMPORT
-========================================================= */
-
-function exportData(){
-
-    const data = {
-
-        version:4,
-
-        exportedAt:now(),
-
-        userId:currentUser,
-
-        users:
-            state.users.filter(
-                u => u.id === currentUser
-            ),
-
-        projects:
-            getProjects(),
-
-        folders:
-            getFolders(),
-
-        parts:
-            getParts()
-    };
-
-    const blob =
-        new Blob(
-            [
-                JSON.stringify(
-                    data,
-                    null,
-                    2
-                )
-            ],
-            {
-                type:"application/json"
-            }
-        );
-
     const url =
-        URL.createObjectURL(blob);
+        URL.createObjectURL(
+            blob
+        );
 
     const a =
         document.createElement("a");
@@ -4388,248 +3639,617 @@ function exportData(){
     a.href = url;
 
     a.download =
-        "minicad-backup-" +
-        new Date()
-            .toISOString()
-            .slice(0,10) +
-        ".json";
+        part.drawingName ||
+        (
+            safeFileName(
+                part.name +
+                "-" +
+                part.number
+            ) +
+            ".pdf"
+        );
+
+    document.body.appendChild(a);
 
     a.click();
 
-    URL.revokeObjectURL(url);
+    a.remove();
+
+    setTimeout(
+        ()=>{
+            URL.revokeObjectURL(
+                url
+            );
+        },
+        1000
+    );
+}
+
+
+/* =========================================================
+   DELETE PART
+========================================================= */
+
+async function deletePart(partId){
+
+    const part =
+        state.parts.find(
+            p =>
+                p.id ===
+                partId
+        );
+
+    if(!part) return;
+
+    if(
+        !isAdmin() &&
+        part.userId !== currentUserId
+    ){
+
+        toast(
+            "Нет доступа.",
+            "error"
+        );
+
+        return;
+    }
+
+    if(
+        !confirm(
+            `Удалить "${part.name} — ${part.number}"?`
+        )
+    ){
+        return;
+    }
+
+    if(part.drawingId){
+
+        await deleteBlob(
+            part.drawingId
+        );
+    }
+
+    state.parts =
+        state.parts.filter(
+            p =>
+                p.id !==
+                partId
+        );
+
+    saveState();
+
+    closeModal();
+
+    selectedPartName =
+        null;
+
+    renderCatalog();
 
     toast(
-        "Резервная копия создана",
+        "Деталь удалена.",
         "success"
     );
 }
 
-function importData(event){
-
-    const file =
-        event.target.files?.[0];
-
-    if(!file) return;
-
-    const reader =
-        new FileReader();
-
-    reader.onload = function(){
-
-        try{
-
-            const data =
-                JSON.parse(
-                    reader.result
-                );
-
-            if(!data || !Array.isArray(data.projects)){
-                throw new Error(
-                    "Некорректный файл"
-                );
-            }
-
-            const importedProjects =
-                data.projects.map(
-                    p => ({
-                        ...p,
-                        userId:currentUser
-                    })
-                );
-
-            const importedFolders =
-                (data.folders || []).map(
-                    f => ({
-                        ...f,
-                        userId:currentUser
-                    })
-                );
-
-            const importedParts =
-                (data.parts || []).map(
-                    p => ({
-                        ...p,
-                        userId:currentUser
-                    })
-                );
-
-            /*
-              Добавляем новые ID,
-              чтобы не перезаписать существующие.
-            */
-
-            const projectIdMap = {};
-
-            importedProjects.forEach(project=>{
-
-                const oldId =
-                    project.id;
-
-                const newId =
-                    uid("project");
-
-                projectIdMap[oldId] =
-                    newId;
-
-                project.id =
-                    newId;
-            });
-
-            const folderIdMap = {};
-
-            importedFolders.forEach(folder=>{
-
-                const oldId =
-                    folder.id;
-
-                const newId =
-                    uid("folder");
-
-                folderIdMap[oldId] =
-                    newId;
-
-                folder.id =
-                    newId;
-
-                folder.projectId =
-                    projectIdMap[
-                        folder.projectId
-                    ];
-            });
-
-            importedParts.forEach(part=>{
-
-                part.id =
-                    uid("part");
-
-                part.folderId =
-                    folderIdMap[
-                        part.folderId
-                    ];
-
-                /*
-                  Файлы чертежей
-                  импортируются отдельно
-                  через полноценный backup
-                  только если blob доступен.
-                */
-                part.fileId = null;
-                part.fileName = null;
-                part.fileType = null;
-                part.fileSize = null;
-            });
-
-            state.projects.push(
-                ...importedProjects
-            );
-
-            state.folders.push(
-                ...importedFolders
-            );
-
-            state.parts.push(
-                ...importedParts
-            );
-
-            saveState();
-
-            renderProjects();
-
-            toast(
-                "Данные импортированы",
-                "success"
-            );
-
-        }catch(error){
-
-            console.error(error);
-
-            toast(
-                "Не удалось импортировать файл.",
-                "error"
-            );
-        }
-    };
-
-    reader.readAsText(file);
-
-    event.target.value = "";
-}
-
 
 /* =========================================================
-   STATS
+   ADMIN PANEL
 ========================================================= */
 
-function updateStats(){
+function openAdminPanel(){
 
-    if(!currentUser) return;
+    if(!isAdmin()){
 
-    const projects =
-        getProjects();
+        toast(
+            "Доступ запрещён.",
+            "error"
+        );
 
-    const folders =
-        getFolders();
+        return;
+    }
+
+    document
+        .getElementById(
+            "pageCatalog"
+        )
+        .classList.add(
+            "hidden"
+        );
+
+    document
+        .getElementById(
+            "pageAdmin"
+        )
+        .classList.remove(
+            "hidden"
+        );
+
+    document
+        .getElementById(
+            "breadcrumb"
+        )
+        .innerHTML =
+        "<strong>Администратор</strong>";
+
+    document
+        .querySelectorAll(
+            ".side-btn"
+        )
+        .forEach(
+            btn =>
+                btn.classList.remove(
+                    "active"
+                )
+        );
+
+    document
+        .getElementById(
+            "navAdmin"
+        )
+        .classList.add(
+            "active"
+        );
+
+    renderAdminPanel();
+
+    closeSidebar();
+}
+
+function renderAdminPanel(){
+
+    if(!isAdmin()) return;
+
+    const users =
+        state.users;
 
     const parts =
-        getParts();
+        state.parts;
 
     document
-        .getElementById("statProjects")
+        .getElementById(
+            "adminUserCount"
+        )
         .textContent =
-        projects.length;
+        users.length;
 
     document
-        .getElementById("statFolders")
-        .textContent =
-        folders.length;
-
-    document
-        .getElementById("statParts")
+        .getElementById(
+            "adminPartCount"
+        )
         .textContent =
         parts.length;
 
     document
-        .getElementById("statPublic")
+        .getElementById(
+            "adminProgramCount"
+        )
         .textContent =
-        folders.filter(
-            f => f.public
+        parts.filter(
+            p =>
+                p.category ===
+                "programs"
         ).length;
+
+    document
+        .getElementById(
+            "adminToolCount"
+        )
+        .textContent =
+        parts.filter(
+            p =>
+                p.category ===
+                "tools"
+        ).length;
+
+    const table =
+        document.getElementById(
+            "usersTable"
+        );
+
+    table.innerHTML =
+        users
+            .map(
+                user=>`
+
+                    <tr>
+
+                        <td>
+                            ${escapeHtml(
+                                user.login
+                            )}
+                        </td>
+
+                        <td>
+
+                            <span
+                                class="
+                                    ${
+                                        user.role ===
+                                        "admin"
+                                        ? "role-admin"
+                                        : "role-user"
+                                    }
+                                ">
+
+                                ${
+                                    user.role ===
+                                    "admin"
+                                    ? "Администратор"
+                                    : "Пользователь"
+                                }
+
+                            </span>
+
+                        </td>
+
+                        <td>
+                            ${formatDate(
+                                user.createdAt
+                            )}
+                        </td>
+
+                        <td>
+
+                            ${
+                                user.id ===
+                                "admin"
+                                ? `
+                                    <span
+                                        style="
+                                            color:#66738a;
+                                            font-size:10px;
+                                        ">
+                                        Системный аккаунт
+                                    </span>
+                                  `
+                                : `
+                                    <button
+                                        type="button"
+                                        class="btn danger"
+                                        style="
+                                            padding:7px 10px;
+                                            font-size:10px;
+                                        "
+                                        onclick="
+                                            deleteUser(
+                                                '${user.id}'
+                                            )
+                                        ">
+                                        Удалить
+                                    </button>
+                                  `
+                            }
+
+                        </td>
+
+                    </tr>
+
+                `
+            )
+            .join("");
 }
 
 
 /* =========================================================
-   MODALS
+   CREATE USER
+========================================================= */
+
+function openUserModal(){
+
+    if(!isAdmin()) return;
+
+    showModal(`
+
+        <div class="modal-header">
+
+            <div class="modal-title">
+                Новый аккаунт
+            </div>
+
+            <button
+                type="button"
+                class="modal-close"
+                onclick="closeModal()">
+                ×
+            </button>
+
+        </div>
+
+
+        <div class="modal-body">
+
+            <div class="field">
+
+                <label>
+                    Логин *
+                </label>
+
+                <input
+                    id="newUserLogin"
+                    class="input"
+                    autocomplete="off"
+                    placeholder="Например: operator01">
+
+            </div>
+
+
+            <div class="field">
+
+                <label>
+                    Пароль *
+                </label>
+
+                <input
+                    id="newUserPassword"
+                    class="input"
+                    type="text"
+                    autocomplete="off"
+                    placeholder="Введите пароль">
+
+            </div>
+
+
+            <div class="field">
+
+                <label>
+                    Роль
+                </label>
+
+                <select
+                    id="newUserRole"
+                    class="select">
+
+                    <option value="user">
+                        Пользователь
+                    </option>
+
+                    <option value="admin">
+                        Администратор
+                    </option>
+
+                </select>
+
+            </div>
+
+        </div>
+
+
+        <div class="modal-footer">
+
+            <button
+                type="button"
+                class="btn"
+                onclick="closeModal()">
+                Отмена
+            </button>
+
+            <button
+                type="button"
+                class="btn primary"
+                onclick="createUser()">
+                Создать аккаунт
+            </button>
+
+        </div>
+    `);
+}
+
+function createUser(){
+
+    const loginValue =
+        document
+            .getElementById(
+                "newUserLogin"
+            )
+            .value
+            .trim();
+
+    const password =
+        document
+            .getElementById(
+                "newUserPassword"
+            )
+            .value;
+
+    const role =
+        document
+            .getElementById(
+                "newUserRole"
+            )
+            .value;
+
+    if(!loginValue){
+
+        toast(
+            "Введите логин.",
+            "error"
+        );
+
+        return;
+    }
+
+    if(!password){
+
+        toast(
+            "Введите пароль.",
+            "error"
+        );
+
+        return;
+    }
+
+    if(
+        state.users.some(
+            u =>
+                u.login.toLowerCase() ===
+                loginValue.toLowerCase()
+        )
+    ){
+
+        toast(
+            "Такой логин уже существует.",
+            "error"
+        );
+
+        return;
+    }
+
+    state.users.push({
+
+        id:uid("user"),
+
+        login:loginValue,
+
+        password,
+
+        role,
+
+        createdAt:now()
+    });
+
+    saveState();
+
+    closeModal();
+
+    renderAdminPanel();
+
+    toast(
+        "Аккаунт создан.",
+        "success"
+    );
+}
+
+
+/* =========================================================
+   DELETE USER
+========================================================= */
+
+async function deleteUser(userId){
+
+    if(!isAdmin()) return;
+
+    const user =
+        state.users.find(
+            u =>
+                u.id ===
+                userId
+        );
+
+    if(!user) return;
+
+    if(user.id === "admin"){
+
+        toast(
+            "Главный аккаунт администратора удалить нельзя.",
+            "error"
+        );
+
+        return;
+    }
+
+    if(
+        !confirm(
+            `Удалить аккаунт "${user.login}"?\n\n` +
+            "Все детали этого пользователя также будут удалены."
+        )
+    ){
+
+        return;
+    }
+
+    const userParts =
+        state.parts.filter(
+            p =>
+                p.userId ===
+                userId
+        );
+
+    for(
+        const part of userParts
+    ){
+
+        if(part.drawingId){
+
+            await deleteBlob(
+                part.drawingId
+            );
+        }
+    }
+
+    state.parts =
+        state.parts.filter(
+            p =>
+                p.userId !==
+                userId
+        );
+
+    state.users =
+        state.users.filter(
+            u =>
+                u.id !==
+                userId
+        );
+
+    saveState();
+
+    renderAdminPanel();
+
+    toast(
+        "Аккаунт удалён.",
+        "success"
+    );
+}
+
+
+/* =========================================================
+   MODAL
 ========================================================= */
 
 function showModal(html){
 
     document
-        .getElementById("modal")
-        .innerHTML = html;
+        .getElementById(
+            "modal"
+        )
+        .innerHTML =
+        html;
 
     document
-        .getElementById("modalBackdrop")
-        .classList.remove("hidden");
+        .getElementById(
+            "modalBackdrop"
+        )
+        .classList.remove(
+            "hidden"
+        );
 }
 
 function closeModal(){
 
     document
-        .getElementById("modalBackdrop")
-        .classList.add("hidden");
+        .getElementById(
+            "modalBackdrop"
+        )
+        .classList.add(
+            "hidden"
+        );
 
     document
-        .getElementById("modal")
+        .getElementById(
+            "modal"
+        )
         .innerHTML = "";
 
-    editingProjectId = null;
-    editingFolderId = null;
-    editingPartId = null;
-    selectedDrawing = null;
+    editingPartId =
+        null;
+
+    editingUserId =
+        null;
+
+    selectedFile =
+        null;
 }
 
-function backdropClose(event){
+function modalBackdropClick(event){
 
     if(
         event.target ===
@@ -4637,89 +4257,10 @@ function backdropClose(event){
             "modalBackdrop"
         )
     ){
+
         closeModal();
     }
 }
-
-
-/* =========================================================
-   CONTEXT MENU
-========================================================= */
-
-let contextMenuEl = null;
-
-function showContextMenu(
-    x,
-    y,
-    items
-){
-
-    closeContextMenu();
-
-    contextMenuEl =
-        document.createElement("div");
-
-    contextMenuEl.className =
-        "context-menu";
-
-    contextMenuEl.style.left =
-        Math.min(
-            x,
-            window.innerWidth - 195
-        ) + "px";
-
-    contextMenuEl.style.top =
-        Math.min(
-            y,
-            window.innerHeight - 180
-        ) + "px";
-
-    items.forEach(item=>{
-
-        const button =
-            document.createElement("button");
-
-        button.type = "button";
-
-        button.textContent =
-            item.text;
-
-        if(item.danger){
-            button.classList.add("danger");
-        }
-
-        button.onclick = ()=>{
-
-            closeContextMenu();
-
-            item.action();
-        };
-
-        contextMenuEl.appendChild(
-            button
-        );
-    });
-
-    document.body.appendChild(
-        contextMenuEl
-    );
-}
-
-function closeContextMenu(){
-
-    if(contextMenuEl){
-
-        contextMenuEl.remove();
-        contextMenuEl = null;
-    }
-}
-
-document.addEventListener(
-    "click",
-    ()=>{
-        closeContextMenu();
-    }
-);
 
 
 /* =========================================================
@@ -4736,27 +4277,37 @@ function toast(
             "toastContainer"
         );
 
-    const el =
-        document.createElement("div");
+    const element =
+        document.createElement(
+            "div"
+        );
 
-    el.className =
-        "toast " + type;
+    element.className =
+        "toast " +
+        type;
 
-    el.textContent =
+    element.textContent =
         message;
 
-    container.appendChild(el);
+    container.appendChild(
+        element
+    );
 
     setTimeout(
         ()=>{
-            el.style.opacity = "0";
-            el.style.transform =
+            element.style.opacity =
+                "0";
+
+            element.style.transform =
                 "translateY(10px)";
 
             setTimeout(
-                ()=>el.remove(),
+                ()=>{
+                    element.remove();
+                },
                 250
             );
+
         },
         3000
     );
@@ -4764,105 +4315,103 @@ function toast(
 
 
 /* =========================================================
-   SIDEBAR
+   CONTEXT MENU
 ========================================================= */
 
-function toggleSidebar(){
+let contextMenu = null;
 
-    document
-        .getElementById("sidebar")
-        .classList.toggle("open");
-}
+function closeContextMenu(){
 
-function closeSidebar(){
+    if(contextMenu){
 
-    document
-        .getElementById("sidebar")
-        .classList.remove("open");
+        contextMenu.remove();
+
+        contextMenu =
+            null;
+    }
 }
 
 
 /* =========================================================
-   HASH PUBLIC LINK
+   ESC
 ========================================================= */
 
-function checkPublicHash(){
+document.addEventListener(
+    "keydown",
+    event=>{
 
-    const hash =
-        location.hash;
+        if(
+            event.key ===
+            "Escape"
+        ){
 
-    if(!hash.startsWith("#public=")){
-        return false;
+            closeModal();
+
+            closeContextMenu();
+
+            closeSidebar();
+        }
     }
-
-    const token =
-        decodeURIComponent(
-            hash.substring(8)
-        );
-
-    if(!token) return false;
-
-    openPublicFolderByToken(token);
-
-    return true;
-}
-
-window.addEventListener(
-    "hashchange",
-    checkPublicHash
 );
 
 
 /* =========================================================
-   START PUBLIC / NORMAL APP
+   INIT
 ========================================================= */
 
-const originalBoot = boot;
+async function boot(){
 
-boot = function(){
+    try{
 
-    initDB()
-        .catch(error=>{
-            console.error(error);
-        });
+        await initDB();
 
-    if(checkPublicHash()){
-        return;
+    }catch(error){
+
+        console.error(
+            "IndexedDB:",
+            error
+        );
     }
 
-    if(currentUser){
+    /*
+      Если сессия сохранилась —
+      сразу открываем приложение.
+    */
+    if(currentUserId){
 
-        const userExists =
-            state.users.some(
-                u => u.id === currentUser
-            );
+        const user =
+            getCurrentUser();
 
-        if(userExists){
+        if(user){
 
             enterApp();
 
             return;
         }
+
+        localStorage.removeItem(
+            SESSION_KEY
+        );
+
+        currentUserId =
+            null;
     }
 
-    switchAuth("login");
-};
-
-
-/* =========================================================
-   SAFETY
-========================================================= */
+    /*
+      Вход.
+    */
+    document
+        .getElementById(
+            "authPage"
+        )
+        .classList.remove(
+            "hidden"
+        );
+}
 
 window.addEventListener(
-    "keydown",
-    event=>{
-
-        if(event.key === "Escape"){
-
-            closeModal();
-            closeContextMenu();
-        }
-    }
+    "load",
+    boot
 );
 
 </script>
