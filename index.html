@@ -1072,9 +1072,26 @@ button{
 .changelog-entry{padding:16px;border:1px solid var(--line);border-radius:15px;background:rgba(255,255,255,.025);margin-bottom:10px}
 .changelog-entry h4{margin:0 0 6px;font-size:14px}
 .changelog-date{color:#738097;font-size:10px;margin-bottom:8px}
-.history-row{display:grid;grid-template-columns:1.2fr 1fr 1.4fr auto;gap:10px;align-items:center;padding:11px 0;border-bottom:1px solid var(--line);font-size:11px}
+.history-row{display:grid;grid-template-columns:minmax(220px,1.5fr) 1fr 1.25fr auto;gap:10px;align-items:center;padding:11px 0;border-bottom:1px solid var(--line);font-size:11px}
+.history-filters{margin-bottom:12px;padding:12px;border:1px solid var(--line);border-radius:15px;background:rgba(255,255,255,.025)}
+.history-filters-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}
+.history-filter-field{display:flex;flex-direction:column;gap:5px}
+.history-filter-field label{font-size:10px;color:#718097;font-weight:700;text-transform:uppercase;letter-spacing:.04em}
+.history-filter-field input,.history-filter-field select{width:100%;min-height:42px;padding:9px 11px;border-radius:11px;border:1px solid var(--line);background:rgba(0,0,0,.16);color:var(--text);outline:none}
+.history-filter-actions{display:flex;gap:8px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-top:10px}
+.history-active{display:flex;gap:6px;flex-wrap:wrap;min-height:24px}
+.history-chip{display:inline-flex;align-items:center;gap:5px;padding:5px 8px;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.04);font-size:10px;color:#b9c2d2}
+.history-summary{color:#718097;font-size:10px;margin:10px 0}
+.history-pagination{display:flex;gap:6px;justify-content:center;align-items:center;flex-wrap:wrap;padding-top:14px}
+.history-page-btn{min-width:42px;min-height:42px;padding:7px 10px}
+.history-page-btn.active{border-color:rgba(120,180,255,.55);background:rgba(90,150,255,.14)}
+.history-page-dots{color:#718097;padding:0 2px}
 .bulk-toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
 .sticky-actions{position:sticky;bottom:10px;z-index:20}
+@media(max-width:700px){
+    .history-filters-grid{grid-template-columns:1fr}
+    .history-filter-field[style*="grid-column"]{grid-column:auto !important}
+}
 @media(max-width:600px){
     .folder-list{max-height:380px}
     .history-row{grid-template-columns:1fr;gap:4px}
@@ -1781,7 +1798,11 @@ button{
 
             <div id="adminHistoryCard" class="card" style="margin-top:15px;display:none;">
                 <div style="font-size:17px;font-weight:800;margin-bottom:12px;">Журнал действий и откат</div>
+                <div id="historyFilters"></div>
+                <div id="historyActive"></div>
+                <div id="historySummary"></div>
                 <div id="historyList"></div>
+                <div id="historyPagination"></div>
             </div>
 
             <div class="app-footer"><span class="site-version">BetaLock v0.01</span></div>
@@ -4873,10 +4894,101 @@ function bulkDeleteSelected(){
     saveState(); renderAdminPanel(); renderCatalog(); toast("Выбранное удалено.","success");
 }
 function toggleBulkChecks(source){document.querySelectorAll(".bulk-part,.bulk-folder").forEach(x=>x.checked=source.checked)}
-function renderHistory(){
-    const el=document.getElementById("historyList"); if(!el) return;
-    const items=(state.actionHistory||[]);
-    el.innerHTML=items.length?items.map(a=>{const u=state.users.find(x=>x.id===a.userId);return `<div class="history-row"><div><b>${escapeHtml(a.label)}</b></div><div>${escapeHtml(u?.login||"Удалённый пользователь")}</div><div>${formatDate(a.createdAt)}</div><div><button class="btn" type="button" onclick="undoAction('${a.id}')">↶ Отменить</button></div></div>`}).join(""):"<div style='color:#718097;padding:15px 0;'>История пока пуста.</div>";
+let historyPage = 1;
+const HISTORY_PAGE_SIZE = 10;
+let historyFilters = {search:"",date:"all",user:"all",action:"all",object:"all",category:"all",sort:"newest",from:"",to:""};
+
+function historyObject(type){
+    if(["folder_create","folder_edit","folder_delete"].includes(type)) return "folder";
+    if(["part_create","part_edit","part_move","part_delete"].includes(type)) return "part";
+    if(["user_create","user_delete","role_change"].includes(type)) return "user";
+    if(type==="bulk_delete") return "catalog";
+    return "system";
+}
+function historyObjectName(type){return ({folder:"Папки",part:"Файлы/детали",user:"Пользователи",catalog:"Каталог",system:"Система"})[historyObject(type)]||"Система";}
+function historyActionName(type){return ({folder_create:"Создание папки",folder_edit:"Изменение папки",folder_delete:"Удаление папки",part_create:"Создание детали",part_edit:"Изменение детали",part_move:"Перемещение детали",part_delete:"Удаление детали",user_create:"Создание аккаунта",user_delete:"Удаление аккаунта",role_change:"Изменение прав",bulk_delete:"Массовое удаление",changelog_create:"Публикация записи",login:"Вход"})[type]||type||"Действие";}
+function historyCategory(a){
+    const src=JSON.stringify(a.before||"")+" "+JSON.stringify(a.after||"")+" "+String(a.label||"");
+    if(/programs|ПРОГРАММЫ/i.test(src)) return "programs";
+    if(/tools|ИНСТРУМЕНТ/i.test(src)) return "tools";
+    if(/other|ПРОЧЕЕ/i.test(src)) return "other";
+    return "all";
+}
+function historyCategoryName(v){return ({programs:"ПРОГРАММЫ",tools:"ИНСТРУМЕНТ",other:"ПРОЧЕЕ",all:"Без категории"})[v]||v;}
+function historyDateMatch(a){
+    const d=new Date(a.createdAt); if(Number.isNaN(d.getTime())) return false;
+    const n=new Date(); const start=new Date(n.getFullYear(),n.getMonth(),n.getDate());
+    if(historyFilters.date==="today") return d>=start;
+    if(historyFilters.date==="yesterday"){const y=new Date(start);y.setDate(y.getDate()-1);return d>=y&&d<start;}
+    if(historyFilters.date==="7"){const x=new Date(start);x.setDate(x.getDate()-6);return d>=x;}
+    if(historyFilters.date==="30"){const x=new Date(start);x.setDate(x.getDate()-29);return d>=x;}
+    if(historyFilters.date==="custom"){
+        if(historyFilters.from){const f=new Date(historyFilters.from+"T00:00:00");if(d<f)return false;}
+        if(historyFilters.to){const t=new Date(historyFilters.to+"T23:59:59.999");if(d>t)return false;}
+    }
+    return true;
+}
+function getFilteredHistory(){
+    const f=historyFilters;
+    let items=[...(state.actionHistory||[])].filter(a=>{
+        const u=state.users.find(x=>x.id===a.userId); const login=u?.login||"Удалённый пользователь";
+        const hay=[a.label,login,a.type,historyActionName(a.type),historyObjectName(a.type),historyCategory(a)].join(" ").toLowerCase();
+        if(f.search&&!hay.includes(f.search.toLowerCase())) return false;
+        if(f.user!=="all"&&a.userId!==f.user)return false;
+        if(f.action!=="all"&&a.type!==f.action)return false;
+        if(f.object!=="all"&&historyObject(a.type)!==f.object)return false;
+        if(f.category!=="all"&&historyCategory(a)!==f.category)return false;
+        return historyDateMatch(a);
+    });
+    items.sort((a,b)=>{
+        if(f.sort==="oldest") return new Date(a.createdAt)-new Date(b.createdAt);
+        if(f.sort==="user") return (state.users.find(x=>x.id===a.userId)?.login||"").localeCompare(state.users.find(x=>x.id===b.userId)?.login||"","ru");
+        if(f.sort==="action") return historyActionName(a.type).localeCompare(historyActionName(b.type),"ru");
+        return new Date(b.createdAt)-new Date(a.createdAt);
+    });
+    return items;
+}
+function historyFilterSet(key,value){historyFilters[key]=value;historyPage=1;renderHistory();}
+function clearHistoryFilter(key){const d={search:"",date:"all",user:"all",action:"all",object:"all",category:"all",sort:"newest",from:"",to:""};historyFilters[key]=d[key];if(key==="date"){historyFilters.from="";historyFilters.to="";}historyPage=1;renderHistory();}
+function clearHistoryFilters(){historyFilters={search:"",date:"all",user:"all",action:"all",object:"all",category:"all",sort:"newest",from:"",to:""};historyPage=1;renderHistory();}
+function historyFilterUI(){
+    const el=document.getElementById("historyFilters");if(!el)return;
+    const users=[...(state.users||[])].sort((a,b)=>String(a.login).localeCompare(String(b.login),"ru"));
+    const types=[...new Set((state.actionHistory||[]).map(a=>a.type))];
+    el.innerHTML=`<div class="history-filters"><div class="history-filters-grid">
+        <div class="history-filter-field" style="grid-column:span 2;"><label>Поиск</label><input id="historySearch" type="search" value="${escapeHtml(historyFilters.search)}" placeholder="Действие, пользователь, папка, деталь..."></div>
+        <div class="history-filter-field"><label>Дата</label><select id="historyDate"><option value="all">Все даты</option><option value="today">Сегодня</option><option value="yesterday">Вчера</option><option value="7">Последние 7 дней</option><option value="30">Последние 30 дней</option><option value="custom">Свой диапазон</option></select></div>
+        <div class="history-filter-field"><label>Пользователь</label><select id="historyUser"><option value="all">Все пользователи</option>${users.map(u=>`<option value="${u.id}">${escapeHtml(u.login)}</option>`).join("")}</select></div>
+        <div class="history-filter-field"><label>Действие</label><select id="historyAction"><option value="all">Все действия</option>${types.map(t=>`<option value="${t}">${escapeHtml(historyActionName(t))}</option>`).join("")}</select></div>
+        <div class="history-filter-field"><label>Объект</label><select id="historyObject"><option value="all">Всё</option><option value="folder">Папки</option><option value="part">Файлы/детали</option><option value="user">Пользователи</option><option value="catalog">Каталог</option><option value="system">Система</option></select></div>
+        <div class="history-filter-field"><label>Раздел</label><select id="historyCategory"><option value="all">Все разделы</option><option value="programs">ПРОГРАММЫ</option><option value="tools">ИНСТРУМЕНТ</option><option value="other">ПРОЧЕЕ</option></select></div>
+        <div class="history-filter-field"><label>Сортировка</label><select id="historySort"><option value="newest">Новые → старые</option><option value="oldest">Старые → новые</option><option value="user">Пользователь А → Я</option><option value="action">Действие А → Я</option></select></div>
+        <div id="historyCustomFromWrap" class="history-filter-field"><label>Дата от</label><input id="historyFrom" type="date" value="${historyFilters.from}"></div>
+        <div id="historyCustomToWrap" class="history-filter-field"><label>Дата до</label><input id="historyTo" type="date" value="${historyFilters.to}"></div>
+    </div><div class="history-filter-actions"><span style="font-size:10px;color:#718097;">Фильтры применяются сразу</span><button class="btn" type="button" onclick="clearHistoryFilters()">Сбросить всё</button></div></div>`;
+    ["historyDate","historyUser","historyAction","historyObject","historyCategory","historySort"].forEach(id=>{const key=id.replace("history","").toLowerCase();const map={date:"date",user:"user",action:"action",object:"object",category:"category",sort:"sort"};document.getElementById(id)?.addEventListener("change",e=>historyFilterSet(map[key],e.target.value));});
+    document.getElementById("historySearch")?.addEventListener("input",e=>{historyFilters.search=e.target.value;historyPage=1;renderHistory(false);});
+    document.getElementById("historyFrom")?.addEventListener("change",e=>{historyFilters.from=e.target.value;historyPage=1;renderHistory(false);});
+    document.getElementById("historyTo")?.addEventListener("change",e=>{historyFilters.to=e.target.value;historyPage=1;renderHistory(false);});
+    document.getElementById("historyDate").value=historyFilters.date;document.getElementById("historyUser").value=historyFilters.user;document.getElementById("historyAction").value=historyFilters.action;document.getElementById("historyObject").value=historyFilters.object;document.getElementById("historyCategory").value=historyFilters.category;document.getElementById("historySort").value=historyFilters.sort;
+    const custom=historyFilters.date==="custom";document.getElementById("historyCustomFromWrap").style.display=custom?"flex":"none";document.getElementById("historyCustomToWrap").style.display=custom?"flex":"none";
+}
+function renderHistoryActive(){
+    const el=document.getElementById("historyActive");if(!el)return;const f=historyFilters,ch=[];
+    if(f.search)ch.push(["Поиск: "+f.search,"search"]);if(f.date!=="all")ch.push(["Дата: "+({today:"сегодня",yesterday:"вчера",7:"7 дней",30:"30 дней",custom:"свой диапазон"}[f.date]),"date"]);
+    if(f.user!=="all"){const u=state.users.find(x=>x.id===f.user);ch.push(["Пользователь: "+(u?.login||"удалён"),"user"]);}if(f.action!=="all")ch.push(["Действие: "+historyActionName(f.action),"action"]);if(f.object!=="all")ch.push(["Объект: "+historyObjectName(f.object),"object"]);if(f.category!=="all")ch.push(["Раздел: "+historyCategoryName(f.category),"category"]);if(f.sort!=="newest")ch.push(["Сортировка: "+({oldest:"старые → новые",user:"пользователь А → Я",action:"действие А → Я"}[f.sort]),"sort"]);
+    el.innerHTML=ch.length?`<div class="history-active">${ch.map(c=>`<span class="history-chip">${escapeHtml(c[0])} <button class="btn" style="min-width:24px;min-height:24px;padding:0;border:0;background:none;" type="button" onclick="clearHistoryFilter('${c[1]}')">×</button></span>`).join("")}</div>`:"";
+}
+function renderHistoryPagination(totalPages){
+    const el=document.getElementById("historyPagination");if(!el)return;if(totalPages<=1){el.innerHTML="";return;}const pages=[];const add=n=>{if(!pages.includes(n))pages.push(n)};
+    if(totalPages<=7){for(let i=1;i<=totalPages;i++)add(i);}else{add(1);if(historyPage>3)pages.push("…");for(let i=Math.max(2,historyPage-1);i<=Math.min(totalPages-1,historyPage+1);i++)add(i);if(historyPage<totalPages-2)pages.push("…");add(totalPages);}
+    el.innerHTML=`<div class="history-pagination">${pages.map(x=>x==="…"?`<span class="history-page-dots">…</span>`:`<button type="button" class="btn history-page-btn ${x===historyPage?"active":""}" onclick="setHistoryPage(${x})">${x}</button>`).join("")}</div>`;
+}
+function setHistoryPage(page){historyPage=Number(page)||1;renderHistory(false);}
+function renderHistory(rebuildFilters=true){
+    const el=document.getElementById("historyList");if(!el)return;if(rebuildFilters)historyFilterUI();renderHistoryActive();const items=getFilteredHistory();const totalPages=Math.max(1,Math.ceil(items.length/HISTORY_PAGE_SIZE));historyPage=Math.min(Math.max(1,historyPage),totalPages);const start=(historyPage-1)*HISTORY_PAGE_SIZE,pageItems=items.slice(start,start+HISTORY_PAGE_SIZE);const summary=document.getElementById("historySummary");
+    if(summary)summary.textContent=items.length?`Показано ${start+1}–${Math.min(start+pageItems.length,items.length)} из ${items.length} действий`:"По выбранным фильтрам действий не найдено.";
+    el.innerHTML=pageItems.length?pageItems.map(a=>{const u=state.users.find(x=>x.id===a.userId);return `<div class="history-row"><div><b>${escapeHtml(a.label)}</b><div style="color:#718097;font-size:9px;margin-top:3px;">${escapeHtml(historyObjectName(a.type))} · ${escapeHtml(historyActionName(a.type))}</div></div><div>${escapeHtml(u?.login||"Удалённый пользователь")}</div><div>${formatDate(a.createdAt)}</div><div><button class="btn" type="button" onclick="undoAction('${a.id}')">↶ Отменить</button></div></div>`}).join(""):"<div style='color:#718097;padding:15px 0;'>История пока пуста.</div>";renderHistoryPagination(totalPages);
 }
 function openChangelog(){
     document.getElementById("pageCatalog").classList.add("hidden"); document.getElementById("pageAdmin").classList.add("hidden"); document.getElementById("pageChangelog").classList.remove("hidden");
