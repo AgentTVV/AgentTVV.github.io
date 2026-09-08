@@ -2031,10 +2031,7 @@ function getUserParts(){
 }
 
 function getVisibleParts(){
-
-    return isAdmin()
-        ? state.parts
-        : getUserParts();
+    return state.parts;
 }
 
 function getAllParts(){
@@ -2080,19 +2077,8 @@ function getPartsInFolder(folderId){
 }
 
 function getVisibleFolders(category){
-    const visibleParts = getVisibleParts();
-    const used = new Set(
-        visibleParts
-            .filter(p=>p.category === category)
-            .map(p=>p.folderId)
-    );
-
-    /* Папки без деталей тоже показываем только администратору. */
     return state.folders
-        .filter(folder =>
-            folder.category === category &&
-            (isAdmin() || used.has(folder.id))
-        )
+        .filter(folder => folder.category === category)
         .sort((a,b)=>
             a.name.localeCompare(
                 b.name,
@@ -2681,13 +2667,13 @@ function renderCatalog(){
 
     renderFolderList(folders, visibleParts);
 
+    // Папка не открывается автоматически. Каталог деталей показывается
+    // только после явного нажатия на папку.
     if(
-        !selectedPartName ||
+        selectedPartName &&
         !folders.some(f => f.id === selectedPartName)
     ){
-        selectedPartName = folders.length
-            ? folders[0].id
-            : null;
+        selectedPartName = null;
     }
 
     renderFolderVariants(folders, visibleParts);
@@ -2766,7 +2752,17 @@ function renderFolderVariants(folders, visibleParts){
     const folder =
         folders.find(f => f.id === selectedPartName);
 
-    if(!folder) return;
+    // Пока пользователь не нажал на папку — детали каталога скрыты.
+    if(!folder){
+        container.innerHTML = `
+            <div class="empty" style="min-height:260px;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+                <div class="empty-icon">📁</div>
+                <div style="font-size:17px;font-weight:800;margin-bottom:6px;">Выберите папку</div>
+                <div style="color:#718096;font-size:11px;">Нажмите на папку слева, чтобы открыть каталог деталей.</div>
+            </div>
+        `;
+        return;
+    }
 
     const parts =
         visibleParts
