@@ -1,10 +1,10 @@
-<!DOCTYPE html>
+<meta name='viewport' content='width=device-width, initial-scale=1'/><!DOCTYPE html>
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#080b14">
-<title>MiniCAD — Производственная система</title>
+<title>MiniCAD -- Производственная система</title>
 
 <style>
 :root{
@@ -50,6 +50,10 @@ html,body{
 
 body{
     overflow-x:hidden;
+}
+
+body.sidebar-lock{
+    overflow:hidden;
 }
 
 button,
@@ -256,11 +260,22 @@ button{
 
 .sidebar-overlay{
     display:none;
+    position:fixed;
+    inset:0;
+    z-index:70;
+    background:rgba(0,0,0,.45);
+    backdrop-filter:blur(2px);
+    -webkit-backdrop-filter:blur(2px);
+    pointer-events:none;
+}
+.sidebar-overlay.active{
+    display:block;
+    pointer-events:auto;
 }
 
 .sidebar{
     position:fixed;
-    z-index:80;
+    z-index:100;
     left:0;
     top:0;
     bottom:0;
@@ -624,6 +639,66 @@ button{
     margin-top:4px;
 }
 
+
+.folder-list{
+    display:flex;
+    flex-direction:column;
+    gap:7px;
+}
+.folder-item{
+    width:100%;
+    text-align:left;
+    border:1px solid var(--line);
+    border-radius:14px;
+    background:rgba(255,255,255,.025);
+    color:#aeb8c9;
+    padding:12px 13px;
+    transition:.2s;
+}
+.folder-item:hover{
+    background:rgba(255,255,255,.055);
+    color:white;
+    border-color:rgba(91,140,255,.22);
+}
+.folder-item.active{
+    color:white;
+    background:linear-gradient(135deg,rgba(91,140,255,.17),rgba(123,97,255,.1));
+    border-color:rgba(91,140,255,.22);
+}
+.folder-row{
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+.folder-icon{
+    font-size:18px;
+    width:22px;
+    text-align:center;
+}
+.folder-title{
+    flex:1;
+    min-width:0;
+    font-size:13px;
+    font-weight:750;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+}
+.folder-count{
+    color:#6f7c91;
+    font-size:10px;
+}
+.folder-hint{
+    color:#66738a;
+    font-size:9px;
+    margin-top:5px;
+    padding-left:32px;
+}
+.move-select{
+    width:100%;
+    margin-top:6px;
+}
+
 .variants{
     min-width:0;
 }
@@ -969,15 +1044,12 @@ button{
     }
 
     .sidebar-overlay{
-        position:fixed;
         z-index:70;
-        inset:0;
-        background:rgba(0,0,0,.45);
-        backdrop-filter:blur(2px);
     }
 
-    .sidebar.open + .sidebar-overlay{
+    .sidebar-overlay.active{
         display:block;
+        pointer-events:auto;
     }
 
     .main{
@@ -1416,7 +1488,7 @@ button{
 
                     <input
                         id="partSearch"
-                        placeholder="Поиск по номеру, названию или G-коду..."
+                        placeholder="Поиск по номеру..."
                         oninput="renderCatalog()">
 
                 </div>
@@ -1661,72 +1733,128 @@ function createInitialState(){
                 createdAt:new Date().toISOString()
             }
         ],
-
+        folders:[],
         parts:[]
     };
+}
+
+function normalizeState(parsed){
+
+    if(!parsed || !Array.isArray(parsed.users) || !Array.isArray(parsed.parts)){
+        return createInitialState();
+    }
+
+    if(!Array.isArray(parsed.folders)){
+        parsed.folders = [];
+    }
+
+    parsed.parts.forEach(part=>{
+        if(!part.userId && part.ownerId){
+            part.userId = part.ownerId;
+        }
+        if(!part.userId){
+            part.userId = "admin";
+        }
+        if(!part.category){
+            part.category = "programs";
+        }
+        if(!part.name){
+            part.name = "Без названия";
+        }
+        if(!part.number){
+            part.number = "";
+        }
+
+        /* Старые детали получают папку по названию. */
+        if(!part.folderId){
+            const sameName = parsed.folders.find(f =>
+                f.category === part.category &&
+                String(f.name).trim().toLowerCase() ===
+                String(part.name).trim().toLowerCase()
+            );
+
+            if(sameName){
+                part.folderId = sameName.id;
+            }else{
+                const folder = {
+                    id:uid("folder"),
+                    category:part.category,
+                    name:part.name.trim(),
+                    createdAt:part.createdAt || now()
+                };
+                parsed.folders.push(folder);
+                part.folderId = folder.id;
+            }
+        }
+    });
+
+    /* Удаляем дубли папок и исправляем пустые названия. */
+    const seen = new Set();
+    parsed.folders = parsed.folders.filter(folder=>{
+        folder.name = String(folder.name || "Без названия").trim();
+        folder.category = folder.category || "programs";
+        const key = folder.category + "::" + folder.name.toLowerCase();
+        if(seen.has(key)) return false;
+        seen.add(key);
+        return true;
+    });
+
+    /* Если в старой версии осталась ссылка на удалённую папку,
+       создаём её заново. */
+    parsed.parts.forEach(part=>{
+        if(!parsed.folders.some(f=>f.id === part.folderId)){
+            const folder = {
+                id:uid("folder"),
+                category:part.category,
+                name:String(part.name || "Без названия").trim(),
+                createdAt:part.createdAt || now()
+            };
+            parsed.folders.push(folder);
+            part.folderId = folder.id;
+        }
+    });
+
+    let admin = parsed.users.find(u =>
+        String(u.login || "").toLowerCase() === "admin"
+    );
+
+    if(!admin){
+        parsed.users.unshift({
+            id:"admin",
+            login:"admin",
+            password:"admin",
+            role:"admin",
+            createdAt:new Date().toISOString()
+        });
+    }else{
+        admin.id = "admin";
+        admin.login = "admin";
+        admin.role = "admin";
+        if(!admin.password) admin.password = "admin";
+    }
+
+    return parsed;
 }
 
 function loadState(){
 
     try{
-
-        const raw =
-            localStorage.getItem(
-                STORAGE_KEY
-            );
+        const raw = localStorage.getItem(STORAGE_KEY);
 
         if(raw){
-
-            const parsed =
-                JSON.parse(raw);
-
-            if(
-                parsed &&
-                Array.isArray(parsed.users) &&
-                Array.isArray(parsed.parts)
-            ){
-
-                /*
-                  На случай обновления старой версии.
-                */
-
-                if(
-                    !parsed.users.some(
-                        u =>
-                            u.login === "admin"
-                    )
-                ){
-
-                    parsed.users.push({
-                        id:"admin",
-                        login:"admin",
-                        password:"admin",
-                        role:"admin",
-                        createdAt:
-                            new Date().toISOString()
-                    });
-                }
-
-                return parsed;
-            }
+            const parsed = JSON.parse(raw);
+            const normalized = normalizeState(parsed);
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(normalized));
+            return normalized;
         }
-
     }catch(error){
-
         console.error(error);
     }
 
-    const fresh =
-        createInitialState();
-
-    localStorage.setItem(
-        STORAGE_KEY,
-        JSON.stringify(fresh)
-    );
-
+    const fresh = createInitialState();
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(fresh));
     return fresh;
 }
-
 function saveState(){
 
     localStorage.setItem(
@@ -1771,7 +1899,7 @@ function escapeHtml(value){
 function formatDate(date){
 
     if(!date){
-        return "—";
+        return "--";
     }
 
     return new Date(date)
@@ -1811,9 +1939,75 @@ function getUserParts(){
     );
 }
 
-function getAllParts(){
+function getVisibleParts(){
 
+    return isAdmin()
+        ? state.parts
+        : getUserParts();
+}
+
+function getAllParts(){
     return state.parts;
+}
+
+function normalizeFolderName(name){
+    return String(name || "").trim().replace(/\s+/g," ");
+}
+
+function findFolder(folderId){
+    return state.folders.find(f => f.id === folderId);
+}
+
+function findFolderByName(name, category=currentCategory){
+    const normalized = normalizeFolderName(name).toLowerCase();
+    return state.folders.find(f =>
+        f.category === category &&
+        normalizeFolderName(f.name).toLowerCase() === normalized
+    );
+}
+
+function ensureFolder(name, category=currentCategory){
+    const cleanName = normalizeFolderName(name) || "Без названия";
+    let folder = findFolderByName(cleanName, category);
+
+    if(!folder){
+        folder = {
+            id:uid("folder"),
+            category,
+            name:cleanName,
+            createdAt:now()
+        };
+        state.folders.push(folder);
+    }
+
+    return folder;
+}
+
+function getPartsInFolder(folderId){
+    return getVisibleParts().filter(p => p.folderId === folderId);
+}
+
+function getVisibleFolders(category){
+    const visibleParts = getVisibleParts();
+    const used = new Set(
+        visibleParts
+            .filter(p=>p.category === category)
+            .map(p=>p.folderId)
+    );
+
+    /* Папки без деталей тоже показываем только администратору. */
+    return state.folders
+        .filter(folder =>
+            folder.category === category &&
+            (isAdmin() || used.has(folder.id))
+        )
+        .sort((a,b)=>
+            a.name.localeCompare(
+                b.name,
+                "ru",
+                {numeric:true,sensitivity:"base"}
+            )
+        );
 }
 
 function categoryName(category){
@@ -2134,59 +2328,45 @@ function enterApp(){
 
 function openSidebar(){
 
-    const sidebar =
-        document.getElementById(
-            "sidebar"
-        );
+    const sidebar = document.getElementById("sidebar");
+    const overlay = document.getElementById("sidebarOverlay");
 
     sidebar.classList.add("open");
-
     sidebar.classList.remove("closed");
 
-    document
-        .getElementById(
-            "sidebarOverlay"
-        )
-        .style.display =
-        window.innerWidth <= 900
-        ? "block"
-        : "none";
+    if(window.innerWidth <= 900){
+        overlay.classList.add("active");
+        document.body.classList.add("sidebar-lock");
+    }else{
+        overlay.classList.remove("active");
+        document.body.classList.remove("sidebar-lock");
+    }
 }
 
 function closeSidebar(){
 
-    const sidebar =
-        document.getElementById(
-            "sidebar"
-        );
+    const sidebar = document.getElementById("sidebar");
+    const overlay = document.getElementById("sidebarOverlay");
 
     sidebar.classList.remove("open");
 
     if(window.innerWidth <= 900){
-
-        sidebar.classList.add(
-            "closed"
-        );
+        sidebar.classList.add("closed");
+    }else{
+        sidebar.classList.remove("closed");
     }
+
+    overlay.classList.remove("active");
+    document.body.classList.remove("sidebar-lock");
 }
 
 function toggleSidebar(){
 
-    const sidebar =
-        document.getElementById(
-            "sidebar"
-        );
+    const sidebar = document.getElementById("sidebar");
 
-    if(
-        sidebar.classList.contains(
-            "open"
-        )
-    ){
-
+    if(sidebar.classList.contains("open")){
         closeSidebar();
-
     }else{
-
         openSidebar();
     }
 }
@@ -2198,6 +2378,7 @@ function toggleSidebar(){
 
 let swipeStartX = null;
 let swipeStartY = null;
+let swipeStartedInSidebar = false;
 
 document.addEventListener(
     "pointerdown",
@@ -2210,11 +2391,14 @@ document.addEventListener(
             return;
         }
 
-        swipeStartX =
-            event.clientX;
+        swipeStartX = event.clientX;
+        swipeStartY = event.clientY;
 
-        swipeStartY =
-            event.clientY;
+        const sidebar =
+            document.getElementById("sidebar");
+
+        swipeStartedInSidebar =
+            sidebar.contains(event.target);
     },
     {passive:true}
 );
@@ -2223,63 +2407,54 @@ document.addEventListener(
     "pointerup",
     event=>{
 
-        if(
-            swipeStartX === null
-        ){
+        if(swipeStartX === null){
             return;
         }
 
-        const dx =
-            event.clientX -
-            swipeStartX;
-
-        const dy =
-            event.clientY -
-            swipeStartY;
+        const dx = event.clientX - swipeStartX;
+        const dy = event.clientY - swipeStartY;
 
         const sidebar =
-            document.getElementById(
-                "sidebar"
-            );
+            document.getElementById("sidebar");
 
-        /*
-          Свайп влево.
-        */
         if(
-            dx < -70 &&
-            Math.abs(dx) >
-            Math.abs(dy) * 1.3
+            swipeStartedInSidebar &&
+            sidebar.classList.contains("open") &&
+            dx < -60 &&
+            Math.abs(dx) > Math.abs(dy) * 1.25
         ){
-
-            if(
-                sidebar.classList.contains(
-                    "open"
-                )
-            ){
-
-                closeSidebar();
-            }
+            closeSidebar();
         }
 
-        /*
-          Свайп вправо от левого края.
-        */
         if(
-            dx > 70 &&
-            Math.abs(dx) >
-            Math.abs(dy) * 1.3 &&
-            swipeStartX < 45
+            !swipeStartedInSidebar &&
+            dx > 60 &&
+            Math.abs(dx) > Math.abs(dy) * 1.25 &&
+            swipeStartX < 35 &&
+            !sidebar.classList.contains("open")
         ){
-
             openSidebar();
         }
 
         swipeStartX = null;
         swipeStartY = null;
+        swipeStartedInSidebar = false;
     },
     {passive:true}
 );
 
+window.addEventListener("resize",()=>{
+    const overlay = document.getElementById("sidebarOverlay");
+    const sidebar = document.getElementById("sidebar");
+
+    if(window.innerWidth > 900){
+        overlay.classList.remove("active");
+        document.body.classList.remove("sidebar-lock");
+        sidebar.classList.remove("closed");
+    }else if(!sidebar.classList.contains("open")){
+        sidebar.classList.add("closed");
+    }
+});
 
 /* =========================================================
    CATEGORY
@@ -2365,226 +2540,122 @@ function openCategory(category){
 function renderCatalog(){
 
     const search =
-        document
-            .getElementById(
-                "partSearch"
-            )
-            .value
-            .trim()
-            .toLowerCase();
+        document.getElementById("partSearch")
+            .value.trim().toLowerCase();
 
-    let parts =
-        getUserParts()
-            .filter(
-                p =>
-                    p.category ===
-                    currentCategory
-            );
+    let visibleParts =
+        getVisibleParts().filter(
+            p => p.category === currentCategory
+        );
 
-    /*
-      Поиск по:
-      - названию
-      - номеру
-      - G-коду
-    */
+    /* Поиск именно по номеру. */
     if(search){
-
-        parts =
-            parts.filter(
-                p =>
-
-                    p.name
-                        .toLowerCase()
-                        .includes(search)
-
-                    ||
-
-                    p.number
-                        .toLowerCase()
-                        .includes(search)
-
-                    ||
-
-                    p.code
-                        .toLowerCase()
-                        .includes(search)
-            );
+        visibleParts = visibleParts.filter(
+            p => String(p.number || "")
+                .toLowerCase()
+                .includes(search)
+        );
     }
 
-    /*
-      Группируем по названию детали.
-    */
-    const groups = {};
+    const folders = getVisibleFolders(currentCategory);
 
-    parts.forEach(part=>{
+    renderFolderList(folders, visibleParts);
 
-        const key =
-            part.name
-                .trim()
-                .toLowerCase();
-
-        if(!groups[key]){
-            groups[key] = {
-                name:part.name,
-                parts:[]
-            };
-        }
-
-        groups[key]
-            .parts
-            .push(part);
-    });
-
-    const names =
-        Object.values(groups)
-            .sort(
-                (a,b)=>
-                    a.name.localeCompare(
-                        b.name,
-                        "ru",
-                        {numeric:true}
-                    )
-            );
-
-    renderNameList(
-        names
-    );
-
-    /*
-      Если ничего не выбрано —
-      выбираем первый вид детали.
-    */
     if(
-        !selectedPartName &&
-        names.length
+        !selectedPartName ||
+        !folders.some(f => f.id === selectedPartName)
     ){
-
-        selectedPartName =
-            names[0].name;
-    }
-
-    /*
-      Если после поиска выбранная
-      деталь исчезла.
-    */
-    if(
-        selectedPartName &&
-        !names.some(
-            g =>
-                g.name ===
-                selectedPartName
-        )
-    ){
-
-        selectedPartName =
-            names.length
-            ? names[0].name
+        selectedPartName = folders.length
+            ? folders[0].id
             : null;
     }
 
-    renderVariants(
-        names
-    );
+    renderFolderVariants(folders, visibleParts);
 }
 
-function renderNameList(groups){
+function renderFolderList(folders, visibleParts){
 
     const container =
-        document.getElementById(
-            "nameList"
-        );
+        document.getElementById("nameList");
 
-    if(!groups.length){
+    if(!folders.length){
 
         container.innerHTML = `
-            <div
-                style="
-                    padding:25px 10px;
-                    text-align:center;
-                    color:#6f7b90;
-                    font-size:11px;
-                ">
-
-                Детали не найдены.
-
+            <div style="
+                padding:28px 10px;
+                text-align:center;
+                color:#6f7b90;
+                font-size:11px;
+            ">
+                <div style="font-size:27px;margin-bottom:9px;">📁</div>
+                Папок пока нет.
+                <div style="margin-top:7px;">
+                    Добавьте первую деталь —
+                    папка создастся автоматически.
+                </div>
             </div>
         `;
 
         return;
     }
 
-    container.innerHTML =
-        groups
-            .map(group=>`
+    container.innerHTML = `
+        <div class="folder-list">
+            ${folders.map(folder=>{
+                const count =
+                    visibleParts.filter(
+                        p=>p.folderId === folder.id
+                    ).length;
 
-                <button
-                    type="button"
-                    class="
-                        name-item
-                        ${
-                            selectedPartName ===
-                            group.name
+                return `
+                    <button
+                        type="button"
+                        class="folder-item ${
+                            selectedPartName === folder.id
                             ? "active"
                             : ""
-                        }
-                    "
-                    onclick="
-                        selectPartGroup(
-                            ${JSON.stringify(
-                                group.name
-                            )}
-                        )
-                    ">
+                        }"
+                        onclick="selectFolder('${folder.id}')">
 
-                    <div class="name-item-title">
-                        ${escapeHtml(
-                            group.name
-                        )}
-                    </div>
+                        <div class="folder-row">
+                            <span class="folder-icon">📁</span>
 
-                    <div class="name-item-count">
-                        ${group.parts.length}
-                        ${
-                            group.parts.length === 1
-                            ? " вариант"
-                            : " вариантов"
-                        }
-                    </div>
+                            <span class="folder-title">
+                                ${escapeHtml(folder.name)}
+                            </span>
 
-                </button>
+                            <span class="folder-count">
+                                ${count}
+                            </span>
+                        </div>
 
-            `)
-            .join("");
+                        <div class="folder-hint">
+                            ${count === 1 ? "1 деталь" : `${count} деталей`}
+                        </div>
+                    </button>
+                `;
+            }).join("")}
+        </div>
+    `;
 }
 
-function selectPartGroup(name){
+function selectFolder(folderId){
 
-    selectedPartName =
-        name;
-
+    selectedPartName = folderId;
     renderCatalog();
 }
 
-function renderVariants(groups){
+function renderFolderVariants(folders, visibleParts){
 
     const container =
-        document.getElementById(
-            "variantsContainer"
-        );
+        document.getElementById("variantsContainer");
 
-    if(!groups.length){
+    if(!folders.length){
 
         container.innerHTML = `
             <div class="empty">
-
-                <div class="empty-icon">
-                    ⚙
-                </div>
-
-                <div>
-                    В категории пока нет деталей.
-                </div>
-
+                <div class="empty-icon">📁</div>
+                В категории пока нет деталей.
                 <div style="margin-top:14px;">
                     <button
                         type="button"
@@ -2593,105 +2664,117 @@ function renderVariants(groups){
                         ＋ Добавить деталь
                     </button>
                 </div>
-
             </div>
         `;
 
         return;
     }
 
-    const group =
-        groups.find(
-            g =>
-                g.name ===
-                selectedPartName
-        );
+    const folder =
+        folders.find(f => f.id === selectedPartName);
 
-    if(!group){
-
-        return;
-    }
+    if(!folder) return;
 
     const parts =
-        [...group.parts]
-            .sort(
-                (a,b)=>
-                    a.number.localeCompare(
-                        b.number,
+        visibleParts
+            .filter(p => p.folderId === folder.id)
+            .sort((a,b)=>
+                String(a.number || "")
+                    .localeCompare(
+                        String(b.number || ""),
                         "ru",
                         {
-                            numeric:true
+                            numeric:true,
+                            sensitivity:"base"
                         }
                     )
             );
 
     container.innerHTML = `
+        <div style="
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            gap:10px;
+            margin-bottom:12px;
+        ">
+            <div>
+                <div style="
+                    color:#8d99ae;
+                    font-size:11px;
+                ">
+                    ПАПКА
+                </div>
 
-        <div
-            style="
-                margin-bottom:12px;
-                color:#8d99ae;
-                font-size:11px;
+                <div style="
+                    font-size:21px;
+                    font-weight:850;
+                    margin-top:3px;
+                ">
+                    📁 ${escapeHtml(folder.name)}
+                </div>
+            </div>
+
+            <div style="
+                color:#69758b;
+                font-size:10px;
             ">
-            ${escapeHtml(
-                group.name
-            )}
-            ·
-            ${parts.length}
-            вариантов
+                ${parts.length}
+                ${parts.length === 1 ? "вариант" : "вариантов"}
+            </div>
         </div>
 
-        <div class="variant-grid">
-
-            ${parts
-                .map(part=>
-                    renderVariantCard(part)
-                )
-                .join("")}
-
-        </div>
+        ${
+            parts.length
+            ? `<div class="variant-grid">
+                ${parts.map(part=>renderVariantCard(part)).join("")}
+               </div>`
+            : `
+                <div class="empty">
+                    В этой папке нет деталей по заданному номеру.
+                </div>
+              `
+        }
     `;
 }
 
 function renderVariantCard(part){
 
     const preview =
-        part.code
+        String(part.code || "")
             .split("\n")
             .slice(0,4)
             .join("\n");
 
-    return `
+    const owner =
+        state.users.find(u=>u.id === part.userId);
 
+    return `
         <div class="variant-card">
 
             <div class="variant-number">
-                № ${escapeHtml(
-                    part.number
-                )}
+                № ${escapeHtml(part.number)}
             </div>
 
             <div class="variant-name">
-                ${escapeHtml(
-                    part.name
-                )}
+                ${escapeHtml(part.name)}
             </div>
 
             <div class="variant-meta">
                 Обновлено:
-                ${formatDate(
-                    part.updatedAt
-                )}
+                ${formatDate(part.updatedAt)}
+                ${
+                    owner && isAdmin()
+                    ? ` · ${escapeHtml(owner.login)}`
+                    : ""
+                }
             </div>
 
             <div class="gcode-mini">
-                ${escapeHtml(
-                    preview
-                )}
+                ${escapeHtml(preview)}
             </div>
 
             <div class="badges">
-
                 ${
                     part.drawingName
                     ? `
@@ -2705,37 +2788,42 @@ function renderVariantCard(part){
                 <span class="badge">
                     G-код
                 </span>
-
             </div>
 
-            <div
-                style="
-                    display:flex;
-                    gap:7px;
-                    margin-top:14px;
-                ">
+            <div style="
+                display:flex;
+                gap:7px;
+                margin-top:14px;
+            ">
 
                 <button
                     type="button"
                     class="btn primary"
                     style="flex:1"
-                    onclick="
-                        openPartViewer(
-                            '${part.id}'
-                        )
-                    ">
+                    onclick="openPartViewer('${part.id}')">
                     Открыть
                 </button>
+
+                ${
+                    isAdmin() || part.userId === currentUserId
+                    ? `
+                        <button
+                            type="button"
+                            class="btn"
+                            title="Изменить"
+                            onclick="openPartModal('${part.id}')">
+                            ✎
+                        </button>
+                      `
+                    : ""
+                }
 
                 <button
                     type="button"
                     class="btn"
-                    onclick="
-                        openPartModal(
-                            '${part.id}'
-                        )
-                    ">
-                    ✎
+                    title="Переместить"
+                    onclick="openMovePartModal('${part.id}')">
+                    ↗
                 </button>
 
             </div>
@@ -2743,7 +2831,6 @@ function renderVariantCard(part){
         </div>
     `;
 }
-
 
 /* =========================================================
    PART MODAL
@@ -2766,7 +2853,7 @@ function openPartModal(partId=null){
         : null;
 
     /*
-      Если редактирует обычный пользователь —
+      Если редактирует обычный пользователь --
       только свои детали.
     */
     if(
@@ -2853,6 +2940,52 @@ function openPartModal(partId=null){
                     </option>
 
                 </select>
+
+            </div>
+
+
+            <div class="field">
+
+                <label>
+                    Папка
+                </label>
+
+                <select
+                    id="partFolder"
+                    class="select">
+                    ${
+                        state.folders
+                            .filter(f=>f.category === category)
+                            .sort((a,b)=>
+                                a.name.localeCompare(
+                                    b.name,
+                                    "ru",
+                                    {numeric:true,sensitivity:"base"}
+                                )
+                            )
+                            .map(f=>`
+                                <option
+                                    value="${f.id}"
+                                    ${
+                                        part?.folderId === f.id
+                                        ? "selected"
+                                        : ""
+                                    }>
+                                    ${escapeHtml(f.name)}
+                                </option>
+                            `)
+                            .join("")
+                    }
+                </select>
+
+                <div style="
+                    color:#66738a;
+                    font-size:10px;
+                    margin-top:6px;
+                ">
+                    Для новой детали папка по названию создастся автоматически.
+                    После создания её можно изменить кнопкой «Переместить».
+                </div>
 
             </div>
 
@@ -3084,209 +3217,373 @@ function previewDrawing(event){
 async function savePart(){
 
     const category =
-        document
-            .getElementById(
-                "partCategory"
-            )
-            .value;
+        document.getElementById("partCategory").value;
 
     const name =
-        document
-            .getElementById(
-                "partName"
-            )
-            .value
-            .trim();
+        document.getElementById("partName")
+            .value.trim();
 
     const number =
-        document
-            .getElementById(
-                "partNumber"
-            )
-            .value
-            .trim();
+        document.getElementById("partNumber")
+            .value.trim();
 
     const code =
-        document
-            .getElementById(
-                "partCode"
-            )
-            .value
-            .trim();
+        document.getElementById("partCode")
+            .value.trim();
 
     if(!name){
-
-        toast(
-            "Введите название детали.",
-            "error"
-        );
-
+        toast("Введите название детали.","error");
         return;
     }
 
     if(!number){
-
-        toast(
-            "Введите номер детали.",
-            "error"
-        );
-
+        toast("Введите номер детали.","error");
         return;
     }
 
     if(!code){
-
-        toast(
-            "Введите G-код.",
-            "error"
-        );
-
+        toast("Введите G-код.","error");
         return;
     }
 
-    /*
-      Номер должен быть уникальным
-      в рамках одного названия и категории.
-    */
     const duplicate =
         state.parts.find(
             p =>
                 p.category === category &&
-                p.name.toLowerCase() ===
-                    name.toLowerCase() &&
-                p.number.toLowerCase() ===
+                String(p.number || "").toLowerCase() ===
                     number.toLowerCase() &&
                 p.id !== editingPartId
         );
 
     if(duplicate){
-
         toast(
-            "Такая деталь с этим номером уже существует.",
+            "Такая деталь с этим номером уже существует в этом разделе.",
             "error"
         );
-
         return;
     }
 
     let part =
         editingPartId
         ? state.parts.find(
-            p =>
-                p.id ===
-                editingPartId
+            p => p.id === editingPartId
           )
         : null;
 
+    const oldDrawingId = part?.drawingId || null;
+    const wasExisting = !!part;
+
     if(part){
 
-        part.category =
-            category;
+        if(
+            !isAdmin() &&
+            part.userId !== currentUserId
+        ){
+            toast("Нет доступа.","error");
+            return;
+        }
 
-        part.name =
-            name;
-
-        part.number =
-            number;
-
-        part.code =
-            code;
-
-        part.updatedAt =
-            now();
+        part.category = category;
+        part.name = name;
+        part.number = number;
+        part.code = code;
+        part.updatedAt = now();
 
     }else{
 
         part = {
-
             id:uid("part"),
-
-            userId:
-                currentUserId,
-
+            userId:currentUserId,
             category,
-
             name,
-
             number,
-
             code,
-
+            folderId:null,
             drawingId:null,
-
             drawingName:null,
-
             drawingType:null,
-
-            createdAt:
-                now(),
-
-            updatedAt:
-                now()
+            createdAt:now(),
+            updatedAt:now()
         };
 
-        state.parts.push(
-            part
-        );
+        state.parts.push(part);
     }
 
     /*
-      Сохраняем чертёж.
+      НОВАЯ ДЕТАЛЬ:
+      если есть папка с таким же названием —
+      кладём в неё.
+      Если нет — создаём.
     */
+    if(!wasExisting){
+
+        const folder =
+            ensureFolder(name, category);
+
+        part.folderId = folder.id;
+
+    }else{
+
+        /*
+          При редактировании сохраняем текущую папку.
+          Если её больше нет — восстанавливаем её.
+        */
+        let folder = findFolder(part.folderId);
+
+        if(
+            !folder ||
+            folder.category !== category
+        ){
+            folder = ensureFolder(name, category);
+            part.folderId = folder.id;
+        }
+    }
+
     if(selectedFile){
 
-        if(part.drawingId){
-
-            await deleteBlob(
-                part.drawingId
-            );
+        if(oldDrawingId){
+            await deleteBlob(oldDrawingId);
         }
 
-        const drawingId =
-            uid("drawing");
+        const drawingId = uid("drawing");
 
         await saveBlob(
             drawingId,
             selectedFile
         );
 
-        part.drawingId =
-            drawingId;
-
-        part.drawingName =
-            selectedFile.name;
-
-        part.drawingType =
-            selectedFile.type;
+        part.drawingId = drawingId;
+        part.drawingName = selectedFile.name;
+        part.drawingType = selectedFile.type;
     }
 
     saveState();
 
     closeModal();
 
-    currentCategory =
-        category;
+    currentCategory = category;
+    selectedPartName = part.folderId;
 
-    selectedPartName =
-        name;
-
-    /*
-      Если после сохранения
-      категория изменилась —
-      обновляем интерфейс.
-    */
-    openCategory(
-        category
-    );
+    openCategory(category);
 
     toast(
-        editingPartId
+        wasExisting
         ? "Деталь обновлена."
-        : "Деталь добавлена.",
+        : "Деталь добавлена в папку «" +
+          escapeHtml(findFolder(part.folderId)?.name || name) +
+          "».",
         "success"
     );
 }
 
+
+/* =========================================================
+   MOVE PART TO ANOTHER FOLDER
+========================================================= */
+
+function openMovePartModal(partId){
+
+    const part =
+        state.parts.find(p=>p.id === partId);
+
+    if(!part) return;
+
+    if(
+        !isAdmin() &&
+        part.userId !== currentUserId
+    ){
+        toast("Нет доступа.","error");
+        return;
+    }
+
+    const folders =
+        state.folders
+            .filter(f=>f.category === part.category)
+            .sort((a,b)=>
+                a.name.localeCompare(
+                    b.name,
+                    "ru",
+                    {
+                        numeric:true,
+                        sensitivity:"base"
+                    }
+                )
+            );
+
+    showModal(`
+        <div class="modal-header">
+
+            <div>
+                <div style="
+                    color:#82a4ff;
+                    font-size:10px;
+                    font-weight:800;
+                    text-transform:uppercase;
+                ">
+                    Перемещение детали
+                </div>
+
+                <div class="modal-title" style="margin-top:5px;">
+                    ${escapeHtml(part.name)}
+                    <span style="
+                        color:#8492aa;
+                        font-weight:500;
+                    ">
+                        · ${escapeHtml(part.number)}
+                    </span>
+                </div>
+            </div>
+
+            <button
+                type="button"
+                class="modal-close"
+                onclick="closeModal()">
+                ×
+            </button>
+
+        </div>
+
+        <div class="modal-body">
+
+            <div class="field">
+
+                <label>
+                    Текущая папка
+                </label>
+
+                <div style="
+                    padding:13px 14px;
+                    border-radius:12px;
+                    background:rgba(255,255,255,.035);
+                    border:1px solid var(--line);
+                    color:#aeb8c9;
+                ">
+                    📁 ${
+                        escapeHtml(
+                            findFolder(part.folderId)?.name ||
+                            "Без папки"
+                        )
+                    }
+                </div>
+
+            </div>
+
+            <div class="field">
+
+                <label>
+                    Новая папка
+                </label>
+
+                <select
+                    id="moveFolderSelect"
+                    class="select move-select">
+
+                    ${
+                        folders.map(folder=>`
+                            <option
+                                value="${folder.id}"
+                                ${
+                                    folder.id === part.folderId
+                                    ? "selected"
+                                    : ""
+                                }>
+                                ${escapeHtml(folder.name)}
+                            </option>
+                        `).join("")
+                    }
+
+                </select>
+
+            </div>
+
+            <div style="
+                padding:12px 13px;
+                border-radius:12px;
+                background:rgba(91,140,255,.06);
+                border:1px solid rgba(91,140,255,.12);
+                color:#8491a8;
+                font-size:11px;
+                line-height:1.55;
+            ">
+                Перемещение меняет только папку.
+                Название, номер, G-код и чертёж останутся без изменений.
+            </div>
+
+        </div>
+
+        <div class="modal-footer">
+
+            <button
+                type="button"
+                class="btn"
+                onclick="closeModal()">
+                Отмена
+            </button>
+
+            <button
+                type="button"
+                class="btn primary"
+                onclick="movePart('${part.id}')">
+                Переместить
+            </button>
+
+        </div>
+    `);
+}
+
+function movePart(partId){
+
+    const part =
+        state.parts.find(p=>p.id === partId);
+
+    if(!part) return;
+
+    if(
+        !isAdmin() &&
+        part.userId !== currentUserId
+    ){
+        toast("Нет доступа.","error");
+        return;
+    }
+
+    const select =
+        document.getElementById("moveFolderSelect");
+
+    const folder =
+        state.folders.find(
+            f => f.id === select?.value
+        );
+
+    if(!folder){
+        toast("Папка не найдена.","error");
+        return;
+    }
+
+    const oldFolder =
+        findFolder(part.folderId);
+
+    part.folderId = folder.id;
+    part.updatedAt = now();
+
+    saveState();
+
+    closeModal();
+
+    currentCategory = part.category;
+    selectedPartName = folder.id;
+
+    const search =
+        document.getElementById("partSearch");
+
+    if(search) search.value = "";
+
+    openCategory(part.category);
+
+    toast(
+        `Деталь перемещена: «${oldFolder?.name || "Без папки"}» → «${folder.name}».`,
+        "success"
+    );
+}
 
 /* =========================================================
    VIEW PART
@@ -3696,7 +3993,7 @@ async function deletePart(partId){
 
     if(
         !confirm(
-            `Удалить "${part.name} — ${part.number}"?`
+            `Удалить "${part.name} -- ${part.number}"?`
         )
     ){
         return;
@@ -3719,9 +4016,6 @@ async function deletePart(partId){
     saveState();
 
     closeModal();
-
-    selectedPartName =
-        null;
 
     renderCatalog();
 
@@ -4374,7 +4668,7 @@ async function boot(){
     }
 
     /*
-      Если сессия сохранилась —
+      Если сессия сохранилась --
       сразу открываем приложение.
     */
     if(currentUserId){
