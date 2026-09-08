@@ -1779,7 +1779,10 @@ button{
                 </div>
             </div>
 
-            ${isSuperAdmin()?`<div class="card" style="margin-top:15px;"><div style="font-size:17px;font-weight:800;margin-bottom:12px;">Журнал действий и откат</div><div id="historyList"></div></div>`:""}
+            <div id="adminHistoryCard" class="card" style="margin-top:15px;display:none;">
+                <div style="font-size:17px;font-weight:800;margin-bottom:12px;">Журнал действий и откат</div>
+                <div id="historyList"></div>
+            </div>
 
             <div class="app-footer"><span class="site-version">BetaLock v0.01</span></div>
         </section>
@@ -4438,7 +4441,7 @@ function renderAdminPanel(){
                                         class="btn"
                                         style="padding:7px 10px;font-size:10px;"
                                         onclick="toggleUserAdmin('${user.id}')">
-                                        ${user.role === "admin" ? "Забрать админку" : "Выдать админку"}
+                                        ${user.role === "admin" ? "Забрать редактор" : "Выдать редактор"}
                                     </button>
                                 ` : ""}
 
@@ -4500,6 +4503,10 @@ function renderAdminPanel(){
     if(folderBulk){
         folderBulk.innerHTML = state.folders.length ? state.folders.map(f=>`<tr><td><input class="bulk-folder" type="checkbox" value="${f.id}"></td><td>📁 ${escapeHtml(f.name)}</td><td>${escapeHtml(categoryName(f.category))}</td><td>${state.parts.filter(p=>p.folderId===f.id).length}</td></tr>`).join("") : `<tr><td colspan="4" style="color:#69758b;text-align:center;padding:18px;">Папок пока нет.</td></tr>`;
     }
+    const historyCard = document.getElementById("adminHistoryCard");
+    if(historyCard){
+        historyCard.style.display = isSuperAdmin() ? "block" : "none";
+    }
     if(isSuperAdmin()) renderHistory();
 }
 
@@ -4511,7 +4518,7 @@ function renderAdminPanel(){
 function openUserModal(){
 
     if(!isSuperAdmin()){
-        toast("Только администратор может создавать аккаунты.","error");
+        toast("Только главный администратор может создавать аккаунты.","error");
         return;
     }
 
@@ -4614,7 +4621,7 @@ function openUserModal(){
 function createUser(){
 
     if(!isSuperAdmin()){
-        toast("Только администратор может создавать аккаунты.","error");
+        toast("Только главный администратор может создавать аккаунты.","error");
         return;
     }
 
@@ -4711,7 +4718,7 @@ function createUser(){
 function toggleUserAdmin(userId){
 
     if(!isSuperAdmin()){
-        toast("Только администратор может менять права.","error");
+        toast("Только главный администратор может менять права.","error");
         return;
     }
 
@@ -4720,20 +4727,20 @@ function toggleUserAdmin(userId){
 
     const before = snapshotState();
     const makeAdmin = user.role !== "admin";
-    if(!confirm(`${makeAdmin ? "Выдать" : "Забрать"} админку аккаунту "${user.login}"?`)) return;
+    if(!confirm(`${makeAdmin ? "Выдать" : "Забрать"} редактор аккаунту "${user.login}"?`)) return;
 
     user.role = makeAdmin ? "admin" : "user";
     user.updatedAt = now();
     recordAction("role_change", `${makeAdmin ? "Выдача прав редактора" : "Забор прав редактора"} «${user.login}»`, before);
     saveState();
     renderAdminPanel();
-    toast(makeAdmin ? "Права редактора выданы." : "Права администратора забраны.","success");
+    toast(makeAdmin ? "Права редактора выданы." : "Права редактора забраны.","success");
 }
 
 function startImpersonation(userId){
 
     if(!isSuperAdmin()){
-        toast("Только администратор может входить в другие аккаунты.","error");
+        toast("Только главный администратор может входить в другие аккаунты.","error");
         return;
     }
 
