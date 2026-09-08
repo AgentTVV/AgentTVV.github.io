@@ -1459,10 +1459,20 @@ button{
 
             </div>
 
-            <div
-                id="storageStatus"
-                class="storage-status">
-                Локальное хранилище
+            <div style="display:flex;align-items:center;gap:10px;">
+                <button
+                    type="button"
+                    id="returnImpersonationBtn"
+                    class="btn"
+                    style="display:none;padding:8px 11px;font-size:10px;"
+                    onclick="returnFromImpersonation()">
+                    ↩ Вернуться в главный аккаунт
+                </button>
+                <div
+                    id="storageStatus"
+                    class="storage-status">
+                    Локальное хранилище
+                </div>
             </div>
 
         </div>
@@ -1572,6 +1582,7 @@ button{
 
                 <button
                     type="button"
+                    id="adminCreateUserBtn"
                     class="btn primary"
                     onclick="openUserModal()">
                     ＋ Создать аккаунт
@@ -1641,7 +1652,7 @@ button{
             </div>
 
 
-            <div class="card">
+            <div class="card" id="adminUsersCard">
 
                 <div
                     style="
@@ -1749,6 +1760,7 @@ button{
 
 const STORAGE_KEY = "minicad_production_v6";
 const SESSION_KEY = "minicad_session_v6";
+const IMPERSONATION_KEY = "minicad_impersonation_v1";
 
 const IDB_NAME = "minicad_production_files_v6";
 const IDB_STORE = "files";
@@ -1783,7 +1795,7 @@ function createInitialState(){
                 id:"admin",
                 login:"admin",
                 password:"admin",
-                role:"admin",
+                role:"superadmin",
                 createdAt:new Date().toISOString()
             }
         ],
@@ -1877,15 +1889,22 @@ function normalizeState(parsed){
             id:"admin",
             login:"admin",
             password:"admin",
-            role:"admin",
+            role:"superadmin",
             createdAt:new Date().toISOString()
         });
     }else{
         admin.id = "admin";
         admin.login = "admin";
-        admin.role = "admin";
+        admin.role = "superadmin";
         if(!admin.password) admin.password = "admin";
     }
+
+    /* Все остальные аккаунты с неизвестной ролью считаем обычными пользователями. */
+    parsed.users.forEach(u=>{
+        if(u.id !== "admin" && !["user","admin"].includes(u.role)){
+            u.role = "user";
+        }
+    });
 
     return parsed;
 }
@@ -1979,10 +1998,28 @@ function getCurrentUser(){
 
 function isAdmin(){
 
-    return (
-        getCurrentUser()?.role ===
-        "admin"
-    );
+    const role = getCurrentUser()?.role;
+
+    return role === "admin" || role === "superadmin";
+}
+
+function isSuperAdmin(){
+
+    return getCurrentUser()?.role === "superadmin";
+}
+
+function roleLabel(role){
+
+    if(role === "superadmin") return "Главный администратор";
+    if(role === "admin") return "Администратор";
+    return "Пользователь";
+}
+
+function roleClass(role){
+
+    if(role === "superadmin") return "role-admin";
+    if(role === "admin") return "role-admin";
+    return "role-user";
 }
 
 function getUserParts(){
@@ -2305,6 +2342,13 @@ function login(event){
 
 function logout(){
 
+    /* Если главный админ вошёл в другой аккаунт для теста,
+       кнопка выхода возвращает его в главный аккаунт. */
+    if(localStorage.getItem(IMPERSONATION_KEY)){
+        returnFromImpersonation();
+        return;
+    }
+
     currentUserId = null;
 
     localStorage.removeItem(
@@ -2352,10 +2396,17 @@ function enterApp(){
         .textContent =
         user.login +
         (
-            user.role === "admin"
+            user.role === "superadmin"
+            ? " · Главный администратор"
+            : user.role === "admin"
             ? " · Администратор"
-            : ""
+            : " · Пользователь"
         );
+
+    const impersonationBtn = document.getElementById("returnImpersonationBtn");
+    if(impersonationBtn){
+        impersonationBtn.style.display = localStorage.getItem(IMPERSONATION_KEY) ? "inline-flex" : "none";
+    }
 
     document
         .getElementById("adminNavigation")
@@ -2363,6 +2414,11 @@ function enterApp(){
             "hidden",
             !isAdmin()
         );
+
+    const addPartBtn = document.getElementById("catalogAddPartBtn");
+    const newFolderBtn = document.getElementById("catalogNewFolderBtn");
+    if(addPartBtn) addPartBtn.style.display = isAdmin() ? "inline-flex" : "none";
+    if(newFolderBtn) newFolderBtn.style.display = isAdmin() ? "inline-flex" : "none";
 
     currentCategory =
         "programs";
@@ -2693,12 +2749,13 @@ function renderFolderVariants(folders, visibleParts){
                 <div class="empty-icon">📁</div>
                 В категории пока нет деталей.
                 <div style="margin-top:14px;">
+                    ${isAdmin() ? `
                     <button
                         type="button"
                         class="btn primary"
                         onclick="openPartModal()">
                         ＋ Добавить деталь
-                    </button>
+                    </button>` : ""}
                 </div>
             </div>
         `;
@@ -4280,6 +4337,16 @@ function renderAdminPanel(){
                 "tools"
         ).length;
 
+    const createAccountBtn = document.getElementById("adminCreateUserBtn");
+    if(createAccountBtn){
+        createAccountBtn.style.display = isSuperAdmin() ? "inline-flex" : "none";
+    }
+
+    const usersCard = document.getElementById("adminUsersCard");
+    if(usersCard){
+        usersCard.style.display = isSuperAdmin() ? "block" : "none";
+    }
+
     const table =
         document.getElementById(
             "usersTable"
@@ -4293,72 +4360,63 @@ function renderAdminPanel(){
                     <tr>
 
                         <td>
-                            ${escapeHtml(
-                                user.login
-                            )}
+                            ${escapeHtml(user.login)}
                         </td>
 
                         <td>
-
-                            <span
-                                class="
-                                    ${
-                                        user.role ===
-                                        "admin"
-                                        ? "role-admin"
-                                        : "role-user"
-                                    }
-                                ">
-
-                                ${
-                                    user.role ===
-                                    "admin"
-                                    ? "Администратор"
-                                    : "Пользователь"
-                                }
-
+                            <span class="${roleClass(user.role)}">
+                                ${roleLabel(user.role)}
                             </span>
-
                         </td>
 
                         <td>
-                            ${formatDate(
-                                user.createdAt
-                            )}
+                            ${formatDate(user.createdAt)}
                         </td>
 
                         <td>
+                            <div style="display:flex;gap:6px;flex-wrap:wrap;">
+                                ${isSuperAdmin() && user.id !== currentUserId ? `
+                                    <button
+                                        type="button"
+                                        class="btn"
+                                        style="padding:7px 10px;font-size:10px;"
+                                        onclick="startImpersonation('${user.id}')">
+                                        ⇥ Войти
+                                    </button>
+                                ` : ""}
 
-                            ${
-                                user.id ===
-                                "admin"
-                                ? `
-                                    <span
-                                        style="
-                                            color:#66738a;
-                                            font-size:10px;
-                                        ">
-                                        Системный аккаунт
-                                    </span>
-                                  `
-                                : `
+                                ${isSuperAdmin() && user.id !== "admin" && user.id !== currentUserId ? `
+                                    <button
+                                        type="button"
+                                        class="btn"
+                                        style="padding:7px 10px;font-size:10px;"
+                                        onclick="toggleUserAdmin('${user.id}')">
+                                        ${user.role === "admin" ? "Забрать админку" : "Выдать админку"}
+                                    </button>
+                                ` : ""}
+
+                                ${isSuperAdmin() && user.id !== "admin" && user.id !== currentUserId ? `
                                     <button
                                         type="button"
                                         class="btn danger"
-                                        style="
-                                            padding:7px 10px;
-                                            font-size:10px;
-                                        "
-                                        onclick="
-                                            deleteUser(
-                                                '${user.id}'
-                                            )
-                                        ">
+                                        style="padding:7px 10px;font-size:10px;"
+                                        onclick="deleteUser('${user.id}')">
                                         Удалить
                                     </button>
-                                  `
-                            }
+                                ` : ""}
 
+                                ${user.id === "admin" ? `
+                                    <span style="color:#66738a;font-size:10px;align-self:center;">
+                                        Системный аккаунт · Гл. Админ
+                                    </span>
+                                ` : ""}
+
+                                ${user.id === currentUserId && user.id !== "admin" ? `
+                                    <span style="color:#66738a;font-size:10px;align-self:center;">
+                                        Текущий аккаунт
+                                    </span>
+                                ` : ""}
+                            </div>
                         </td>
 
                     </tr>
@@ -4400,7 +4458,10 @@ function renderAdminPanel(){
 
 function openUserModal(){
 
-    if(!isAdmin()) return;
+    if(!isSuperAdmin()){
+        toast("Только главный администратор может создавать аккаунты.","error");
+        return;
+    }
 
     showModal(`
 
@@ -4500,6 +4561,11 @@ function openUserModal(){
 
 function createUser(){
 
+    if(!isSuperAdmin()){
+        toast("Только главный администратор может создавать аккаунты.","error");
+        return;
+    }
+
     const loginValue =
         document
             .getElementById(
@@ -4585,12 +4651,84 @@ function createUser(){
 
 
 /* =========================================================
+   USER ROLE / IMPERSONATION
+========================================================= */
+
+function toggleUserAdmin(userId){
+
+    if(!isSuperAdmin()){
+        toast("Только главный администратор может менять права.","error");
+        return;
+    }
+
+    const user = state.users.find(u=>u.id===userId);
+    if(!user || user.id === "admin") return;
+
+    const makeAdmin = user.role !== "admin";
+    if(!confirm(`${makeAdmin ? "Выдать" : "Забрать"} админку аккаунту "${user.login}"?`)) return;
+
+    user.role = makeAdmin ? "admin" : "user";
+    user.updatedAt = now();
+    saveState();
+    renderAdminPanel();
+    toast(makeAdmin ? "Права администратора выданы." : "Права администратора забраны.","success");
+}
+
+function startImpersonation(userId){
+
+    if(!isSuperAdmin()){
+        toast("Только главный администратор может входить в другие аккаунты.","error");
+        return;
+    }
+
+    const target = state.users.find(u=>u.id===userId);
+    if(!target || target.id === currentUserId) return;
+
+    if(!confirm(`Войти как "${target.login}" (${roleLabel(target.role)}) для проверки полномочий?`)) return;
+
+    localStorage.setItem(IMPERSONATION_KEY,currentUserId);
+    currentUserId = target.id;
+    localStorage.setItem(SESSION_KEY,currentUserId);
+    closeModal();
+    enterApp();
+    toast(`Вы вошли как ${target.login}.`,"success");
+}
+
+function returnFromImpersonation(){
+
+    const originalId = localStorage.getItem(IMPERSONATION_KEY);
+    if(!originalId){
+        toast("Активная проверка аккаунта не найдена.","error");
+        return;
+    }
+
+    const original = state.users.find(u=>u.id===originalId);
+    if(!original || !["superadmin"].includes(original.role)){
+        localStorage.removeItem(IMPERSONATION_KEY);
+        toast("Главный аккаунт не найден.","error");
+        logout();
+        return;
+    }
+
+    localStorage.removeItem(IMPERSONATION_KEY);
+    currentUserId = original.id;
+    localStorage.setItem(SESSION_KEY,currentUserId);
+    enterApp();
+    openAdminPanel();
+    toast("Вы вернулись в главный аккаунт.","success");
+}
+
+
+/* =========================================================
    DELETE USER
 ========================================================= */
 
 async function deleteUser(userId){
 
-    if(!isAdmin()) return;
+    if(!isSuperAdmin()){
+        toast("Только главный администратор может удалять аккаунты.","error");
+        return;
+    }
 
     const user =
         state.users.find(
@@ -4601,7 +4739,7 @@ async function deleteUser(userId){
 
     if(!user) return;
 
-    if(user.id === "admin"){
+    if(user.id === "admin" || user.id === currentUserId){
 
         toast(
             "Главный аккаунт администратора удалить нельзя.",
