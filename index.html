@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#080b14">
-<title>MiniCAD -- Производственная система</title>
+<title>BetaLock -- Производственная система</title>
 
 <style>
 :root{
@@ -1012,7 +1012,7 @@ button{
 #toastContainer{
     position:fixed;
     right:18px;
-    bottom:18px;
+    bottom:calc(18px + var(--keyboard-offset, 0px));
     z-index:600;
     display:flex;
     flex-direction:column;
@@ -1048,6 +1048,38 @@ button{
         opacity:1;
         transform:none;
     }
+}
+
+/* =====================================================
+   UX / MOBILE / FOLDER SCROLL / FOOTER
+===================================================== */
+.btn, .side-btn, .menu-open, .folder-main, .folder-more{
+    min-width:44px;
+    min-height:44px;
+}
+.folder-list{
+    max-height:calc(5 * 76px);
+    overflow-y:auto;
+    overflow-x:hidden;
+    padding-right:4px;
+    overscroll-behavior:contain;
+}
+.folder-list::-webkit-scrollbar{width:7px}
+.folder-list::-webkit-scrollbar-thumb{background:rgba(255,255,255,.14);border-radius:20px}
+.app-footer{
+    text-align:center; padding:22px 10px 10px; color:#647086; font-size:10px;
+}
+.changelog-entry{padding:16px;border:1px solid var(--line);border-radius:15px;background:rgba(255,255,255,.025);margin-bottom:10px}
+.changelog-entry h4{margin:0 0 6px;font-size:14px}
+.changelog-date{color:#738097;font-size:10px;margin-bottom:8px}
+.history-row{display:grid;grid-template-columns:1.2fr 1fr 1.4fr auto;gap:10px;align-items:center;padding:11px 0;border-bottom:1px solid var(--line);font-size:11px}
+.bulk-toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
+.sticky-actions{position:sticky;bottom:10px;z-index:20}
+@media(max-width:600px){
+    .folder-list{max-height:380px}
+    .history-row{grid-template-columns:1fr;gap:4px}
+    .app-footer{padding-bottom:calc(14px + env(safe-area-inset-bottom))}
+    .btn{min-height:44px}
 }
 
 /* =====================================================
@@ -1090,17 +1122,8 @@ button{
         grid-template-columns:1fr;
     }
 
-    .name-list{
-        max-height:none;
-        display:flex;
-        overflow-x:auto;
-        gap:5px;
-    }
-
-    .name-item{
-        min-width:160px;
-        margin:0;
-    }
+    .name-list{max-height:none;display:block;overflow:visible;}
+    .folder-list{max-height:calc(5 * 76px);overflow-y:auto;display:block;}
 }
 
 @media(max-width:600px){
@@ -1150,7 +1173,7 @@ button{
     #toastContainer{
         left:10px;
         right:10px;
-        bottom:10px;
+        bottom:calc(10px + var(--keyboard-offset, 0px));
     }
 
     .toast{
@@ -1359,6 +1382,11 @@ button{
 
             </button>
 
+            <button type="button" class="side-btn" id="navChangelog" onclick="openChangelog()">
+                <span class="side-icon">📝</span>
+                <span>Блог изменений</span>
+            </button>
+
         </nav>
 
 
@@ -1554,9 +1582,22 @@ button{
                 </div>
 
             </div>
+            <div class="app-footer"><span class="site-version">BetaLock v0.01</span></div>
 
         </section>
 
+
+        <section id="pageChangelog" class="hidden">
+            <div class="category-header">
+                <div>
+                    <div class="category-title">Блог изменений</div>
+                    <div class="category-description">История обновлений сайта.</div>
+                </div>
+                <button type="button" id="newChangelogBtn" class="btn primary" onclick="openChangelogModal()">＋ Новая запись</button>
+            </div>
+            <div id="changelogList"></div>
+            <div class="app-footer"><span class="site-version">BetaLock v0.01</span></div>
+        </section>
 
         <!-- =================================================
              ADMIN
@@ -1705,12 +1746,17 @@ button{
             </div>
 
             <div class="card" style="margin-top:15px;">
+                <div class="bulk-toolbar"><div style="font-size:17px;font-weight:800;margin-right:auto;">Массовые операции</div><label style="display:flex;align-items:center;gap:7px;min-height:44px;"><input type="checkbox" onchange="toggleBulkChecks(this)"> Выбрать всё</label><button type="button" class="btn danger" onclick="bulkDeleteSelected()">🗑 Удалить выбранное</button></div>
+                <div style="color:#69758b;font-size:11px;">Выбор выполняется чекбоксами в таблице ниже. Пустые папки можно удалить массово.</div>
+            </div>
+
+            <div class="card" style="margin-top:15px;">
                 <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:15px;">
                     <div>
                         <div style="font-size:17px;font-weight:800;">Управление каталогом</div>
-                        <div style="color:#69758b;font-size:11px;margin-top:4px;">Только администратор может создавать, изменять, перемещать и удалять папки и детали.</div>
+                        <div style="color:#69758b;font-size:11px;margin-top:4px;">Администратор и Редактор могут создавать, изменять, перемещать и удалять папки и детали.</div>
                     </div>
-                    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                    <div class="sticky-actions" style="display:flex;gap:8px;flex-wrap:wrap;">
                         <button type="button" class="btn" onclick="openFolderModal()">📁 Новая папка</button>
                         <button type="button" class="btn primary" onclick="openPartModal()">＋ Новая деталь</button>
                     </div>
@@ -1723,6 +1769,19 @@ button{
                 </div>
             </div>
 
+            <div class="card" style="margin-top:15px;">
+                <div style="font-size:17px;font-weight:800;margin-bottom:12px;">Папки для массового удаления</div>
+                <div style="overflow:auto;">
+                    <table class="admin-table">
+                        <thead><tr><th>Выбор</th><th>Папка</th><th>Раздел</th><th>Деталей</th></tr></thead>
+                        <tbody id="adminFoldersBulkTable"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            ${isSuperAdmin()?`<div class="card" style="margin-top:15px;"><div style="font-size:17px;font-weight:800;margin-bottom:12px;">Журнал действий и откат</div><div id="historyList"></div></div>`:""}
+
+            <div class="app-footer"><span class="site-version">BetaLock v0.01</span></div>
         </section>
 
     </main>
@@ -1761,6 +1820,8 @@ button{
 const STORAGE_KEY = "minicad_production_v6";
 const SESSION_KEY = "minicad_session_v6";
 const IMPERSONATION_KEY = "minicad_impersonation_v1";
+const SITE_VERSION = "BetaLock v0.01";
+/* Для CI/CD: при выпуске новой сборки обновляйте SITE_VERSION на +0.01. */
 
 const IDB_NAME = "minicad_production_files_v6";
 const IDB_STORE = "files";
@@ -1800,7 +1861,9 @@ function createInitialState(){
             }
         ],
         folders:[],
-        parts:[]
+        parts:[],
+        actionHistory:[],
+        changelog:[]
     };
 }
 
@@ -1810,9 +1873,9 @@ function normalizeState(parsed){
         return createInitialState();
     }
 
-    if(!Array.isArray(parsed.folders)){
-        parsed.folders = [];
-    }
+    if(!Array.isArray(parsed.folders)){ parsed.folders = []; }
+    if(!Array.isArray(parsed.actionHistory)){ parsed.actionHistory = []; }
+    if(!Array.isArray(parsed.changelog)){ parsed.changelog = []; }
 
     parsed.parts.forEach(part=>{
         if(!part.userId && part.ownerId){
@@ -1929,12 +1992,29 @@ function loadState(){
     return fresh;
 }
 function saveState(){
-
-    localStorage.setItem(
-        STORAGE_KEY,
-        JSON.stringify(state)
-    );
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
 }
+
+function snapshotState(){
+    return JSON.parse(JSON.stringify({users:state.users,folders:state.folders,parts:state.parts,changelog:state.changelog||[]}));
+}
+function recordAction(type,label,before){
+    if(!isAdmin()) return;
+    state.actionHistory = Array.isArray(state.actionHistory) ? state.actionHistory : [];
+    state.actionHistory.unshift({id:uid("action"),type,label,userId:currentUserId,createdAt:now(),before,after:snapshotState()});
+    state.actionHistory = state.actionHistory.slice(0,100);
+}
+function undoAction(id){
+    if(!isSuperAdmin()){toast("Только администратор может выполнять откат.","error");return;}
+    const item=state.actionHistory.find(a=>a.id===id);
+    if(!item){toast("Действие не найдено.","error");return;}
+    if(!confirm("Отменить действие: "+item.label+"?")) return;
+    state.users=item.before.users; state.folders=item.before.folders; state.parts=item.before.parts; state.changelog=item.before.changelog||[];
+    state.actionHistory=state.actionHistory.filter(a=>a.id!==id);
+    saveState(); renderAdminPanel(); renderChangelog(); renderCatalog();
+    toast("Действие отменено.","success");
+}
+
 
 
 /* =========================================================
@@ -2010,8 +2090,8 @@ function isSuperAdmin(){
 
 function roleLabel(role){
 
-    if(role === "superadmin") return "Главный администратор";
-    if(role === "admin") return "Администратор";
+    if(role === "superadmin") return "Администратор";
+    if(role === "admin") return "Редактор";
     return "Пользователь";
 }
 
@@ -2380,14 +2460,7 @@ function enterApp(){
     document
         .getElementById("currentUserName")
         .textContent =
-        user.login +
-        (
-            user.role === "superadmin"
-            ? " · Главный администратор"
-            : user.role === "admin"
-            ? " · Администратор"
-            : " · Пользователь"
-        );
+        user.login + " · " + roleLabel(user.role);
 
     const impersonationBtn = document.getElementById("returnImpersonationBtn");
     if(impersonationBtn){
@@ -2581,13 +2654,8 @@ function openCategory(category){
             "hidden"
         );
 
-    document
-        .getElementById(
-            "pageAdmin"
-        )
-        .classList.add(
-            "hidden"
-        );
+    document.getElementById("pageAdmin").classList.add("hidden");
+    document.getElementById("pageChangelog").classList.add("hidden");
 
     document
         .getElementById(
@@ -2667,13 +2735,13 @@ function renderCatalog(){
 
     renderFolderList(folders, visibleParts);
 
-    // Папка не открывается автоматически. Каталог деталей показывается
-    // только после явного нажатия на папку.
     if(
-        selectedPartName &&
+        !selectedPartName ||
         !folders.some(f => f.id === selectedPartName)
     ){
-        selectedPartName = null;
+        selectedPartName = folders.length
+            ? folders[0].id
+            : null;
     }
 
     renderFolderVariants(folders, visibleParts);
@@ -2686,7 +2754,7 @@ function renderFolderList(folders, visibleParts){
     container.innerHTML = `
         <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;padding:5px 4px 10px;">
             <div style="color:#68748a;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1px;">ПАПКИ</div>
-            <button type="button" id="folderAddBtn" class="btn" style="padding:7px 9px;font-size:11px;" onclick="openFolderModal()">＋</button>
+
         </div>
         <div class="folder-list">
             ${folders.length ? folders.map(folder=>{
@@ -2752,17 +2820,7 @@ function renderFolderVariants(folders, visibleParts){
     const folder =
         folders.find(f => f.id === selectedPartName);
 
-    // Пока пользователь не нажал на папку — детали каталога скрыты.
-    if(!folder){
-        container.innerHTML = `
-            <div class="empty" style="min-height:260px;display:flex;flex-direction:column;align-items:center;justify-content:center;">
-                <div class="empty-icon">📁</div>
-                <div style="font-size:17px;font-weight:800;margin-bottom:6px;">Выберите папку</div>
-                <div style="color:#718096;font-size:11px;">Нажмите на папку слева, чтобы открыть каталог деталей.</div>
-            </div>
-        `;
-        return;
-    }
+    if(!folder) return;
 
     const parts =
         visibleParts
@@ -2965,6 +3023,7 @@ function openFolderModal(folderId=null){
 
 function saveFolder(folderId=null){
     if(!isAdmin()){ toast("Только администратор может управлять папками.","error"); return; }
+    const before = snapshotState();
     const name = normalizeFolderName(document.getElementById("folderName")?.value);
     const category = document.getElementById("folderCategory")?.value || currentCategory;
     if(!name){ toast("Введите название папки.","error"); return; }
@@ -2977,6 +3036,7 @@ function saveFolder(folderId=null){
         if(duplicate){ toast("Папка с таким названием уже существует.","error"); return; }
         folder.name = name;
         folder.updatedAt = now();
+        recordAction("folder_edit", `Переименование папки «${name}»`, before);
         saveState();
         closeModal();
         selectedPartName = folder.id;
@@ -2988,6 +3048,7 @@ function saveFolder(folderId=null){
     if(findFolderByName(name, category)){ toast("Папка с таким названием уже существует.","error"); return; }
     const folder = {id:uid("folder"), category, name, ownerId:currentUserId, createdAt:now(), updatedAt:now()};
     state.folders.push(folder);
+    recordAction("folder_create", `Создание папки «${name}»`, before);
     saveState();
     closeModal();
     currentCategory = category;
@@ -3022,11 +3083,13 @@ function deleteFolder(folderId){
     if(!folder) return;
     if(!isAdmin() && folder.ownerId !== currentUserId){ toast("Нет доступа.","error"); return; }
 
+    const before = snapshotState();
     const count = state.parts.filter(p=>p.folderId === folderId).length;
     if(count){ toast(`Нельзя удалить папку: внутри ${count} ${count===1?"деталь":"деталей"}. Переместите их сначала.`,"error"); return; }
 
     state.folders = state.folders.filter(f=>f.id !== folderId);
     if(selectedPartName === folderId) selectedPartName = null;
+    recordAction("folder_delete", `Удаление папки «${folder.name}»`, before);
     saveState();
     closeModal();
     renderCatalog();
@@ -3421,6 +3484,7 @@ async function savePart(){
 
     if(!isAdmin()){ toast("Только администратор может изменять каталог.","error"); return; }
 
+    const before = snapshotState();
     const category =
         document.getElementById("partCategory").value;
 
@@ -3562,6 +3626,7 @@ async function savePart(){
         part.drawingType = selectedFile.type;
     }
 
+    recordAction(wasExisting ? "part_edit" : "part_create", `${wasExisting ? "Изменение" : "Создание"} детали «${name} — ${number}»`, before);
     saveState();
 
     closeModal();
@@ -3768,12 +3833,14 @@ function movePart(partId){
         return;
     }
 
+    const before = snapshotState();
     const oldFolder =
         findFolder(part.folderId);
 
     part.folderId = folder.id;
     part.updatedAt = now();
 
+    recordAction("part_move", `Перемещение детали «${part.name} — ${part.number}»`, before);
     saveState();
 
     closeModal();
@@ -4197,12 +4264,7 @@ async function deletePart(partId){
         return;
     }
 
-    if(part.drawingId){
-
-        await deleteBlob(
-            part.drawingId
-        );
-    }
+    const before = snapshotState();
 
     state.parts =
         state.parts.filter(
@@ -4211,6 +4273,7 @@ async function deletePart(partId){
                 partId
         );
 
+    recordAction("part_delete", `Удаление детали «${part.name} — ${part.number}»`, before);
     saveState();
 
     closeModal();
@@ -4240,21 +4303,9 @@ function openAdminPanel(){
         return;
     }
 
-    document
-        .getElementById(
-            "pageCatalog"
-        )
-        .classList.add(
-            "hidden"
-        );
-
-    document
-        .getElementById(
-            "pageAdmin"
-        )
-        .classList.remove(
-            "hidden"
-        );
+    document.getElementById("pageCatalog").classList.add("hidden");
+    document.getElementById("pageChangelog").classList.add("hidden");
+    document.getElementById("pageAdmin").classList.remove("hidden");
 
     document
         .getElementById(
@@ -4403,7 +4454,7 @@ function renderAdminPanel(){
 
                                 ${user.id === "admin" ? `
                                     <span style="color:#66738a;font-size:10px;align-self:center;">
-                                        Системный аккаунт · Гл. Админ
+                                        Системный аккаунт · Администратор
                                     </span>
                                 ` : ""}
 
@@ -4431,7 +4482,7 @@ function renderAdminPanel(){
         });
         partsTable.innerHTML = sortedParts.length ? sortedParts.map(part=>`
             <tr>
-                <td>📁 ${escapeHtml(findFolder(part.folderId)?.name || "Без папки")}</td>
+                <td><input class="bulk-part" type="checkbox" value="${part.id}"> 📁 ${escapeHtml(findFolder(part.folderId)?.name || "Без папки")}</td>
                 <td>${escapeHtml(part.name)}</td>
                 <td>${escapeHtml(part.number)}</td>
                 <td>${escapeHtml(categoryName(part.category))}</td>
@@ -4445,6 +4496,11 @@ function renderAdminPanel(){
             </tr>
         `).join("") : `<tr><td colspan="5" style="color:#69758b;text-align:center;padding:22px;">Каталог пока пуст.</td></tr>`;
     }
+    const folderBulk = document.getElementById("adminFoldersBulkTable");
+    if(folderBulk){
+        folderBulk.innerHTML = state.folders.length ? state.folders.map(f=>`<tr><td><input class="bulk-folder" type="checkbox" value="${f.id}"></td><td>📁 ${escapeHtml(f.name)}</td><td>${escapeHtml(categoryName(f.category))}</td><td>${state.parts.filter(p=>p.folderId===f.id).length}</td></tr>`).join("") : `<tr><td colspan="4" style="color:#69758b;text-align:center;padding:18px;">Папок пока нет.</td></tr>`;
+    }
+    if(isSuperAdmin()) renderHistory();
 }
 
 
@@ -4455,7 +4511,7 @@ function renderAdminPanel(){
 function openUserModal(){
 
     if(!isSuperAdmin()){
-        toast("Только главный администратор может создавать аккаунты.","error");
+        toast("Только администратор может создавать аккаунты.","error");
         return;
     }
 
@@ -4525,7 +4581,7 @@ function openUserModal(){
                     </option>
 
                     <option value="admin">
-                        Администратор
+                        Редактор
                     </option>
 
                 </select>
@@ -4558,7 +4614,7 @@ function openUserModal(){
 function createUser(){
 
     if(!isSuperAdmin()){
-        toast("Только главный администратор может создавать аккаунты.","error");
+        toast("Только администратор может создавать аккаунты.","error");
         return;
     }
 
@@ -4620,6 +4676,7 @@ function createUser(){
         return;
     }
 
+    const before = snapshotState();
     state.users.push({
 
         id:uid("user"),
@@ -4633,6 +4690,7 @@ function createUser(){
         createdAt:now()
     });
 
+    recordAction("user_create", `Создание аккаунта «${loginValue}»`, before);
     saveState();
 
     closeModal();
@@ -4653,27 +4711,29 @@ function createUser(){
 function toggleUserAdmin(userId){
 
     if(!isSuperAdmin()){
-        toast("Только главный администратор может менять права.","error");
+        toast("Только администратор может менять права.","error");
         return;
     }
 
     const user = state.users.find(u=>u.id===userId);
     if(!user || user.id === "admin") return;
 
+    const before = snapshotState();
     const makeAdmin = user.role !== "admin";
     if(!confirm(`${makeAdmin ? "Выдать" : "Забрать"} админку аккаунту "${user.login}"?`)) return;
 
     user.role = makeAdmin ? "admin" : "user";
     user.updatedAt = now();
+    recordAction("role_change", `${makeAdmin ? "Выдача прав редактора" : "Забор прав редактора"} «${user.login}»`, before);
     saveState();
     renderAdminPanel();
-    toast(makeAdmin ? "Права администратора выданы." : "Права администратора забраны.","success");
+    toast(makeAdmin ? "Права редактора выданы." : "Права администратора забраны.","success");
 }
 
 function startImpersonation(userId){
 
     if(!isSuperAdmin()){
-        toast("Только главный администратор может входить в другие аккаунты.","error");
+        toast("Только администратор может входить в другие аккаунты.","error");
         return;
     }
 
@@ -4722,7 +4782,7 @@ function returnFromImpersonation(){
 async function deleteUser(userId){
 
     if(!isSuperAdmin()){
-        toast("Только главный администратор может удалять аккаунты.","error");
+        toast("Только администратор может удалять аккаунты.","error");
         return;
     }
 
@@ -4738,7 +4798,7 @@ async function deleteUser(userId){
     if(user.id === "admin" || user.id === currentUserId){
 
         toast(
-            "Главный аккаунт администратора удалить нельзя.",
+            "Системный аккаунт администратора удалить нельзя.",
             "error"
         );
 
@@ -4755,24 +4815,13 @@ async function deleteUser(userId){
         return;
     }
 
+    const before = snapshotState();
     const userParts =
         state.parts.filter(
             p =>
                 p.userId ===
                 userId
         );
-
-    for(
-        const part of userParts
-    ){
-
-        if(part.drawingId){
-
-            await deleteBlob(
-                part.drawingId
-            );
-        }
-    }
 
     state.parts =
         state.parts.filter(
@@ -4788,6 +4837,7 @@ async function deleteUser(userId){
                 userId
         );
 
+    recordAction("user_delete", `Удаление аккаунта «${user.login}»`, before);
     saveState();
 
     renderAdminPanel();
@@ -4798,6 +4848,51 @@ async function deleteUser(userId){
     );
 }
 
+
+/* =========================================================
+   BULK / HISTORY / CHANGELOG
+========================================================= */
+function bulkDeleteSelected(){
+    if(!isAdmin()){toast("Доступ запрещён.","error");return;}
+    const ids=[...document.querySelectorAll(".bulk-part:checked")].map(x=>x.value);
+    const folderIds=[...document.querySelectorAll(".bulk-folder:checked")].map(x=>x.value);
+    if(!ids.length && !folderIds.length){toast("Выберите элементы.","error");return;}
+    if(!confirm(`Удалить выбранное: ${ids.length} деталей и ${folderIds.length} папок?`)) return;
+    const before=snapshotState();
+    state.parts=state.parts.filter(p=>!ids.includes(p.id));
+    const used=new Set(state.parts.map(p=>p.folderId));
+    state.folders=state.folders.filter(f=>!folderIds.includes(f.id) || used.has(f.id));
+    recordAction("bulk_delete",`Массовое удаление: ${ids.length} деталей, ${folderIds.length} папок`,before);
+    saveState(); renderAdminPanel(); renderCatalog(); toast("Выбранное удалено.","success");
+}
+function toggleBulkChecks(source){document.querySelectorAll(".bulk-part,.bulk-folder").forEach(x=>x.checked=source.checked)}
+function renderHistory(){
+    const el=document.getElementById("historyList"); if(!el) return;
+    const items=(state.actionHistory||[]);
+    el.innerHTML=items.length?items.map(a=>{const u=state.users.find(x=>x.id===a.userId);return `<div class="history-row"><div><b>${escapeHtml(a.label)}</b></div><div>${escapeHtml(u?.login||"Удалённый пользователь")}</div><div>${formatDate(a.createdAt)}</div><div><button class="btn" type="button" onclick="undoAction('${a.id}')">↶ Отменить</button></div></div>`}).join(""):"<div style='color:#718097;padding:15px 0;'>История пока пуста.</div>";
+}
+function openChangelog(){
+    document.getElementById("pageCatalog").classList.add("hidden"); document.getElementById("pageAdmin").classList.add("hidden"); document.getElementById("pageChangelog").classList.remove("hidden");
+    document.querySelectorAll(".side-btn").forEach(b=>b.classList.remove("active")); document.getElementById("navChangelog")?.classList.add("active");
+    document.getElementById("breadcrumb").innerHTML="<strong>Блог изменений</strong>";
+    const b=document.getElementById("newChangelogBtn"); if(b) b.style.display=isSuperAdmin()?"inline-flex":"none";
+    renderChangelog(); closeSidebar();
+}
+function renderChangelog(){
+    const el=document.getElementById("changelogList"); if(!el) return;
+    const arr=[...(state.changelog||[])].sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt));
+    el.innerHTML=arr.length?arr.map(x=>`<div class="changelog-entry"><h4>${escapeHtml(x.title)}</h4><div class="changelog-date">${formatDate(x.createdAt)}</div><div style="white-space:pre-wrap;color:#c5ccda;font-size:12px;line-height:1.6;">${escapeHtml(x.text)}</div></div>`).join(""):"<div class='card'>Пока нет записей об обновлениях.</div>";
+}
+function openChangelogModal(){
+    if(!isSuperAdmin()){toast("Только администратор может редактировать блог.","error");return;}
+    showModal(`<div class="modal-header"><div class="modal-title">Новая запись</div><button class="modal-close" onclick="closeModal()">×</button></div><div class="modal-body"><div class="field"><label>Заголовок</label><input id="changeTitle" class="input" placeholder="Например: BetaLock v0.02"></div><div class="field"><label>Что изменено</label><textarea id="changeText" class="textarea" rows="8" placeholder="Добавлено...&#10;Изменено...&#10;Удалено..."></textarea></div></div><div class="modal-footer"><button class="btn" onclick="closeModal()">Отмена</button><button class="btn primary" onclick="saveChangelog()">Опубликовать</button></div>`);
+}
+function saveChangelog(){
+    if(!isSuperAdmin()) return;
+    const title=document.getElementById("changeTitle")?.value.trim(); const text=document.getElementById("changeText")?.value.trim();
+    if(!title||!text){toast("Заполните заголовок и текст.","error");return;}
+    const before=snapshotState(); state.changelog.push({id:uid("change"),title,text,createdAt:now(),authorId:currentUserId}); recordAction("changelog_create",`Публикация записи «${title}»`,before); saveState(); closeModal(); renderChangelog(); toast("Запись опубликована.","success");
+}
 
 /* =========================================================
    MODAL
@@ -4953,11 +5048,23 @@ document.addEventListener(
 );
 
 
+function updateSiteVersion(){ document.querySelectorAll(".site-version").forEach(el=>el.textContent=SITE_VERSION); }
+function handleVisualViewport(){
+    if(!window.visualViewport) return;
+    const offset=Math.max(0, window.innerHeight-window.visualViewport.height-window.visualViewport.offsetTop);
+    document.documentElement.style.setProperty("--keyboard-offset", offset+"px");
+}
+if(window.visualViewport){ window.visualViewport.addEventListener("resize",handleVisualViewport); window.visualViewport.addEventListener("scroll",handleVisualViewport); }
+window.addEventListener("focusin",()=>setTimeout(handleVisualViewport,50));
+window.addEventListener("focusout",()=>setTimeout(handleVisualViewport,150));
+
 /* =========================================================
    INIT
 ========================================================= */
 
 async function boot(){
+    updateSiteVersion();
+    handleVisualViewport();
 
     try{
 
