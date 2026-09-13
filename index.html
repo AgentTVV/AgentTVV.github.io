@@ -94,27 +94,20 @@ button{
 }
 
 .auth-orb.one{
-    width:350px;
-    height:350px;
-    background:#4d70ff;
-    left:-120px;
-    top:-100px;
+    width:350px;height:350px;background:#4d70ff;left:-120px;top:-100px;
 }
 
 .auth-orb.two{
-    width:350px;
-    height:350px;
-    background:#764dff;
-    right:-120px;
-    bottom:-100px;
+    width:350px;height:350px;background:#764dff;right:-120px;bottom:-100px;
 }
 
-.auth-card{
+/* Стеклянный контейнер на две колонки */
+.auth-container{
     position:relative;
     z-index:2;
+    display:flex;
     width:100%;
-    max-width:450px;
-    padding:36px;
+    max-width:880px;
     border-radius:27px;
     background:rgba(11,16,28,.82);
     border:1px solid var(--line2);
@@ -123,6 +116,147 @@ button{
     box-shadow:
         0 40px 100px rgba(0,0,0,.55),
         inset 0 1px 0 rgba(255,255,255,.05);
+    overflow:hidden;
+}
+
+/* ---------- ЛЕВАЯ КОЛОНКА: визуал ---------- */
+.auth-visual{
+    flex:1;
+    position:relative;
+    background:
+        linear-gradient(135deg,
+            rgba(91,140,255,.10),
+            rgba(123,97,255,.05),
+            transparent);
+    display:flex;
+    flex-direction:column;
+    justify-content:flex-end;
+    align-items:center;
+    padding-bottom:50px;
+    overflow:hidden;
+    min-height:540px;
+}
+
+/* 1. Падение лампы */
+.lamp-wrapper{
+    position:absolute;
+    top:0;
+    left:50%;
+    transform:translateX(-50%) translateY(-150%);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    z-index:10;
+    animation:dropLamp 1s cubic-bezier(.25,1,.5,1) forwards;
+}
+
+@keyframes dropLamp{
+    to{ transform:translateX(-50%) translateY(0); }
+}
+
+/* 2. Качание лампы */
+.lamp{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    transform-origin:top center;
+    animation:swing 3s ease-in-out infinite alternate;
+    animation-delay:1s;
+}
+
+@keyframes swing{
+    0%{ transform:rotate(2.5deg); }
+    100%{ transform:rotate(-2.5deg); }
+}
+
+.lamp-cord{
+    width:2px;
+    height:95px;
+    background:#2a3044;
+}
+
+.lamp-shade{
+    width:80px;
+    height:46px;
+    background:#1a1f33;
+    border-radius:0 0 40px 40px;
+    border-bottom:3px solid var(--blue);
+    box-shadow:0 0 22px rgba(91,140,255,.25);
+    position:relative;
+}
+
+.lamp-light{
+    width:190px;
+    height:190px;
+    background:radial-gradient(circle,
+        rgba(91,140,255,.38) 0%,
+        rgba(123,97,255,.12) 40%,
+        transparent 70%);
+    border-radius:50%;
+    margin-top:-20px;
+    filter:blur(15px);
+    animation:glowPulse 3s infinite alternate;
+}
+
+@keyframes glowPulse{
+    0%{ opacity:.6; transform:scale(.95); }
+    100%{ opacity:1; transform:scale(1.05); }
+}
+
+/* 3. Появление робота */
+.robot-wrapper{
+    opacity:0;
+    transform:scale(.5) translateY(30px);
+    animation:popIn .6s cubic-bezier(.175,.885,.32,1.275) 1.2s forwards;
+    z-index:5;
+    position:relative;
+    margin-bottom:10px;
+}
+
+@keyframes popIn{
+    to{ opacity:1; transform:scale(1) translateY(0); }
+}
+
+.robot-svg{
+    width:120px;
+    height:120px;
+    filter:drop-shadow(0 0 15px rgba(91,140,255,.55));
+    animation:float 4s ease-in-out infinite;
+    animation-delay:1.8s;
+}
+
+@keyframes float{
+    0%,100%{ transform:translateY(0); }
+    50%{ transform:translateY(-10px); }
+}
+
+/* 4. Реалистичное моргание */
+.eye{
+    transform-box:fill-box;
+    transform-origin:center;
+    animation:blink 4s infinite;
+    animation-delay:2s;
+}
+
+@keyframes blink{
+    0%,92%,100%{ transform:scaleY(1); }
+    95%{ transform:scaleY(.1); }
+}
+
+/* ---------- ПРАВАЯ КОЛОНКА: форма ---------- */
+.auth-form-side{
+    flex:1.15;
+    padding:40px 42px;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    opacity:0;
+    transform:translateX(40px);
+    animation:slideInRight .7s ease-out 1.8s forwards;
+}
+
+@keyframes slideInRight{
+    to{ opacity:1; transform:translateX(0); }
 }
 
 .logo{
@@ -156,91 +290,15 @@ button{
 }
 
 .auth-title{
-    margin:30px 0 8px;
-    font-size:30px;
+    margin:26px 0 8px;
+    font-size:28px;
 }
 
 .auth-description{
     color:var(--muted);
     line-height:1.6;
-    margin:0 0 25px;
-}
-
-.field{
-    margin-bottom:16px;
-}
-
-.field label{
-    display:block;
-    color:#b9c2d2;
+    margin:0 0 22px;
     font-size:13px;
-    margin-bottom:8px;
-}
-
-.input,
-.textarea,
-.select{
-    width:100%;
-    background:rgba(255,255,255,.045);
-    color:white;
-    border:1px solid var(--line);
-    border-radius:12px;
-    outline:none;
-    padding:13px 14px;
-}
-
-.textarea{
-    min-height:190px;
-    resize:vertical;
-    font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
-    font-size:12px;
-}
-
-.input:focus,
-.textarea:focus,
-.select:focus{
-    border-color:rgba(91,140,255,.7);
-    box-shadow:0 0 0 4px rgba(91,140,255,.1);
-}
-
-.btn{
-    border:1px solid var(--line);
-    border-radius:12px;
-    background:rgba(255,255,255,.045);
-    color:white;
-    padding:11px 15px;
-    transition:.2s;
-    display:inline-flex;
-    align-items:center;
-    justify-content:center;
-    gap:8px;
-}
-
-.btn:hover{
-    background:rgba(255,255,255,.085);
-    transform:translateY(-1px);
-}
-
-.btn.primary{
-    background:linear-gradient(135deg,var(--blue),var(--purple));
-    border:0;
-    box-shadow:0 10px 30px rgba(91,140,255,.2);
-}
-
-.btn.danger{
-    color:#ff8097;
-    background:rgba(255,85,116,.08);
-    border-color:rgba(255,85,116,.2);
-}
-
-.btn.success{
-    color:#70e7b8;
-    background:rgba(53,212,154,.08);
-    border-color:rgba(53,212,154,.2);
-}
-
-.btn.full{
-    width:100%;
 }
 
 .auth-error{
@@ -248,6 +306,32 @@ button{
     min-height:20px;
     font-size:13px;
     margin:8px 0;
+}
+
+.auth-footnote{
+    text-align:center;
+    margin-top:20px;
+    color:#5f6b81;
+    font-size:10px;
+    line-height:1.5;
+}
+
+/* ---------- Адаптив ---------- */
+@media(max-width:768px){
+    .auth-container{
+        flex-direction:column;
+        max-width:450px;
+    }
+    .auth-visual{
+        min-height:230px;
+        padding-bottom:30px;
+    }
+    .lamp-cord{ height:55px; }
+    .lamp-shade{ width:64px; height:38px; }
+    .lamp-light{ width:150px; height:150px; }
+    .robot-svg{ width:88px; height:88px; }
+    .auth-form-side{ padding:28px 24px; }
+    .auth-title{ font-size:24px; }
 }
 
 /* =====================================================
@@ -1212,90 +1296,108 @@ button{
     <div class="auth-orb one"></div>
     <div class="auth-orb two"></div>
 
-    <div class="auth-card">
+    <div class="auth-container">
 
-        <div class="logo">
+        <!-- ===== Левая колонка: лампа и робот ===== -->
+        <div class="auth-visual">
 
-            <div class="logo-mark">
-                ⌬
+            <!-- Лампа -->
+            <div class="lamp-wrapper">
+                <div class="lamp">
+                    <div class="lamp-cord"></div>
+                    <div class="lamp-shade"></div>
+                    <div class="lamp-light"></div>
+                </div>
             </div>
 
-            <div>
-                <div class="logo-title">
-                    MiniCAD
-                </div>
+            <!-- Робот -->
+            <div class="robot-wrapper">
+                <svg class="robot-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Антенна -->
+                    <line x1="50" y1="10" x2="50" y2="25" stroke="#5b8cff" stroke-width="3"/>
+                    <circle cx="50" cy="10" r="4" fill="#7b61ff"/>
 
-                <div class="logo-sub">
-                    Производственная система
-                </div>
+                    <!-- Голова -->
+                    <rect x="25" y="25" width="50" height="40" rx="15"
+                          fill="#0d1220" stroke="#5b8cff" stroke-width="3"/>
+
+                    <!-- Глаза (класс eye — для моргания) -->
+                    <circle class="eye" cx="40" cy="45" r="5" fill="#7b61ff"/>
+                    <circle class="eye" cx="60" cy="45" r="5" fill="#7b61ff"/>
+
+                    <!-- Улыбка -->
+                    <path d="M 40 55 Q 50 65 60 55"
+                          stroke="#5b8cff" stroke-width="3"
+                          fill="none" stroke-linecap="round"/>
+
+                    <!-- Тело -->
+                    <rect x="35" y="65" width="30" height="30" rx="10"
+                          fill="#0d1220" stroke="#5b8cff" stroke-width="3"/>
+
+                    <!-- Наушники -->
+                    <rect x="15" y="35" width="10" height="20" rx="5" fill="#5b8cff"/>
+                    <rect x="75" y="35" width="10" height="20" rx="5" fill="#5b8cff"/>
+
+                    <!-- Индикатор -->
+                    <circle cx="50" cy="80" r="3" fill="#7b61ff"/>
+                </svg>
             </div>
 
         </div>
 
-        <h1 class="auth-title">
-            Вход в систему
-        </h1>
+        <!-- ===== Правая колонка: форма входа ===== -->
+        <div class="auth-form-side">
 
-        <p class="auth-description">
-            Введите выданные администратором
-            данные для доступа к каталогу.
-        </p>
-
-        <form onsubmit="login(event)">
-
-            <div class="field">
-
-                <label>
-                    Логин
-                </label>
-
-                <input
-                    id="loginInput"
-                    class="input"
-                    autocomplete="username"
-                    required
-                    placeholder="Введите логин">
-
+            <div class="logo">
+                <div class="logo-mark">⌬</div>
+                <div>
+                    <div class="logo-title">MiniCAD</div>
+                    <div class="logo-sub">Производственная система</div>
+                </div>
             </div>
 
-            <div class="field">
+            <h1 class="auth-title">Вход в систему</h1>
 
-                <label>
-                    Пароль
-                </label>
+            <p class="auth-description">
+                Введите выданные администратором
+                данные для доступа к каталогу.
+            </p>
 
-                <input
-                    id="passwordInput"
-                    class="input"
-                    type="password"
-                    autocomplete="current-password"
-                    required
-                    placeholder="Введите пароль">
+            <form onsubmit="login(event)">
 
+                <div class="field">
+                    <label>Логин</label>
+                    <input
+                        id="loginInput"
+                        class="input"
+                        autocomplete="username"
+                        required
+                        placeholder="Введите логин">
+                </div>
+
+                <div class="field">
+                    <label>Пароль</label>
+                    <input
+                        id="passwordInput"
+                        class="input"
+                        type="password"
+                        autocomplete="current-password"
+                        required
+                        placeholder="Введите пароль">
+                </div>
+
+                <div id="loginError" class="auth-error"></div>
+
+                <button type="submit" class="btn primary full">
+                    Войти
+                </button>
+
+            </form>
+
+            <div class="auth-footnote">
+                Аккаунты выдаются только администратором.
             </div>
 
-            <div
-                id="loginError"
-                class="auth-error">
-            </div>
-
-            <button
-                type="submit"
-                class="btn primary full">
-                Войти
-            </button>
-
-        </form>
-
-        <div
-            style="
-                text-align:center;
-                margin-top:20px;
-                color:#5f6b81;
-                font-size:10px;
-                line-height:1.5;
-            ">
-            Аккаунты выдаются только администратором.
         </div>
 
     </div>
