@@ -25,9 +25,7 @@
     --radius:19px;
 }
 
-*{
-    box-sizing:border-box;
-}
+*{ box-sizing:border-box; }
 
 html,body{
     margin:0;
@@ -38,37 +36,96 @@ html,body{
         radial-gradient(circle at 50% 100%,rgba(53,212,154,.06),transparent 35%),
         var(--bg);
     color:var(--text);
-    font-family:
-        Inter,
-        -apple-system,
-        BlinkMacSystemFont,
-        "Segoe UI",
-        Roboto,
-        Arial,
-        sans-serif;
+    font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
 }
 
-body{
-    overflow-x:hidden;
+body{ overflow-x:hidden; }
+body.sidebar-lock{ overflow:hidden; }
+
+button,input,textarea,select{ font:inherit; }
+button{ cursor:pointer; }
+
+.hidden{ display:none!important; }
+
+/* =====================================================
+   ОБЩИЕ ЭЛЕМЕНТЫ ФОРМ (восстановлено)
+===================================================== */
+
+.field{
+    margin-bottom:16px;
 }
 
-body.sidebar-lock{
-    overflow:hidden;
+.field label{
+    display:block;
+    color:#b9c2d2;
+    font-size:13px;
+    margin-bottom:8px;
 }
 
-button,
-input,
-textarea,
-select{
-    font:inherit;
+.input,
+.textarea,
+.select{
+    width:100%;
+    background:rgba(255,255,255,.045);
+    color:white;
+    border:1px solid var(--line);
+    border-radius:12px;
+    outline:none;
+    padding:13px 14px;
 }
 
-button{
-    cursor:pointer;
+.textarea{
+    min-height:190px;
+    resize:vertical;
+    font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+    font-size:12px;
 }
 
-.hidden{
-    display:none!important;
+.input:focus,
+.textarea:focus,
+.select:focus{
+    border-color:rgba(91,140,255,.7);
+    box-shadow:0 0 0 4px rgba(91,140,255,.1);
+}
+
+.btn{
+    border:1px solid var(--line);
+    border-radius:12px;
+    background:rgba(255,255,255,.045);
+    color:white;
+    padding:11px 15px;
+    transition:.2s;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+}
+
+.btn:hover{
+    background:rgba(255,255,255,.085);
+    transform:translateY(-1px);
+}
+
+.btn.primary{
+    background:linear-gradient(135deg,var(--blue),var(--purple));
+    border:0;
+    box-shadow:0 10px 30px rgba(91,140,255,.2);
+}
+
+.btn.danger{
+    color:#ff8097;
+    background:rgba(255,85,116,.08);
+    border-color:rgba(255,85,116,.2);
+}
+
+.btn.success{
+    color:#70e7b8;
+    background:rgba(53,212,154,.08);
+    border-color:rgba(53,212,154,.2);
+}
+
+.btn.full{
+    width:100%;
 }
 
 /* =====================================================
@@ -1124,14 +1181,8 @@ button{
 }
 
 @keyframes toastIn{
-    from{
-        opacity:0;
-        transform:translateY(10px);
-    }
-    to{
-        opacity:1;
-        transform:none;
-    }
+    from{ opacity:0; transform:translateY(10px); }
+    to{ opacity:1; transform:none; }
 }
 
 /* =====================================================
@@ -1250,10 +1301,6 @@ button{
         grid-template-columns:1fr;
     }
 
-    .auth-card{
-        padding:25px 19px;
-    }
-
     .modal-backdrop{
         padding:7px;
     }
@@ -1321,7 +1368,7 @@ button{
                     <rect x="25" y="25" width="50" height="40" rx="15"
                           fill="#0d1220" stroke="#5b8cff" stroke-width="3"/>
 
-                    <!-- Глаза (класс eye — для моргания) -->
+                    <!-- Глаза -->
                     <circle class="eye" cx="40" cy="45" r="5" fill="#7b61ff"/>
                     <circle class="eye" cx="60" cy="45" r="5" fill="#7b61ff"/>
 
@@ -1947,7 +1994,6 @@ const STORAGE_KEY = "minicad_production_v6";
 const SESSION_KEY = "minicad_session_v6";
 const IMPERSONATION_KEY = "minicad_impersonation_v1";
 const SITE_VERSION = "BetaLock v0.01";
-/* Для CI/CD: при выпуске новой сборки обновляйте SITE_VERSION на +0.01. */
 
 const IDB_NAME = "minicad_production_files_v6";
 const IDB_STORE = "files";
@@ -1970,12 +2016,7 @@ let editingPartId = null;
 let editingUserId = null;
 
 
-/* =========================================================
-   INITIAL STATE
-========================================================= */
-
 function createInitialState(){
-
     return {
         users:[
             {
@@ -2004,23 +2045,12 @@ function normalizeState(parsed){
     if(!Array.isArray(parsed.changelog)){ parsed.changelog = []; }
 
     parsed.parts.forEach(part=>{
-        if(!part.userId && part.ownerId){
-            part.userId = part.ownerId;
-        }
-        if(!part.userId){
-            part.userId = "admin";
-        }
-        if(!part.category){
-            part.category = "programs";
-        }
-        if(!part.name){
-            part.name = "Без названия";
-        }
-        if(!part.number){
-            part.number = "";
-        }
+        if(!part.userId && part.ownerId){ part.userId = part.ownerId; }
+        if(!part.userId){ part.userId = "admin"; }
+        if(!part.category){ part.category = "programs"; }
+        if(!part.name){ part.name = "Без названия"; }
+        if(!part.number){ part.number = ""; }
 
-        /* Старые детали получают папку по названию. */
         if(!part.folderId){
             const sameName = parsed.folders.find(f =>
                 f.category === part.category &&
@@ -2043,7 +2073,6 @@ function normalizeState(parsed){
         }
     });
 
-    /* Удаляем дубли папок и исправляем пустые названия. */
     const seen = new Set();
     parsed.folders = parsed.folders.filter(folder=>{
         folder.name = String(folder.name || "Без названия").trim();
@@ -2054,8 +2083,6 @@ function normalizeState(parsed){
         return true;
     });
 
-    /* Если в старой версии осталась ссылка на удалённую папку,
-       создаём её заново. */
     parsed.parts.forEach(part=>{
         if(!parsed.folders.some(f=>f.id === part.folderId)){
             const folder = {
@@ -2088,7 +2115,6 @@ function normalizeState(parsed){
         if(!admin.password) admin.password = "admin";
     }
 
-    /* Все остальные аккаунты с неизвестной ролью считаем обычными пользователями. */
     parsed.users.forEach(u=>{
         if(u.id !== "admin" && !["user","admin"].includes(u.role)){
             u.role = "user";
@@ -2099,27 +2125,21 @@ function normalizeState(parsed){
 }
 
 function loadState(){
-
     try{
         const raw = localStorage.getItem(STORAGE_KEY);
-
         if(raw){
             const parsed = JSON.parse(raw);
             const normalized = normalizeState(parsed);
             localStorage.setItem(STORAGE_KEY, JSON.stringify(normalized));
             return normalized;
         }
-    }catch(error){
-        console.error(error);
-    }
+    }catch(error){ console.error(error); }
 
     const fresh = createInitialState();
     localStorage.setItem(STORAGE_KEY, JSON.stringify(fresh));
     return fresh;
 }
-function saveState(){
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-}
+function saveState(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
 
 function snapshotState(){
     return JSON.parse(JSON.stringify({users:state.users,folders:state.folders,parts:state.parts,changelog:state.changelog||[]}));
@@ -2141,32 +2161,14 @@ function undoAction(id){
     toast("Действие отменено.","success");
 }
 
-
-
-/* =========================================================
-   HELPERS
-========================================================= */
-
 function uid(prefix="id"){
-
     return (
-        prefix +
-        "_" +
-        Date.now().toString(36) +
-        "_" +
-        Math.random()
-            .toString(36)
-            .slice(2,9)
+        prefix + "_" + Date.now().toString(36) + "_" +
+        Math.random().toString(36).slice(2,9)
     );
 }
-
-function now(){
-
-    return new Date().toISOString();
-}
-
+function now(){ return new Date().toISOString(); }
 function escapeHtml(value){
-
     return String(value ?? "")
         .replaceAll("&","&amp;")
         .replaceAll("<","&lt;")
@@ -2174,84 +2176,36 @@ function escapeHtml(value){
         .replaceAll('"',"&quot;")
         .replaceAll("'","&#039;");
 }
-
 function formatDate(date){
-
-    if(!date){
-        return "--";
-    }
-
-    return new Date(date)
-        .toLocaleString(
-            "ru-RU",
-            {
-                day:"2-digit",
-                month:"2-digit",
-                year:"numeric",
-                hour:"2-digit",
-                minute:"2-digit"
-            }
-        );
+    if(!date) return "--";
+    return new Date(date).toLocaleString("ru-RU",{
+        day:"2-digit",month:"2-digit",year:"numeric",
+        hour:"2-digit",minute:"2-digit"
+    });
 }
-
-function getCurrentUser(){
-
-    return state.users.find(
-        u =>
-            u.id === currentUserId
-    );
-}
-
+function getCurrentUser(){ return state.users.find(u => u.id === currentUserId); }
 function isAdmin(){
-
     const role = getCurrentUser()?.role;
-
     return role === "admin" || role === "superadmin";
 }
-
-function isSuperAdmin(){
-
-    return getCurrentUser()?.role === "superadmin";
-}
-
+function isSuperAdmin(){ return getCurrentUser()?.role === "superadmin"; }
 function roleLabel(role){
-
     if(role === "superadmin") return "Администратор";
     if(role === "admin") return "Редактор";
     return "Пользователь";
 }
-
 function roleClass(role){
-
     if(role === "superadmin") return "role-admin";
     if(role === "admin") return "role-admin";
     return "role-user";
 }
-
-function getUserParts(){
-
-    return state.parts.filter(
-        p =>
-            p.userId === currentUserId
-    );
-}
-
-function getVisibleParts(){
-    return state.parts;
-}
-
-function getAllParts(){
-    return state.parts;
-}
-
+function getUserParts(){ return state.parts.filter(p => p.userId === currentUserId); }
+function getVisibleParts(){ return state.parts; }
+function getAllParts(){ return state.parts; }
 function normalizeFolderName(name){
     return String(name || "").trim().replace(/\s+/g," ");
 }
-
-function findFolder(folderId){
-    return state.folders.find(f => f.id === folderId);
-}
-
+function findFolder(folderId){ return state.folders.find(f => f.id === folderId); }
 function findFolderByName(name, category=currentCategory){
     const normalized = normalizeFolderName(name).toLowerCase();
     return state.folders.find(f =>
@@ -2259,11 +2213,9 @@ function findFolderByName(name, category=currentCategory){
         normalizeFolderName(f.name).toLowerCase() === normalized
     );
 }
-
 function ensureFolder(name, category=currentCategory){
     const cleanName = normalizeFolderName(name) || "Без названия";
     let folder = findFolderByName(cleanName, category);
-
     if(!folder){
         folder = {
             id:uid("folder"),
@@ -2274,318 +2226,112 @@ function ensureFolder(name, category=currentCategory){
         };
         state.folders.push(folder);
     }
-
     return folder;
 }
-
 function getPartsInFolder(folderId){
     return getVisibleParts().filter(p => p.folderId === folderId);
 }
-
 function getVisibleFolders(category){
     return state.folders
         .filter(folder => folder.category === category)
         .sort((a,b)=>
-            a.name.localeCompare(
-                b.name,
-                "ru",
-                {numeric:true,sensitivity:"base"}
-            )
+            a.name.localeCompare(b.name,"ru",{numeric:true,sensitivity:"base"})
         );
 }
-
 function categoryName(category){
-
-    if(category === "programs")
-        return "Программы";
-
-    if(category === "tools")
-        return "Инструмент";
-
+    if(category === "programs") return "Программы";
+    if(category === "tools") return "Инструмент";
     return "Прочее";
 }
-
 function categoryDescription(category){
-
-    if(category === "programs")
-        return "Управляющие программы и G-код.";
-
-    if(category === "tools")
-        return "Инструмент и оснастка.";
-
+    if(category === "programs") return "Управляющие программы и G-код.";
+    if(category === "tools") return "Инструмент и оснастка.";
     return "Дополнительные материалы и данные.";
 }
 
-
-/* =========================================================
-   INDEXED DB
-========================================================= */
-
 function initDB(){
-
-    return new Promise(
-        (resolve,reject)=>{
-
-            const request =
-                indexedDB.open(
-                    IDB_NAME,
-                    1
-                );
-
-            request.onupgradeneeded =
-                function(){
-
-                    const database =
-                        request.result;
-
-                    if(
-                        !database.objectStoreNames.contains(
-                            IDB_STORE
-                        )
-                    ){
-
-                        database.createObjectStore(
-                            IDB_STORE
-                        );
-                    }
-                };
-
-            request.onsuccess =
-                function(){
-
-                    db =
-                        request.result;
-
-                    resolve(db);
-                };
-
-            request.onerror =
-                function(){
-
-                    reject(
-                        request.error
-                    );
-                };
-        }
-    );
+    return new Promise((resolve,reject)=>{
+        const request = indexedDB.open(IDB_NAME,1);
+        request.onupgradeneeded = function(){
+            const database = request.result;
+            if(!database.objectStoreNames.contains(IDB_STORE)){
+                database.createObjectStore(IDB_STORE);
+            }
+        };
+        request.onsuccess = function(){ db = request.result; resolve(db); };
+        request.onerror = function(){ reject(request.error); };
+    });
 }
-
 function saveBlob(fileId,blob){
-
-    return new Promise(
-        (resolve,reject)=>{
-
-            if(!db){
-                resolve();
-                return;
-            }
-
-            const tx =
-                db.transaction(
-                    IDB_STORE,
-                    "readwrite"
-                );
-
-            tx.objectStore(
-                IDB_STORE
-            ).put(
-                blob,
-                fileId
-            );
-
-            tx.oncomplete =
-                resolve;
-
-            tx.onerror =
-                ()=>reject(
-                    tx.error
-                );
-        }
-    );
+    return new Promise((resolve,reject)=>{
+        if(!db){ resolve(); return; }
+        const tx = db.transaction(IDB_STORE,"readwrite");
+        tx.objectStore(IDB_STORE).put(blob,fileId);
+        tx.oncomplete = resolve;
+        tx.onerror = ()=>reject(tx.error);
+    });
 }
-
 function getBlob(fileId){
-
-    return new Promise(
-        (resolve,reject)=>{
-
-            if(!db){
-
-                resolve(null);
-
-                return;
-            }
-
-            const tx =
-                db.transaction(
-                    IDB_STORE,
-                    "readonly"
-                );
-
-            const request =
-                tx.objectStore(
-                    IDB_STORE
-                ).get(fileId);
-
-            request.onsuccess =
-                ()=>{
-                    resolve(
-                        request.result || null
-                    );
-                };
-
-            request.onerror =
-                ()=>{
-                    reject(
-                        request.error
-                    );
-                };
-        }
-    );
+    return new Promise((resolve,reject)=>{
+        if(!db){ resolve(null); return; }
+        const tx = db.transaction(IDB_STORE,"readonly");
+        const request = tx.objectStore(IDB_STORE).get(fileId);
+        request.onsuccess = ()=>{ resolve(request.result || null); };
+        request.onerror = ()=>{ reject(request.error); };
+    });
 }
-
 function deleteBlob(fileId){
-
-    return new Promise(
-        (resolve,reject)=>{
-
-            if(!db){
-
-                resolve();
-
-                return;
-            }
-
-            const tx =
-                db.transaction(
-                    IDB_STORE,
-                    "readwrite"
-                );
-
-            tx.objectStore(
-                IDB_STORE
-            ).delete(fileId);
-
-            tx.oncomplete =
-                resolve;
-
-            tx.onerror =
-                ()=>{
-                    reject(
-                        tx.error
-                    );
-                };
-        }
-    );
+    return new Promise((resolve,reject)=>{
+        if(!db){ resolve(); return; }
+        const tx = db.transaction(IDB_STORE,"readwrite");
+        tx.objectStore(IDB_STORE).delete(fileId);
+        tx.oncomplete = resolve;
+        tx.onerror = ()=>{ reject(tx.error); };
+    });
 }
-
-
-/* =========================================================
-   AUTH
-========================================================= */
 
 function login(event){
-
     event.preventDefault();
-
-    const loginValue =
-        document
-            .getElementById("loginInput")
-            .value
-            .trim();
-
-    const password =
-        document
-            .getElementById("passwordInput")
-            .value;
-
-    const error =
-        document
-            .getElementById("loginError");
-
+    const loginValue = document.getElementById("loginInput").value.trim();
+    const password = document.getElementById("passwordInput").value;
+    const error = document.getElementById("loginError");
     error.textContent = "";
 
-    const user =
-        state.users.find(
-            u =>
-                u.login.toLowerCase() ===
-                loginValue.toLowerCase() &&
-                u.password === password
-        );
+    const user = state.users.find(u =>
+        u.login.toLowerCase() === loginValue.toLowerCase() &&
+        u.password === password
+    );
 
     if(!user){
-
-        error.textContent =
-            "Неверный логин или пароль.";
-
+        error.textContent = "Неверный логин или пароль.";
         return;
     }
 
-    currentUserId =
-        user.id;
-
-    localStorage.setItem(
-        SESSION_KEY,
-        currentUserId
-    );
-
+    currentUserId = user.id;
+    localStorage.setItem(SESSION_KEY,currentUserId);
     enterApp();
 }
 
 function logout(){
-
-    /* Если главный админ вошёл в другой аккаунт для теста,
-       кнопка выхода возвращает его в главный аккаунт. */
     if(localStorage.getItem(IMPERSONATION_KEY)){
         returnFromImpersonation();
         return;
     }
-
     currentUserId = null;
-
-    localStorage.removeItem(
-        SESSION_KEY
-    );
-
-    document
-        .getElementById("app")
-        .classList.add("hidden");
-
-    document
-        .getElementById("authPage")
-        .classList.remove("hidden");
-
+    localStorage.removeItem(SESSION_KEY);
+    document.getElementById("app").classList.add("hidden");
+    document.getElementById("authPage").classList.remove("hidden");
     closeSidebar();
 }
 
-
-/* =========================================================
-   ENTER APP
-========================================================= */
-
 function enterApp(){
+    const user = getCurrentUser();
+    if(!user){ logout(); return; }
 
-    const user =
-        getCurrentUser();
+    document.getElementById("authPage").classList.add("hidden");
+    document.getElementById("app").classList.remove("hidden");
 
-    if(!user){
-
-        logout();
-
-        return;
-    }
-
-    document
-        .getElementById("authPage")
-        .classList.add("hidden");
-
-    document
-        .getElementById("app")
-        .classList.remove("hidden");
-
-    document
-        .getElementById("currentUserName")
-        .textContent =
+    document.getElementById("currentUserName").textContent =
         user.login + " · " + roleLabel(user.role);
 
     const impersonationBtn = document.getElementById("returnImpersonationBtn");
@@ -2593,43 +2339,24 @@ function enterApp(){
         impersonationBtn.style.display = localStorage.getItem(IMPERSONATION_KEY) ? "inline-flex" : "none";
     }
 
-    document
-        .getElementById("adminNavigation")
-        .classList.toggle(
-            "hidden",
-            !isAdmin()
-        );
+    document.getElementById("adminNavigation").classList.toggle("hidden", !isAdmin());
 
     const addPartBtn = document.getElementById("catalogAddPartBtn");
     const newFolderBtn = document.getElementById("catalogNewFolderBtn");
     if(addPartBtn) addPartBtn.style.display = isAdmin() ? "inline-flex" : "none";
     if(newFolderBtn) newFolderBtn.style.display = isAdmin() ? "inline-flex" : "none";
 
-    currentCategory =
-        "programs";
-
+    currentCategory = "programs";
     selectedPartName = null;
-
-    openCategory(
-        "programs"
-    );
-
+    openCategory("programs");
     closeSidebar();
 }
 
-
-/* =========================================================
-   SIDEBAR
-========================================================= */
-
 function openSidebar(){
-
     const sidebar = document.getElementById("sidebar");
     const overlay = document.getElementById("sidebarOverlay");
-
     sidebar.classList.add("open");
     sidebar.classList.remove("closed");
-
     if(window.innerWidth <= 900){
         overlay.classList.add("active");
         document.body.classList.add("sidebar-lock");
@@ -2638,111 +2365,55 @@ function openSidebar(){
         document.body.classList.remove("sidebar-lock");
     }
 }
-
 function closeSidebar(){
-
     const sidebar = document.getElementById("sidebar");
     const overlay = document.getElementById("sidebarOverlay");
-
     sidebar.classList.remove("open");
-
-    if(window.innerWidth <= 900){
-        sidebar.classList.add("closed");
-    }else{
-        sidebar.classList.remove("closed");
-    }
-
+    if(window.innerWidth <= 900){ sidebar.classList.add("closed"); }
+    else{ sidebar.classList.remove("closed"); }
     overlay.classList.remove("active");
     document.body.classList.remove("sidebar-lock");
 }
-
 function toggleSidebar(){
-
     const sidebar = document.getElementById("sidebar");
-
-    if(sidebar.classList.contains("open")){
-        closeSidebar();
-    }else{
-        openSidebar();
-    }
+    if(sidebar.classList.contains("open")){ closeSidebar(); }
+    else{ openSidebar(); }
 }
-
-
-/* =========================================================
-   SWIPE SIDEBAR
-========================================================= */
 
 let swipeStartX = null;
 let swipeStartY = null;
 let swipeStartedInSidebar = false;
 
-document.addEventListener(
-    "pointerdown",
-    event=>{
+document.addEventListener("pointerdown",event=>{
+    if(event.pointerType !== "touch" && event.pointerType !== "pen"){ return; }
+    swipeStartX = event.clientX;
+    swipeStartY = event.clientY;
+    const sidebar = document.getElementById("sidebar");
+    swipeStartedInSidebar = sidebar.contains(event.target);
+},{passive:true});
 
-        if(
-            event.pointerType !== "touch" &&
-            event.pointerType !== "pen"
-        ){
-            return;
-        }
-
-        swipeStartX = event.clientX;
-        swipeStartY = event.clientY;
-
-        const sidebar =
-            document.getElementById("sidebar");
-
-        swipeStartedInSidebar =
-            sidebar.contains(event.target);
-    },
-    {passive:true}
-);
-
-document.addEventListener(
-    "pointerup",
-    event=>{
-
-        if(swipeStartX === null){
-            return;
-        }
-
-        const dx = event.clientX - swipeStartX;
-        const dy = event.clientY - swipeStartY;
-
-        const sidebar =
-            document.getElementById("sidebar");
-
-        if(
-            swipeStartedInSidebar &&
-            sidebar.classList.contains("open") &&
-            dx < -60 &&
-            Math.abs(dx) > Math.abs(dy) * 1.25
-        ){
-            closeSidebar();
-        }
-
-        if(
-            !swipeStartedInSidebar &&
-            dx > 60 &&
-            Math.abs(dx) > Math.abs(dy) * 1.25 &&
-            swipeStartX < 35 &&
-            !sidebar.classList.contains("open")
-        ){
-            openSidebar();
-        }
-
-        swipeStartX = null;
-        swipeStartY = null;
-        swipeStartedInSidebar = false;
-    },
-    {passive:true}
-);
+document.addEventListener("pointerup",event=>{
+    if(swipeStartX === null){ return; }
+    const dx = event.clientX - swipeStartX;
+    const dy = event.clientY - swipeStartY;
+    const sidebar = document.getElementById("sidebar");
+    if(swipeStartedInSidebar && sidebar.classList.contains("open") &&
+       dx < -60 && Math.abs(dx) > Math.abs(dy) * 1.25){
+        closeSidebar();
+    }
+    if(!swipeStartedInSidebar && dx > 60 &&
+       Math.abs(dx) > Math.abs(dy) * 1.25 &&
+       swipeStartX < 35 && !sidebar.classList.contains("open")){
+        openSidebar();
+    }
+    swipeStartX = null;
+    swipeStartY = null;
+    swipeStartedInSidebar = false;
+},{passive:true});
 
 window.addEventListener("resize",()=>{
     const overlay = document.getElementById("sidebarOverlay");
     const sidebar = document.getElementById("sidebar");
-
     if(window.innerWidth > 900){
         overlay.classList.remove("active");
         document.body.classList.remove("sidebar-lock");
@@ -2751,10 +2422,6 @@ window.addEventListener("resize",()=>{
         sidebar.classList.add("closed");
     }
 });
-
-/* =========================================================
-   CATEGORY
-========================================================= */
 
 function updateCatalogPermissions(){
     const admin = isAdmin();
@@ -2765,122 +2432,50 @@ function updateCatalogPermissions(){
 }
 
 function openCategory(category){
-
-    currentCategory =
-        category;
-
-    selectedPartName =
-        null;
-
-    document
-        .getElementById(
-            "pageCatalog"
-        )
-        .classList.remove(
-            "hidden"
-        );
-
+    currentCategory = category;
+    selectedPartName = null;
+    document.getElementById("pageCatalog").classList.remove("hidden");
     document.getElementById("pageAdmin").classList.add("hidden");
     document.getElementById("pageChangelog").classList.add("hidden");
+    document.getElementById("categoryTitle").textContent = categoryName(category);
+    document.getElementById("categoryDescription").textContent = categoryDescription(category);
+    document.getElementById("breadcrumb").innerHTML = `<strong>${categoryName(category)}</strong>`;
+    document.querySelectorAll(".side-btn").forEach(btn=>btn.classList.remove("active"));
 
-    document
-        .getElementById(
-            "categoryTitle"
-        )
-        .textContent =
-        categoryName(category);
-
-    document
-        .getElementById(
-            "categoryDescription"
-        )
-        .textContent =
-        categoryDescription(category);
-
-    document
-        .getElementById(
-            "breadcrumb"
-        )
-        .innerHTML =
-        `<strong>${categoryName(category)}</strong>`;
-
-    document
-        .querySelectorAll(
-            ".side-btn"
-        )
-        .forEach(
-            btn =>
-                btn.classList.remove(
-                    "active"
-                )
-        );
-
-    const navId =
-        category === "programs"
-        ? "navPrograms"
-        : category === "tools"
-        ? "navTools"
-        : "navOther";
-
-    document
-        .getElementById(navId)
-        ?.classList.add("active");
+    const navId = category === "programs" ? "navPrograms"
+                : category === "tools" ? "navTools"
+                : "navOther";
+    document.getElementById(navId)?.classList.add("active");
 
     renderCatalog();
     updateCatalogPermissions();
-
     closeSidebar();
 }
 
-
-/* =========================================================
-   CATALOG
-========================================================= */
-
 function renderCatalog(){
+    const search = document.getElementById("partSearch").value.trim().toLowerCase();
+    let visibleParts = getVisibleParts().filter(p => p.category === currentCategory);
 
-    const search =
-        document.getElementById("partSearch")
-            .value.trim().toLowerCase();
-
-    let visibleParts =
-        getVisibleParts().filter(
-            p => p.category === currentCategory
-        );
-
-    /* Поиск именно по номеру. */
     if(search){
-        visibleParts = visibleParts.filter(
-            p => String(p.number || "")
-                .toLowerCase()
-                .includes(search)
+        visibleParts = visibleParts.filter(p =>
+            String(p.number || "").toLowerCase().includes(search)
         );
     }
 
     const folders = getVisibleFolders(currentCategory);
-
     renderFolderList(folders, visibleParts);
 
-    if(
-        !selectedPartName ||
-        !folders.some(f => f.id === selectedPartName)
-    ){
-        selectedPartName = folders.length
-            ? folders[0].id
-            : null;
+    if(!selectedPartName || !folders.some(f => f.id === selectedPartName)){
+        selectedPartName = folders.length ? folders[0].id : null;
     }
-
     renderFolderVariants(folders, visibleParts);
 }
 
 function renderFolderList(folders, visibleParts){
-
     const container = document.getElementById("nameList");
-
     container.innerHTML = `
         <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;padding:5px 4px 10px;">
             <div style="color:#68748a;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1px;">ПАПКИ</div>
-
         </div>
         <div class="folder-list">
             ${folders.length ? folders.map(folder=>{
@@ -2912,204 +2507,85 @@ function renderFolderList(folders, visibleParts){
 }
 
 function selectFolder(folderId){
-
     selectedPartName = folderId;
     renderCatalog();
 }
 
 function renderFolderVariants(folders, visibleParts){
-
-    const container =
-        document.getElementById("variantsContainer");
+    const container = document.getElementById("variantsContainer");
 
     if(!folders.length){
-
         container.innerHTML = `
             <div class="empty">
                 <div class="empty-icon">📁</div>
                 В категории пока нет деталей.
                 <div style="margin-top:14px;">
                     ${isAdmin() ? `
-                    <button
-                        type="button"
-                        class="btn primary"
-                        onclick="openPartModal()">
+                    <button type="button" class="btn primary" onclick="openPartModal()">
                         ＋ Добавить деталь
                     </button>` : ""}
                 </div>
             </div>
         `;
-
         return;
     }
 
-    const folder =
-        folders.find(f => f.id === selectedPartName);
-
+    const folder = folders.find(f => f.id === selectedPartName);
     if(!folder) return;
 
-    const parts =
-        visibleParts
-            .filter(p => p.folderId === folder.id)
-            .sort((a,b)=>
-                String(a.number || "")
-                    .localeCompare(
-                        String(b.number || ""),
-                        "ru",
-                        {
-                            numeric:true,
-                            sensitivity:"base"
-                        }
-                    )
-            );
+    const parts = visibleParts
+        .filter(p => p.folderId === folder.id)
+        .sort((a,b)=>
+            String(a.number || "").localeCompare(
+                String(b.number || ""),"ru",{numeric:true,sensitivity:"base"}
+            )
+        );
 
     container.innerHTML = `
-        <div style="
-            display:flex;
-            align-items:center;
-            justify-content:space-between;
-            gap:10px;
-            margin-bottom:12px;
-        ">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px;">
             <div>
-                <div style="
-                    color:#8d99ae;
-                    font-size:11px;
-                ">
-                    ПАПКА
-                </div>
-
-                <div style="
-                    font-size:21px;
-                    font-weight:850;
-                    margin-top:3px;
-                ">
-                    📁 ${escapeHtml(folder.name)}
-                </div>
+                <div style="color:#8d99ae;font-size:11px;">ПАПКА</div>
+                <div style="font-size:21px;font-weight:850;margin-top:3px;">📁 ${escapeHtml(folder.name)}</div>
             </div>
-
-            <div style="
-                color:#69758b;
-                font-size:10px;
-            ">
-                ${parts.length}
-                ${parts.length === 1 ? "вариант" : "вариантов"}
+            <div style="color:#69758b;font-size:10px;">
+                ${parts.length} ${parts.length === 1 ? "вариант" : "вариантов"}
             </div>
         </div>
-
-        ${
-            parts.length
-            ? `<div class="variant-grid">
-                ${parts.map(part=>renderVariantCard(part)).join("")}
-               </div>`
-            : `
-                <div class="empty">
-                    В этой папке нет деталей по заданному номеру.
-                </div>
-              `
-        }
+        ${parts.length
+            ? `<div class="variant-grid">${parts.map(part=>renderVariantCard(part)).join("")}</div>`
+            : `<div class="empty">В этой папке нет деталей по заданному номеру.</div>`}
     `;
 }
 
 function renderVariantCard(part){
-
-    const preview =
-        String(part.code || "")
-            .split("\n")
-            .slice(0,4)
-            .join("\n");
-
-    const owner =
-        state.users.find(u=>u.id === part.userId);
+    const preview = String(part.code || "").split("\n").slice(0,4).join("\n");
+    const owner = state.users.find(u=>u.id === part.userId);
 
     return `
         <div class="variant-card">
-
-            <div class="variant-number">
-                № ${escapeHtml(part.number)}
-            </div>
-
-            <div class="variant-name">
-                ${escapeHtml(part.name)}
-            </div>
-
+            <div class="variant-number">№ ${escapeHtml(part.number)}</div>
+            <div class="variant-name">${escapeHtml(part.name)}</div>
             <div class="variant-meta">
-                Обновлено:
-                ${formatDate(part.updatedAt)}
-                ${
-                    owner && isAdmin()
-                    ? ` · ${escapeHtml(owner.login)}`
-                    : ""
-                }
+                Обновлено: ${formatDate(part.updatedAt)}
+                ${owner && isAdmin() ? ` · ${escapeHtml(owner.login)}` : ""}
             </div>
-
-            <div class="gcode-mini">
-                ${escapeHtml(preview)}
-            </div>
-
+            <div class="gcode-mini">${escapeHtml(preview)}</div>
             <div class="badges">
-                ${
-                    part.drawingName
-                    ? `
-                        <span class="badge">
-                            📐 Чертёж
-                        </span>
-                      `
-                    : ""
-                }
-
-                <span class="badge">
-                    G-код
-                </span>
+                ${part.drawingName ? `<span class="badge">📐 Чертёж</span>` : ""}
+                <span class="badge">G-код</span>
             </div>
-
-            <div style="
-                display:flex;
-                gap:7px;
-                margin-top:14px;
-            ">
-
-                <button
-                    type="button"
-                    class="btn primary"
-                    style="flex:1"
-                    onclick="openPartViewer('${part.id}')">
-                    Открыть
-                </button>
-
-                ${
-                    isAdmin() || part.userId === currentUserId
-                    ? `
-                        <button
-                            type="button"
-                            class="btn"
-                            title="Изменить"
-                            onclick="openPartModal('${part.id}')">
-                            ✎
-                        </button>
-                      `
-                    : ""
-                }
-
+            <div style="display:flex;gap:7px;margin-top:14px;">
+                <button type="button" class="btn primary" style="flex:1" onclick="openPartViewer('${part.id}')">Открыть</button>
+                ${isAdmin() || part.userId === currentUserId ? `
+                    <button type="button" class="btn" title="Изменить" onclick="openPartModal('${part.id}')">✎</button>
+                ` : ""}
                 ${isAdmin() ? `
-                    <button
-                        type="button"
-                        class="btn"
-                        title="Переместить"
-                        onclick="openMovePartModal('${part.id}')">
-                        ↗
-                    </button>
-                  ` : ""}
-
+                    <button type="button" class="btn" title="Переместить" onclick="openMovePartModal('${part.id}')">↗</button>
+                ` : ""}
             </div>
-
         </div>
     `;
 }
-
-/* =========================================================
-   FOLDER MANAGEMENT
-========================================================= */
 
 function openFolderModal(folderId=null){
     if(!isAdmin()){ toast("Только администратор может управлять папками.","error"); return; }
@@ -3158,7 +2634,11 @@ function saveFolder(folderId=null){
         const folder = findFolder(folderId);
         if(!folder) return;
         if(!isAdmin() && folder.ownerId !== currentUserId){ toast("Нет доступа.","error"); return; }
-        const duplicate = state.folders.find(f => f.id !== folder.id && f.category === folder.category && normalizeFolderName(f.name).toLowerCase() === name.toLowerCase());
+        const duplicate = state.folders.find(f =>
+            f.id !== folder.id &&
+            f.category === folder.category &&
+            normalizeFolderName(f.name).toLowerCase() === name.toLowerCase()
+        );
         if(duplicate){ toast("Папка с таким названием уже существует.","error"); return; }
         folder.name = name;
         folder.updatedAt = now();
@@ -3211,7 +2691,10 @@ function deleteFolder(folderId){
 
     const before = snapshotState();
     const count = state.parts.filter(p=>p.folderId === folderId).length;
-    if(count){ toast(`Нельзя удалить папку: внутри ${count} ${count===1?"деталь":"деталей"}. Переместите их сначала.`,"error"); return; }
+    if(count){
+        toast(`Нельзя удалить папку: внутри ${count} ${count===1?"деталь":"деталей"}. Переместите их сначала.`,"error");
+        return;
+    }
 
     state.folders = state.folders.filter(f=>f.id !== folderId);
     if(selectedPartName === folderId) selectedPartName = null;
@@ -3222,470 +2705,151 @@ function deleteFolder(folderId){
     toast("Папка удалена.","success");
 }
 
-/* =========================================================
-   PART MODAL
-========================================================= */
-
 function openPartModal(partId=null){
-
     if(!isAdmin()){ toast("Только администратор может изменять каталог.","error"); return; }
 
-    editingPartId =
-        partId;
-
+    editingPartId = partId;
     selectedFile = null;
 
-    const part =
-        partId
-        ? state.parts.find(
-            p =>
-                p.id ===
-                partId
-          )
-        : null;
+    const part = partId ? state.parts.find(p => p.id === partId) : null;
 
-    /*
-      Если редактирует обычный пользователь --
-      только свои детали.
-    */
-    if(
-        part &&
-        !isAdmin() &&
-        part.userId !== currentUserId
-    ){
-
-        toast(
-            "Нет доступа.",
-            "error"
-        );
-
+    if(part && !isAdmin() && part.userId !== currentUserId){
+        toast("Нет доступа.","error");
         return;
     }
 
-    const category =
-        part?.category ||
-        currentCategory;
+    const category = part?.category || currentCategory;
 
     showModal(`
         <div class="modal-header">
-
-            <div class="modal-title">
-
-                ${
-                    part
-                    ? "Редактировать деталь"
-                    : "Новая деталь"
-                }
-
-            </div>
-
-            <button
-                type="button"
-                class="modal-close"
-                onclick="closeModal()">
-                ×
-            </button>
-
+            <div class="modal-title">${part ? "Редактировать деталь" : "Новая деталь"}</div>
+            <button type="button" class="modal-close" onclick="closeModal()">×</button>
         </div>
-
-
         <div class="modal-body">
-
             <div class="field">
-
-                <label>
-                    Раздел
-                </label>
-
-                <select
-                    id="partCategory"
-                    class="select">
-
-                    <option
-                        value="programs"
-                        ${
-                            category === "programs"
-                            ? "selected"
-                            : ""
-                        }>
-                        Программы
-                    </option>
-
-                    <option
-                        value="tools"
-                        ${
-                            category === "tools"
-                            ? "selected"
-                            : ""
-                        }>
-                        Инструмент
-                    </option>
-
-                    <option
-                        value="other"
-                        ${
-                            category === "other"
-                            ? "selected"
-                            : ""
-                        }>
-                        Прочее
-                    </option>
-
+                <label>Раздел</label>
+                <select id="partCategory" class="select">
+                    <option value="programs" ${category === "programs" ? "selected" : ""}>Программы</option>
+                    <option value="tools" ${category === "tools" ? "selected" : ""}>Инструмент</option>
+                    <option value="other" ${category === "other" ? "selected" : ""}>Прочее</option>
                 </select>
-
             </div>
-
-
             <div class="field">
-
-                <label>
-                    Папка
-                </label>
-
-                <select
-                    id="partFolder"
-                    class="select">
-                    ${
-                        state.folders
-                            .filter(f=>f.category === category)
-                            .sort((a,b)=>
-                                a.name.localeCompare(
-                                    b.name,
-                                    "ru",
-                                    {numeric:true,sensitivity:"base"}
-                                )
-                            )
-                            .map(f=>`
-                                <option
-                                    value="${f.id}"
-                                    ${
-                                        part?.folderId === f.id
-                                        ? "selected"
-                                        : ""
-                                    }>
-                                    ${escapeHtml(f.name)}
-                                </option>
-                            `)
-                            .join("")
-                    }
+                <label>Папка</label>
+                <select id="partFolder" class="select">
+                    ${state.folders
+                        .filter(f=>f.category === category)
+                        .sort((a,b)=>a.name.localeCompare(b.name,"ru",{numeric:true,sensitivity:"base"}))
+                        .map(f=>`
+                            <option value="${f.id}" ${part?.folderId === f.id ? "selected" : ""}>
+                                ${escapeHtml(f.name)}
+                            </option>
+                        `).join("")}
                 </select>
-
-                <div style="
-                    color:#66738a;
-                    font-size:10px;
-                    margin-top:6px;
-                ">
+                <div style="color:#66738a;font-size:10px;margin-top:6px;">
                     Для новой детали папка по названию создастся автоматически.
                     После создания её можно изменить кнопкой «Переместить».
                 </div>
-
             </div>
-
-
             <div class="field">
-
-                <label>
-                    Название детали *
-                </label>
-
-                <input
-                    id="partName"
-                    class="input"
-                    required
-                    value="${escapeHtml(
-                        part?.name || ""
-                    )}"
-                    placeholder="Например: Шпилька">
-
+                <label>Название детали *</label>
+                <input id="partName" class="input" required value="${escapeHtml(part?.name || "")}" placeholder="Например: Шпилька">
             </div>
-
-
             <div class="field">
-
-                <label>
-                    Номер детали *
-                </label>
-
-                <input
-                    id="partNumber"
-                    class="input"
-                    required
-                    value="${escapeHtml(
-                        part?.number || ""
-                    )}"
-                    placeholder="Например: М8-100">
-
+                <label>Номер детали *</label>
+                <input id="partNumber" class="input" required value="${escapeHtml(part?.number || "")}" placeholder="Например: М8-100">
             </div>
-
-
             <div class="field">
-
-                <label>
-                    G-код *
-                </label>
-
-                <textarea
-                    id="partCode"
-                    class="textarea"
-                    placeholder="Вставьте G-код программы...">${escapeHtml(
-                        part?.code || ""
-                    )}</textarea>
-
+                <label>G-код *</label>
+                <textarea id="partCode" class="textarea" placeholder="Вставьте G-код программы...">${escapeHtml(part?.code || "")}</textarea>
             </div>
-
-
             <div class="field">
-
-                <label>
-                    Чертёж
-                </label>
-
+                <label>Чертёж</label>
                 <label class="file-drop">
-
-                    <input
-                        id="drawingInput"
-                        type="file"
-                        accept=".jpg,.jpeg,.png,.pdf,image/jpeg,image/png,application/pdf"
-                        onchange="previewDrawing(event)">
-
-                    <div style="font-size:28px;">
-                        📐
+                    <input id="drawingInput" type="file"
+                           accept=".jpg,.jpeg,.png,.pdf,image/jpeg,image/png,application/pdf"
+                           onchange="previewDrawing(event)">
+                    <div style="font-size:28px;">📐</div>
+                    <div style="margin-top:8px;color:#bdc6d7;">
+                        ${part?.drawingName ? escapeHtml(part.drawingName) : "Выбрать чертёж"}
                     </div>
-
-                    <div
-                        style="
-                            margin-top:8px;
-                            color:#bdc6d7;
-                        ">
-
-                        ${
-                            part?.drawingName
-                            ? escapeHtml(
-                                part.drawingName
-                            )
-                            : "Выбрать чертёж"
-                        }
-
-                    </div>
-
-                    <div
-                        style="
-                            color:#69758b;
-                            font-size:10px;
-                            margin-top:5px;
-                        ">
-
-                        JPG, PNG или PDF
-
-                    </div>
-
+                    <div style="color:#69758b;font-size:10px;margin-top:5px;">JPG, PNG или PDF</div>
                 </label>
-
-                <div
-                    id="drawingPreview">
-                </div>
-
+                <div id="drawingPreview"></div>
             </div>
-
         </div>
-
-
         <div class="modal-footer">
-
-            ${
-                part
-                ? `
-                    <button
-                        type="button"
-                        class="btn danger"
-                        style="margin-right:auto"
-                        onclick="
-                            deletePart(
-                                '${part.id}'
-                            )
-                        ">
-                        Удалить
-                    </button>
-                  `
-                : ""
-            }
-
-            <button
-                type="button"
-                class="btn"
-                onclick="closeModal()">
-                Отмена
-            </button>
-
-            <button
-                type="button"
-                class="btn primary"
-                onclick="savePart()">
-                Сохранить
-            </button>
-
+            ${part ? `
+                <button type="button" class="btn danger" style="margin-right:auto" onclick="deletePart('${part.id}')">Удалить</button>
+            ` : ""}
+            <button type="button" class="btn" onclick="closeModal()">Отмена</button>
+            <button type="button" class="btn primary" onclick="savePart()">Сохранить</button>
         </div>
     `);
 }
 
 function previewDrawing(event){
+    const file = event.target.files?.[0];
+    selectedFile = file || null;
+    const container = document.getElementById("drawingPreview");
 
-    const file =
-        event.target.files?.[0];
+    if(!file){ container.innerHTML = ""; return; }
 
-    selectedFile =
-        file || null;
-
-    const container =
-        document.getElementById(
-            "drawingPreview"
-        );
-
-    if(!file){
-
-        container.innerHTML = "";
-
-        return;
-    }
-
-    const allowed = [
-        "image/jpeg",
-        "image/png",
-        "application/pdf"
-    ];
-
-    if(
-        !allowed.includes(
-            file.type
-        )
-    ){
-
-        toast(
-            "Разрешены JPG, PNG и PDF.",
-            "error"
-        );
-
+    const allowed = ["image/jpeg","image/png","application/pdf"];
+    if(!allowed.includes(file.type)){
+        toast("Разрешены JPG, PNG и PDF.","error");
         event.target.value = "";
-
         selectedFile = null;
-
         container.innerHTML = "";
-
         return;
     }
 
-    const url =
-        URL.createObjectURL(file);
-
-    if(
-        file.type ===
-        "application/pdf"
-    ){
-
-        container.innerHTML = `
-            <div class="file-preview">
-
-                <iframe
-                    src="${url}">
-                </iframe>
-
-            </div>
-        `;
-
+    const url = URL.createObjectURL(file);
+    if(file.type === "application/pdf"){
+        container.innerHTML = `<div class="file-preview"><iframe src="${url}"></iframe></div>`;
     }else{
-
-        container.innerHTML = `
-            <div class="file-preview">
-
-                <img
-                    src="${url}"
-                    alt="Чертёж">
-
-            </div>
-        `;
+        container.innerHTML = `<div class="file-preview"><img src="${url}" alt="Чертёж"></div>`;
     }
 }
 
 async function savePart(){
-
     if(!isAdmin()){ toast("Только администратор может изменять каталог.","error"); return; }
 
     const before = snapshotState();
-    const category =
-        document.getElementById("partCategory").value;
+    const category = document.getElementById("partCategory").value;
+    const name = document.getElementById("partName").value.trim();
+    const number = document.getElementById("partNumber").value.trim();
+    const code = document.getElementById("partCode").value.trim();
 
-    const name =
-        document.getElementById("partName")
-            .value.trim();
+    if(!name){ toast("Введите название детали.","error"); return; }
+    if(!number){ toast("Введите номер детали.","error"); return; }
+    if(!code){ toast("Введите G-код.","error"); return; }
 
-    const number =
-        document.getElementById("partNumber")
-            .value.trim();
-
-    const code =
-        document.getElementById("partCode")
-            .value.trim();
-
-    if(!name){
-        toast("Введите название детали.","error");
-        return;
-    }
-
-    if(!number){
-        toast("Введите номер детали.","error");
-        return;
-    }
-
-    if(!code){
-        toast("Введите G-код.","error");
-        return;
-    }
-
-    const duplicate =
-        state.parts.find(
-            p =>
-                p.category === category &&
-                String(p.number || "").toLowerCase() ===
-                    number.toLowerCase() &&
-                p.id !== editingPartId
-        );
-
+    const duplicate = state.parts.find(p =>
+        p.category === category &&
+        String(p.number || "").toLowerCase() === number.toLowerCase() &&
+        p.id !== editingPartId
+    );
     if(duplicate){
-        toast(
-            "Такая деталь с этим номером уже существует в этом разделе.",
-            "error"
-        );
+        toast("Такая деталь с этим номером уже существует в этом разделе.","error");
         return;
     }
 
-    let part =
-        editingPartId
-        ? state.parts.find(
-            p => p.id === editingPartId
-          )
-        : null;
-
+    let part = editingPartId ? state.parts.find(p => p.id === editingPartId) : null;
     const oldDrawingId = part?.drawingId || null;
     const wasExisting = !!part;
 
     if(part){
-
-        if(
-            !isAdmin() &&
-            part.userId !== currentUserId
-        ){
+        if(!isAdmin() && part.userId !== currentUserId){
             toast("Нет доступа.","error");
             return;
         }
-
         part.category = category;
         part.name = name;
         part.number = number;
         part.code = code;
         part.updatedAt = now();
-
     }else{
-
         part = {
             id:uid("part"),
             userId:currentUserId,
@@ -3700,903 +2864,319 @@ async function savePart(){
             createdAt:now(),
             updatedAt:now()
         };
-
         state.parts.push(part);
     }
 
-    /*
-      НОВАЯ ДЕТАЛЬ:
-      если есть папка с таким же названием —
-      кладём в неё.
-      Если нет — создаём.
-    */
     if(!wasExisting){
-
-        const folder =
-            ensureFolder(name, category);
-
+        const folder = ensureFolder(name, category);
         part.folderId = folder.id;
-
     }else{
-
-        /*
-          При редактировании сохраняем текущую папку.
-          Если её больше нет — восстанавливаем её.
-        */
         let folder = findFolder(part.folderId);
-
-        if(
-            !folder ||
-            folder.category !== category
-        ){
+        if(!folder || folder.category !== category){
             folder = ensureFolder(name, category);
             part.folderId = folder.id;
         }
     }
 
     if(selectedFile){
-
-        if(oldDrawingId){
-            await deleteBlob(oldDrawingId);
-        }
-
+        if(oldDrawingId){ await deleteBlob(oldDrawingId); }
         const drawingId = uid("drawing");
-
-        await saveBlob(
-            drawingId,
-            selectedFile
-        );
-
+        await saveBlob(drawingId, selectedFile);
         part.drawingId = drawingId;
         part.drawingName = selectedFile.name;
         part.drawingType = selectedFile.type;
     }
 
-    recordAction(wasExisting ? "part_edit" : "part_create", `${wasExisting ? "Изменение" : "Создание"} детали «${name} — ${number}»`, before);
+    recordAction(wasExisting ? "part_edit" : "part_create",
+        `${wasExisting ? "Изменение" : "Создание"} детали «${name} — ${number}»`, before);
     saveState();
-
     closeModal();
 
     currentCategory = category;
     selectedPartName = part.folderId;
-
     openCategory(category);
 
-    toast(
-        wasExisting
+    toast(wasExisting
         ? "Деталь обновлена."
-        : "Деталь добавлена в папку «" +
-          escapeHtml(findFolder(part.folderId)?.name || name) +
-          "».",
-        "success"
-    );
+        : "Деталь добавлена в папку «" + escapeHtml(findFolder(part.folderId)?.name || name) + "».",
+        "success");
 }
 
-
-/* =========================================================
-   MOVE PART TO ANOTHER FOLDER
-========================================================= */
-
 function openMovePartModal(partId){
-
     if(!isAdmin()){ toast("Только администратор может перемещать детали.","error"); return; }
 
-    const part =
-        state.parts.find(p=>p.id === partId);
-
+    const part = state.parts.find(p=>p.id === partId);
     if(!part) return;
 
-    if(
-        !isAdmin() &&
-        part.userId !== currentUserId
-    ){
+    if(!isAdmin() && part.userId !== currentUserId){
         toast("Нет доступа.","error");
         return;
     }
 
-    const folders =
-        state.folders
-            .filter(f=>f.category === part.category)
-            .sort((a,b)=>
-                a.name.localeCompare(
-                    b.name,
-                    "ru",
-                    {
-                        numeric:true,
-                        sensitivity:"base"
-                    }
-                )
-            );
+    const folders = state.folders
+        .filter(f=>f.category === part.category)
+        .sort((a,b)=>a.name.localeCompare(b.name,"ru",{numeric:true,sensitivity:"base"}));
 
     showModal(`
         <div class="modal-header">
-
             <div>
-                <div style="
-                    color:#82a4ff;
-                    font-size:10px;
-                    font-weight:800;
-                    text-transform:uppercase;
-                ">
+                <div style="color:#82a4ff;font-size:10px;font-weight:800;text-transform:uppercase;">
                     Перемещение детали
                 </div>
-
                 <div class="modal-title" style="margin-top:5px;">
                     ${escapeHtml(part.name)}
-                    <span style="
-                        color:#8492aa;
-                        font-weight:500;
-                    ">
-                        · ${escapeHtml(part.number)}
-                    </span>
+                    <span style="color:#8492aa;font-weight:500;">· ${escapeHtml(part.number)}</span>
                 </div>
             </div>
-
-            <button
-                type="button"
-                class="modal-close"
-                onclick="closeModal()">
-                ×
-            </button>
-
+            <button type="button" class="modal-close" onclick="closeModal()">×</button>
         </div>
-
         <div class="modal-body">
-
             <div class="field">
-
-                <label>
-                    Текущая папка
-                </label>
-
-                <div style="
-                    padding:13px 14px;
-                    border-radius:12px;
-                    background:rgba(255,255,255,.035);
-                    border:1px solid var(--line);
-                    color:#aeb8c9;
-                ">
-                    📁 ${
-                        escapeHtml(
-                            findFolder(part.folderId)?.name ||
-                            "Без папки"
-                        )
-                    }
+                <label>Текущая папка</label>
+                <div style="padding:13px 14px;border-radius:12px;background:rgba(255,255,255,.035);border:1px solid var(--line);color:#aeb8c9;">
+                    📁 ${escapeHtml(findFolder(part.folderId)?.name || "Без папки")}
                 </div>
-
             </div>
-
             <div class="field">
-
-                <label>
-                    Новая папка
-                </label>
-
-                <select
-                    id="moveFolderSelect"
-                    class="select move-select">
-
-                    ${
-                        folders.map(folder=>`
-                            <option
-                                value="${folder.id}"
-                                ${
-                                    folder.id === part.folderId
-                                    ? "selected"
-                                    : ""
-                                }>
-                                ${escapeHtml(folder.name)}
-                            </option>
-                        `).join("")
-                    }
-
+                <label>Новая папка</label>
+                <select id="moveFolderSelect" class="select move-select">
+                    ${folders.map(folder=>`
+                        <option value="${folder.id}" ${folder.id === part.folderId ? "selected" : ""}>
+                            ${escapeHtml(folder.name)}
+                        </option>
+                    `).join("")}
                 </select>
-
             </div>
-
-            <div style="
-                padding:12px 13px;
-                border-radius:12px;
-                background:rgba(91,140,255,.06);
-                border:1px solid rgba(91,140,255,.12);
-                color:#8491a8;
-                font-size:11px;
-                line-height:1.55;
-            ">
+            <div style="padding:12px 13px;border-radius:12px;background:rgba(91,140,255,.06);border:1px solid rgba(91,140,255,.12);color:#8491a8;font-size:11px;line-height:1.55;">
                 Перемещение меняет только папку.
                 Название, номер, G-код и чертёж останутся без изменений.
             </div>
-
         </div>
-
         <div class="modal-footer">
-
-            <button
-                type="button"
-                class="btn"
-                onclick="closeModal()">
-                Отмена
-            </button>
-
-            <button
-                type="button"
-                class="btn primary"
-                onclick="movePart('${part.id}')">
-                Переместить
-            </button>
-
+            <button type="button" class="btn" onclick="closeModal()">Отмена</button>
+            <button type="button" class="btn primary" onclick="movePart('${part.id}')">Переместить</button>
         </div>
     `);
 }
 
 function movePart(partId){
-
     if(!isAdmin()){ toast("Только администратор может перемещать детали.","error"); return; }
 
-    const part =
-        state.parts.find(p=>p.id === partId);
-
+    const part = state.parts.find(p=>p.id === partId);
     if(!part) return;
 
-    if(
-        !isAdmin() &&
-        part.userId !== currentUserId
-    ){
+    if(!isAdmin() && part.userId !== currentUserId){
         toast("Нет доступа.","error");
         return;
     }
 
-    const select =
-        document.getElementById("moveFolderSelect");
-
-    const folder =
-        state.folders.find(
-            f => f.id === select?.value
-        );
-
-    if(!folder){
-        toast("Папка не найдена.","error");
-        return;
-    }
+    const select = document.getElementById("moveFolderSelect");
+    const folder = state.folders.find(f => f.id === select?.value);
+    if(!folder){ toast("Папка не найдена.","error"); return; }
 
     const before = snapshotState();
-    const oldFolder =
-        findFolder(part.folderId);
+    const oldFolder = findFolder(part.folderId);
 
     part.folderId = folder.id;
     part.updatedAt = now();
 
     recordAction("part_move", `Перемещение детали «${part.name} — ${part.number}»`, before);
     saveState();
-
     closeModal();
 
     currentCategory = part.category;
     selectedPartName = folder.id;
 
-    const search =
-        document.getElementById("partSearch");
-
+    const search = document.getElementById("partSearch");
     if(search) search.value = "";
 
     openCategory(part.category);
 
-    toast(
-        `Деталь перемещена: «${oldFolder?.name || "Без папки"}» → «${folder.name}».`,
-        "success"
-    );
+    toast(`Деталь перемещена: «${oldFolder?.name || "Без папки"}» → «${folder.name}».`, "success");
 }
 
-/* =========================================================
-   VIEW PART
-========================================================= */
-
 async function openPartViewer(partId){
+    const part = state.parts.find(p => p.id === partId);
+    if(!part){ toast("Деталь не найдена.","error"); return; }
 
-    const part =
-        state.parts.find(
-            p =>
-                p.id ===
-                partId
-        );
-
-    if(!part){
-
-        toast(
-            "Деталь не найдена.",
-            "error"
-        );
-
-        return;
-    }
-
-    let drawing =
-        `
-        <div class="empty">
-            Чертёж не прикреплён.
-        </div>
-        `;
+    let drawing = `<div class="empty">Чертёж не прикреплён.</div>`;
 
     if(part.drawingId){
-
-        const blob =
-            await getBlob(
-                part.drawingId
-            );
-
+        const blob = await getBlob(part.drawingId);
         if(blob){
-
-            const url =
-                URL.createObjectURL(
-                    blob
-                );
-
-            if(
-                part.drawingType ===
-                "application/pdf"
-            ){
-
-                drawing = `
-                    <div class="file-preview">
-
-                        <iframe
-                            src="${url}">
-                        </iframe>
-
-                    </div>
-                `;
-
+            const url = URL.createObjectURL(blob);
+            if(part.drawingType === "application/pdf"){
+                drawing = `<div class="file-preview"><iframe src="${url}"></iframe></div>`;
             }else{
-
-                drawing = `
-                    <div class="file-preview">
-
-                        <img
-                            src="${url}"
-                            alt="Чертёж">
-
-                    </div>
-                `;
+                drawing = `<div class="file-preview"><img src="${url}" alt="Чертёж"></div>`;
             }
         }
     }
 
     showModal(`
-
         <div class="modal-header">
-
             <div>
-
-                <div
-                    style="
-                        color:#82a4ff;
-                        font-size:11px;
-                        font-weight:800;
-                    ">
-                    ${escapeHtml(
-                        categoryName(
-                            part.category
-                        )
-                    )}
+                <div style="color:#82a4ff;font-size:11px;font-weight:800;">
+                    ${escapeHtml(categoryName(part.category))}
                 </div>
-
-                <div
-                    class="modal-title"
-                    style="margin-top:5px;">
-
-                    ${escapeHtml(
-                        part.name
-                    )}
-
-                    <span
-                        style="
-                            color:#8492aa;
-                            font-weight:500;
-                        ">
-                        ·
-                        ${escapeHtml(
-                            part.number
-                        )}
-                    </span>
-
+                <div class="modal-title" style="margin-top:5px;">
+                    ${escapeHtml(part.name)}
+                    <span style="color:#8492aa;font-weight:500;">· ${escapeHtml(part.number)}</span>
                 </div>
-
             </div>
-
-            <button
-                type="button"
-                class="modal-close"
-                onclick="closeModal()">
-                ×
-            </button>
-
+            <button type="button" class="modal-close" onclick="closeModal()">×</button>
         </div>
-
-
         <div class="modal-body">
-
-            <div
-                style="
-                    font-size:10px;
-                    color:#718097;
-                    font-weight:800;
-                    margin-bottom:7px;
-                    text-transform:uppercase;
-                ">
+            <div style="font-size:10px;color:#718097;font-weight:800;margin-bottom:7px;text-transform:uppercase;">
                 Чертёж
             </div>
-
             ${drawing}
-
-
-            <div
-                style="
-                    font-size:10px;
-                    color:#718097;
-                    font-weight:800;
-                    margin:22px 0 7px;
-                    text-transform:uppercase;
-                ">
+            <div style="font-size:10px;color:#718097;font-weight:800;margin:22px 0 7px;text-transform:uppercase;">
                 G-код
             </div>
-
-            <pre class="code-view">${escapeHtml(
-                part.code
-            )}</pre>
-
+            <pre class="code-view">${escapeHtml(part.code)}</pre>
         </div>
-
-
         <div class="modal-footer">
-
-            <button
-                type="button"
-                class="btn"
-                onclick="
-                    downloadGCode(
-                        '${part.id}'
-                    )
-                ">
-                ⇩ Скачать файл
-            </button>
-
-            ${
-                part.drawingId
-                ? `
-                    <button
-                        type="button"
-                        class="btn"
-                        onclick="
-                            downloadDrawing(
-                                '${part.id}'
-                            )
-                        ">
-                        ⇩ Скачать чертёж
-                    </button>
-                  `
-                : ""
-            }
-
-            ${
-                isAdmin() ||
-                part.userId === currentUserId
-                ? `
-                    <button
-                        type="button"
-                        class="btn"
-                        onclick="
-                            openPartModal(
-                                '${part.id}'
-                            )
-                        ">
-                        ✎ Изменить
-                    </button>
-                  `
-                : ""
-            }
-
-            <button
-                type="button"
-                class="btn primary"
-                onclick="closeModal()">
-                Закрыть
-            </button>
-
+            <button type="button" class="btn" onclick="downloadGCode('${part.id}')">⇩ Скачать файл</button>
+            ${part.drawingId ? `
+                <button type="button" class="btn" onclick="downloadDrawing('${part.id}')">⇩ Скачать чертёж</button>
+            ` : ""}
+            ${isAdmin() || part.userId === currentUserId ? `
+                <button type="button" class="btn" onclick="openPartModal('${part.id}')">✎ Изменить</button>
+            ` : ""}
+            <button type="button" class="btn primary" onclick="closeModal()">Закрыть</button>
         </div>
-
     `);
 }
 
-
-/* =========================================================
-   DOWNLOAD G-CODE
-========================================================= */
-
 function safeFileName(value){
-
-    return String(value)
-        .replace(/[<>:"/\\|?*]/g,"_")
-        .replace(/\s+/g," ")
-        .trim();
+    return String(value).replace(/[<>:"/\\|?*]/g,"_").replace(/\s+/g," ").trim();
 }
 
 function downloadGCode(partId){
-
-    const part =
-        state.parts.find(
-            p =>
-                p.id ===
-                partId
-        );
-
+    const part = state.parts.find(p => p.id === partId);
     if(!part) return;
 
-    /*
-      Название:
-      Название детали-номер.nc
-
-      Например:
-      Шпилька-М8-100.nc
-    */
-    const filename =
-        safeFileName(
-            part.name +
-            "-" +
-            part.number
-        ) +
-        ".nc";
-
-    const blob =
-        new Blob(
-            [
-                part.code
-            ],
-            {
-                type:
-                    "text/plain;charset=utf-8"
-            }
-        );
-
-    const url =
-        URL.createObjectURL(
-            blob
-        );
-
-    const a =
-        document.createElement("a");
-
+    const filename = safeFileName(part.name + "-" + part.number) + ".nc";
+    const blob = new Blob([part.code],{type:"text/plain;charset=utf-8"});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
     a.href = url;
-
-    a.download =
-        filename;
-
+    a.download = filename;
     document.body.appendChild(a);
-
     a.click();
-
     a.remove();
-
-    setTimeout(
-        ()=>{
-            URL.revokeObjectURL(
-                url
-            );
-        },
-        1000
-    );
-
-    toast(
-        "Файл " + filename + " скачан.",
-        "success"
-    );
+    setTimeout(()=>{ URL.revokeObjectURL(url); },1000);
+    toast("Файл " + filename + " скачан.","success");
 }
-
-
-/* =========================================================
-   DOWNLOAD DRAWING
-========================================================= */
 
 async function downloadDrawing(partId){
+    const part = state.parts.find(p => p.id === partId);
+    if(!part || !part.drawingId){ return; }
 
-    const part =
-        state.parts.find(
-            p =>
-                p.id ===
-                partId
-        );
+    const blob = await getBlob(part.drawingId);
+    if(!blob){ toast("Чертёж не найден.","error"); return; }
 
-    if(
-        !part ||
-        !part.drawingId
-    ){
-        return;
-    }
-
-    const blob =
-        await getBlob(
-            part.drawingId
-        );
-
-    if(!blob){
-
-        toast(
-            "Чертёж не найден.",
-            "error"
-        );
-
-        return;
-    }
-
-    const url =
-        URL.createObjectURL(
-            blob
-        );
-
-    const a =
-        document.createElement("a");
-
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
     a.href = url;
-
-    a.download =
-        part.drawingName ||
-        (
-            safeFileName(
-                part.name +
-                "-" +
-                part.number
-            ) +
-            ".pdf"
-        );
-
+    a.download = part.drawingName || (safeFileName(part.name + "-" + part.number) + ".pdf");
     document.body.appendChild(a);
-
     a.click();
-
     a.remove();
-
-    setTimeout(
-        ()=>{
-            URL.revokeObjectURL(
-                url
-            );
-        },
-        1000
-    );
+    setTimeout(()=>{ URL.revokeObjectURL(url); },1000);
 }
-
-
-/* =========================================================
-   DELETE PART
-========================================================= */
 
 async function deletePart(partId){
-
     if(!isAdmin()){ toast("Только администратор может удалять детали.","error"); return; }
-
-    const part =
-        state.parts.find(
-            p =>
-                p.id ===
-                partId
-        );
-
+    const part = state.parts.find(p => p.id === partId);
     if(!part) return;
 
-    if(
-        !confirm(
-            `Удалить "${part.name} -- ${part.number}"?`
-        )
-    ){
-        return;
-    }
+    if(!confirm(`Удалить "${part.name} -- ${part.number}"?`)){ return; }
 
     const before = snapshotState();
-
-    state.parts =
-        state.parts.filter(
-            p =>
-                p.id !==
-                partId
-        );
-
+    state.parts = state.parts.filter(p => p.id !== partId);
     recordAction("part_delete", `Удаление детали «${part.name} — ${part.number}»`, before);
     saveState();
-
     closeModal();
-
     renderCatalog();
-
-    toast(
-        "Деталь удалена.",
-        "success"
-    );
+    toast("Деталь удалена.","success");
 }
 
-
-/* =========================================================
-   ADMIN PANEL
-========================================================= */
-
 function openAdminPanel(){
-
-    if(!isAdmin()){
-
-        toast(
-            "Доступ запрещён.",
-            "error"
-        );
-
-        return;
-    }
+    if(!isAdmin()){ toast("Доступ запрещён.","error"); return; }
 
     document.getElementById("pageCatalog").classList.add("hidden");
     document.getElementById("pageChangelog").classList.add("hidden");
     document.getElementById("pageAdmin").classList.remove("hidden");
+    document.getElementById("breadcrumb").innerHTML = "<strong>Администратор</strong>";
 
-    document
-        .getElementById(
-            "breadcrumb"
-        )
-        .innerHTML =
-        "<strong>Администратор</strong>";
-
-    document
-        .querySelectorAll(
-            ".side-btn"
-        )
-        .forEach(
-            btn =>
-                btn.classList.remove(
-                    "active"
-                )
-        );
-
-    document
-        .getElementById(
-            "navAdmin"
-        )
-        .classList.add(
-            "active"
-        );
+    document.querySelectorAll(".side-btn").forEach(btn=>btn.classList.remove("active"));
+    document.getElementById("navAdmin").classList.add("active");
 
     renderAdminPanel();
-
     closeSidebar();
 }
 
 function renderAdminPanel(){
-
     if(!isAdmin()) return;
 
-    const users =
-        state.users;
+    const users = state.users;
+    const parts = state.parts;
 
-    const parts =
-        state.parts;
-
-    document
-        .getElementById(
-            "adminUserCount"
-        )
-        .textContent =
-        users.length;
-
-    document
-        .getElementById(
-            "adminPartCount"
-        )
-        .textContent =
-        parts.length;
-
-    document
-        .getElementById(
-            "adminProgramCount"
-        )
-        .textContent =
-        parts.filter(
-            p =>
-                p.category ===
-                "programs"
-        ).length;
-
-    document
-        .getElementById(
-            "adminToolCount"
-        )
-        .textContent =
-        parts.filter(
-            p =>
-                p.category ===
-                "tools"
-        ).length;
+    document.getElementById("adminUserCount").textContent = users.length;
+    document.getElementById("adminPartCount").textContent = parts.length;
+    document.getElementById("adminProgramCount").textContent =
+        parts.filter(p => p.category === "programs").length;
+    document.getElementById("adminToolCount").textContent =
+        parts.filter(p => p.category === "tools").length;
 
     const createAccountBtn = document.getElementById("adminCreateUserBtn");
     if(createAccountBtn){
         createAccountBtn.style.display = isSuperAdmin() ? "inline-flex" : "none";
     }
-
     const usersCard = document.getElementById("adminUsersCard");
     if(usersCard){
         usersCard.style.display = isSuperAdmin() ? "block" : "none";
     }
 
-    const table =
-        document.getElementById(
-            "usersTable"
-        );
-
-    table.innerHTML =
-        users
-            .map(
-                user=>`
-
-                    <tr>
-
-                        <td>
-                            ${escapeHtml(user.login)}
-                        </td>
-
-                        <td>
-                            <span class="${roleClass(user.role)}">
-                                ${roleLabel(user.role)}
-                            </span>
-                        </td>
-
-                        <td>
-                            ${formatDate(user.createdAt)}
-                        </td>
-
-                        <td>
-                            <div style="display:flex;gap:6px;flex-wrap:wrap;">
-                                ${isSuperAdmin() && user.id !== currentUserId ? `
-                                    <button
-                                        type="button"
-                                        class="btn"
-                                        style="padding:7px 10px;font-size:10px;"
-                                        onclick="startImpersonation('${user.id}')">
-                                        ⇥ Войти
-                                    </button>
-                                ` : ""}
-
-                                ${isSuperAdmin() && user.id !== "admin" && user.id !== currentUserId ? `
-                                    <button
-                                        type="button"
-                                        class="btn"
-                                        style="padding:7px 10px;font-size:10px;"
-                                        onclick="toggleUserAdmin('${user.id}')">
-                                        ${user.role === "admin" ? "Забрать редактор" : "Выдать редактор"}
-                                    </button>
-                                ` : ""}
-
-                                ${isSuperAdmin() && user.id !== "admin" && user.id !== currentUserId ? `
-                                    <button
-                                        type="button"
-                                        class="btn danger"
-                                        style="padding:7px 10px;font-size:10px;"
-                                        onclick="deleteUser('${user.id}')">
-                                        Удалить
-                                    </button>
-                                ` : ""}
-
-                                ${user.id === "admin" ? `
-                                    <span style="color:#66738a;font-size:10px;align-self:center;">
-                                        Системный аккаунт · Администратор
-                                    </span>
-                                ` : ""}
-
-                                ${user.id === currentUserId && user.id !== "admin" ? `
-                                    <span style="color:#66738a;font-size:10px;align-self:center;">
-                                        Текущий аккаунт
-                                    </span>
-                                ` : ""}
-                            </div>
-                        </td>
-
-                    </tr>
-
-                `
-            )
-            .join("");
+    const table = document.getElementById("usersTable");
+    table.innerHTML = users.map(user=>`
+        <tr>
+            <td>${escapeHtml(user.login)}</td>
+            <td><span class="${roleClass(user.role)}">${roleLabel(user.role)}</span></td>
+            <td>${formatDate(user.createdAt)}</td>
+            <td>
+                <div style="display:flex;gap:6px;flex-wrap:wrap;">
+                    ${isSuperAdmin() && user.id !== currentUserId ? `
+                        <button type="button" class="btn" style="padding:7px 10px;font-size:10px;" onclick="startImpersonation('${user.id}')">
+                            ⇥ Войти
+                        </button>
+                    ` : ""}
+                    ${isSuperAdmin() && user.id !== "admin" && user.id !== currentUserId ? `
+                        <button type="button" class="btn" style="padding:7px 10px;font-size:10px;" onclick="toggleUserAdmin('${user.id}')">
+                            ${user.role === "admin" ? "Забрать редактор" : "Выдать редактор"}
+                        </button>
+                    ` : ""}
+                    ${isSuperAdmin() && user.id !== "admin" && user.id !== currentUserId ? `
+                        <button type="button" class="btn danger" style="padding:7px 10px;font-size:10px;" onclick="deleteUser('${user.id}')">
+                            Удалить
+                        </button>
+                    ` : ""}
+                    ${user.id === "admin" ? `
+                        <span style="color:#66738a;font-size:10px;align-self:center;">
+                            Системный аккаунт · Администратор
+                        </span>
+                    ` : ""}
+                    ${user.id === currentUserId && user.id !== "admin" ? `
+                        <span style="color:#66738a;font-size:10px;align-self:center;">
+                            Текущий аккаунт
+                        </span>
+                    ` : ""}
+                </div>
+            </td>
+        </tr>
+    `).join("");
 
     const partsTable = document.getElementById("adminPartsTable");
     if(partsTable){
@@ -4622,10 +3202,21 @@ function renderAdminPanel(){
             </tr>
         `).join("") : `<tr><td colspan="5" style="color:#69758b;text-align:center;padding:22px;">Каталог пока пуст.</td></tr>`;
     }
+
     const folderBulk = document.getElementById("adminFoldersBulkTable");
     if(folderBulk){
-        folderBulk.innerHTML = state.folders.length ? state.folders.map(f=>`<tr><td><input class="bulk-folder" type="checkbox" value="${f.id}"></td><td>📁 ${escapeHtml(f.name)}</td><td>${escapeHtml(categoryName(f.category))}</td><td>${state.parts.filter(p=>p.folderId===f.id).length}</td></tr>`).join("") : `<tr><td colspan="4" style="color:#69758b;text-align:center;padding:18px;">Папок пока нет.</td></tr>`;
+        folderBulk.innerHTML = state.folders.length
+            ? state.folders.map(f=>`
+                <tr>
+                    <td><input class="bulk-folder" type="checkbox" value="${f.id}"></td>
+                    <td>📁 ${escapeHtml(f.name)}</td>
+                    <td>${escapeHtml(categoryName(f.category))}</td>
+                    <td>${state.parts.filter(p=>p.folderId===f.id).length}</td>
+                </tr>
+            `).join("")
+            : `<tr><td colspan="4" style="color:#69758b;text-align:center;padding:18px;">Папок пока нет.</td></tr>`;
     }
+
     const historyCard = document.getElementById("adminHistoryCard");
     if(historyCard){
         historyCard.style.display = isSuperAdmin() ? "block" : "none";
@@ -4633,217 +3224,70 @@ function renderAdminPanel(){
     if(isSuperAdmin()) renderHistory();
 }
 
-
-/* =========================================================
-   CREATE USER
-========================================================= */
-
 function openUserModal(){
-
-    if(!isSuperAdmin()){
-        toast("Только главный администратор может создавать аккаунты.","error");
-        return;
-    }
+    if(!isSuperAdmin()){ toast("Только главный администратор может создавать аккаунты.","error"); return; }
 
     showModal(`
-
         <div class="modal-header">
-
-            <div class="modal-title">
-                Новый аккаунт
-            </div>
-
-            <button
-                type="button"
-                class="modal-close"
-                onclick="closeModal()">
-                ×
-            </button>
-
+            <div class="modal-title">Новый аккаунт</div>
+            <button type="button" class="modal-close" onclick="closeModal()">×</button>
         </div>
-
-
         <div class="modal-body">
-
             <div class="field">
-
-                <label>
-                    Логин *
-                </label>
-
-                <input
-                    id="newUserLogin"
-                    class="input"
-                    autocomplete="off"
-                    placeholder="Например: operator01">
-
+                <label>Логин *</label>
+                <input id="newUserLogin" class="input" autocomplete="off" placeholder="Например: operator01">
             </div>
-
-
             <div class="field">
-
-                <label>
-                    Пароль *
-                </label>
-
-                <input
-                    id="newUserPassword"
-                    class="input"
-                    type="text"
-                    autocomplete="off"
-                    placeholder="Введите пароль">
-
+                <label>Пароль *</label>
+                <input id="newUserPassword" class="input" type="text" autocomplete="off" placeholder="Введите пароль">
             </div>
-
-
             <div class="field">
-
-                <label>
-                    Роль
-                </label>
-
-                <select
-                    id="newUserRole"
-                    class="select">
-
-                    <option value="user">
-                        Пользователь
-                    </option>
-
-                    <option value="admin">
-                        Редактор
-                    </option>
-
+                <label>Роль</label>
+                <select id="newUserRole" class="select">
+                    <option value="user">Пользователь</option>
+                    <option value="admin">Редактор</option>
                 </select>
-
             </div>
-
         </div>
-
-
         <div class="modal-footer">
-
-            <button
-                type="button"
-                class="btn"
-                onclick="closeModal()">
-                Отмена
-            </button>
-
-            <button
-                type="button"
-                class="btn primary"
-                onclick="createUser()">
-                Создать аккаунт
-            </button>
-
+            <button type="button" class="btn" onclick="closeModal()">Отмена</button>
+            <button type="button" class="btn primary" onclick="createUser()">Создать аккаунт</button>
         </div>
     `);
 }
 
 function createUser(){
+    if(!isSuperAdmin()){ toast("Только главный администратор может создавать аккаунты.","error"); return; }
 
-    if(!isSuperAdmin()){
-        toast("Только главный администратор может создавать аккаунты.","error");
-        return;
-    }
+    const loginValue = document.getElementById("newUserLogin").value.trim();
+    const password = document.getElementById("newUserPassword").value;
+    const role = document.getElementById("newUserRole").value;
 
-    const loginValue =
-        document
-            .getElementById(
-                "newUserLogin"
-            )
-            .value
-            .trim();
+    if(!loginValue){ toast("Введите логин.","error"); return; }
+    if(!password){ toast("Введите пароль.","error"); return; }
 
-    const password =
-        document
-            .getElementById(
-                "newUserPassword"
-            )
-            .value;
-
-    const role =
-        document
-            .getElementById(
-                "newUserRole"
-            )
-            .value;
-
-    if(!loginValue){
-
-        toast(
-            "Введите логин.",
-            "error"
-        );
-
-        return;
-    }
-
-    if(!password){
-
-        toast(
-            "Введите пароль.",
-            "error"
-        );
-
-        return;
-    }
-
-    if(
-        state.users.some(
-            u =>
-                u.login.toLowerCase() ===
-                loginValue.toLowerCase()
-        )
-    ){
-
-        toast(
-            "Такой логин уже существует.",
-            "error"
-        );
-
+    if(state.users.some(u => u.login.toLowerCase() === loginValue.toLowerCase())){
+        toast("Такой логин уже существует.","error");
         return;
     }
 
     const before = snapshotState();
     state.users.push({
-
         id:uid("user"),
-
         login:loginValue,
-
         password,
-
         role,
-
         createdAt:now()
     });
-
     recordAction("user_create", `Создание аккаунта «${loginValue}»`, before);
     saveState();
-
     closeModal();
-
     renderAdminPanel();
-
-    toast(
-        "Аккаунт создан.",
-        "success"
-    );
+    toast("Аккаунт создан.","success");
 }
 
-
-/* =========================================================
-   USER ROLE / IMPERSONATION
-========================================================= */
-
 function toggleUserAdmin(userId){
-
-    if(!isSuperAdmin()){
-        toast("Только главный администратор может менять права.","error");
-        return;
-    }
+    if(!isSuperAdmin()){ toast("Только главный администратор может менять права.","error"); return; }
 
     const user = state.users.find(u=>u.id===userId);
     if(!user || user.id === "admin") return;
@@ -4861,11 +3305,7 @@ function toggleUserAdmin(userId){
 }
 
 function startImpersonation(userId){
-
-    if(!isSuperAdmin()){
-        toast("Только главный администратор может входить в другие аккаунты.","error");
-        return;
-    }
+    if(!isSuperAdmin()){ toast("Только главный администратор может входить в другие аккаунты.","error"); return; }
 
     const target = state.users.find(u=>u.id===userId);
     if(!target || target.id === currentUserId) return;
@@ -4881,12 +3321,8 @@ function startImpersonation(userId){
 }
 
 function returnFromImpersonation(){
-
     const originalId = localStorage.getItem(IMPERSONATION_KEY);
-    if(!originalId){
-        toast("Активная проверка аккаунта не найдена.","error");
-        return;
-    }
+    if(!originalId){ toast("Активная проверка аккаунта не найдена.","error"); return; }
 
     const original = state.users.find(u=>u.id===originalId);
     if(!original || !["superadmin"].includes(original.role)){
@@ -4904,84 +3340,30 @@ function returnFromImpersonation(){
     toast("Вы вернулись в главный аккаунт.","success");
 }
 
-
-/* =========================================================
-   DELETE USER
-========================================================= */
-
 async function deleteUser(userId){
+    if(!isSuperAdmin()){ toast("Только администратор может удалять аккаунты.","error"); return; }
 
-    if(!isSuperAdmin()){
-        toast("Только администратор может удалять аккаунты.","error");
-        return;
-    }
-
-    const user =
-        state.users.find(
-            u =>
-                u.id ===
-                userId
-        );
-
+    const user = state.users.find(u => u.id === userId);
     if(!user) return;
 
     if(user.id === "admin" || user.id === currentUserId){
-
-        toast(
-            "Системный аккаунт администратора удалить нельзя.",
-            "error"
-        );
-
+        toast("Системный аккаунт администратора удалить нельзя.","error");
         return;
     }
 
-    if(
-        !confirm(
-            `Удалить аккаунт "${user.login}"?\n\n` +
-            "Все детали этого пользователя также будут удалены."
-        )
-    ){
-
+    if(!confirm(`Удалить аккаунт "${user.login}"?\n\nВсе детали этого пользователя также будут удалены.`)){
         return;
     }
 
     const before = snapshotState();
-    const userParts =
-        state.parts.filter(
-            p =>
-                p.userId ===
-                userId
-        );
-
-    state.parts =
-        state.parts.filter(
-            p =>
-                p.userId !==
-                userId
-        );
-
-    state.users =
-        state.users.filter(
-            u =>
-                u.id !==
-                userId
-        );
-
+    state.parts = state.parts.filter(p => p.userId !== userId);
+    state.users = state.users.filter(u => u.id !== userId);
     recordAction("user_delete", `Удаление аккаунта «${user.login}»`, before);
     saveState();
-
     renderAdminPanel();
-
-    toast(
-        "Аккаунт удалён.",
-        "success"
-    );
+    toast("Аккаунт удалён.","success");
 }
 
-
-/* =========================================================
-   BULK / HISTORY / CHANGELOG
-========================================================= */
 function bulkDeleteSelected(){
     if(!isAdmin()){toast("Доступ запрещён.","error");return;}
     const ids=[...document.querySelectorAll(".bulk-part:checked")].map(x=>x.value);
@@ -4995,7 +3377,10 @@ function bulkDeleteSelected(){
     recordAction("bulk_delete",`Массовое удаление: ${ids.length} деталей, ${folderIds.length} папок`,before);
     saveState(); renderAdminPanel(); renderCatalog(); toast("Выбранное удалено.","success");
 }
-function toggleBulkChecks(source){document.querySelectorAll(".bulk-part,.bulk-folder").forEach(x=>x.checked=source.checked)}
+function toggleBulkChecks(source){
+    document.querySelectorAll(".bulk-part,.bulk-folder").forEach(x=>x.checked=source.checked);
+}
+
 let historyPage = 1;
 const HISTORY_PAGE_SIZE = 10;
 let historyFilters = {search:"",date:"all",user:"all",action:"all",object:"all",category:"all",sort:"newest",from:"",to:""};
@@ -5007,8 +3392,17 @@ function historyObject(type){
     if(type==="bulk_delete") return "catalog";
     return "system";
 }
-function historyObjectName(type){return ({folder:"Папки",part:"Файлы/детали",user:"Пользователи",catalog:"Каталог",system:"Система"})[historyObject(type)]||"Система";}
-function historyActionName(type){return ({folder_create:"Создание папки",folder_edit:"Изменение папки",folder_delete:"Удаление папки",part_create:"Создание детали",part_edit:"Изменение детали",part_move:"Перемещение детали",part_delete:"Удаление детали",user_create:"Создание аккаунта",user_delete:"Удаление аккаунта",role_change:"Изменение прав",bulk_delete:"Массовое удаление",changelog_create:"Публикация записи",login:"Вход"})[type]||type||"Действие";}
+function historyObjectName(type){
+    return ({folder:"Папки",part:"Файлы/детали",user:"Пользователи",catalog:"Каталог",system:"Система"})[historyObject(type)]||"Система";
+}
+function historyActionName(type){
+    return ({
+        folder_create:"Создание папки",folder_edit:"Изменение папки",folder_delete:"Удаление папки",
+        part_create:"Создание детали",part_edit:"Изменение детали",part_move:"Перемещение детали",part_delete:"Удаление детали",
+        user_create:"Создание аккаунта",user_delete:"Удаление аккаунта",role_change:"Изменение прав",
+        bulk_delete:"Массовое удаление",changelog_create:"Публикация записи",login:"Вход"
+    })[type]||type||"Действие";
+}
 function historyCategory(a){
     const src=JSON.stringify(a.before||"")+" "+JSON.stringify(a.after||"")+" "+String(a.label||"");
     if(/programs|ПРОГРАММЫ/i.test(src)) return "programs";
@@ -5016,14 +3410,22 @@ function historyCategory(a){
     if(/other|ПРОЧЕЕ/i.test(src)) return "other";
     return "all";
 }
-function historyCategoryName(v){return ({programs:"ПРОГРАММЫ",tools:"ИНСТРУМЕНТ",other:"ПРОЧЕЕ",all:"Без категории"})[v]||v;}
+function historyCategoryName(v){
+    return ({programs:"ПРОГРАММЫ",tools:"ИНСТРУМЕНТ",other:"ПРОЧЕЕ",all:"Без категории"})[v]||v;
+}
 function historyDateMatch(a){
     const d=new Date(a.createdAt); if(Number.isNaN(d.getTime())) return false;
     const n=new Date(); const start=new Date(n.getFullYear(),n.getMonth(),n.getDate());
     if(historyFilters.date==="today") return d>=start;
-    if(historyFilters.date==="yesterday"){const y=new Date(start);y.setDate(y.getDate()-1);return d>=y&&d<start;}
-    if(historyFilters.date==="7"){const x=new Date(start);x.setDate(x.getDate()-6);return d>=x;}
-    if(historyFilters.date==="30"){const x=new Date(start);x.setDate(x.getDate()-29);return d>=x;}
+    if(historyFilters.date==="yesterday"){
+        const y=new Date(start);y.setDate(y.getDate()-1);return d>=y&&d<start;
+    }
+    if(historyFilters.date==="7"){
+        const x=new Date(start);x.setDate(x.getDate()-6);return d>=x;
+    }
+    if(historyFilters.date==="30"){
+        const x=new Date(start);x.setDate(x.getDate()-29);return d>=x;
+    }
     if(historyFilters.date==="custom"){
         if(historyFilters.from){const f=new Date(historyFilters.from+"T00:00:00");if(d<f)return false;}
         if(historyFilters.to){const t=new Date(historyFilters.to+"T23:59:59.999");if(d>t)return false;}
@@ -5033,13 +3435,14 @@ function historyDateMatch(a){
 function getFilteredHistory(){
     const f=historyFilters;
     let items=[...(state.actionHistory||[])].filter(a=>{
-        const u=state.users.find(x=>x.id===a.userId); const login=u?.login||"Удалённый пользователь";
+        const u=state.users.find(x=>x.id===a.userId);
+        const login=u?.login||"Удалённый пользователь";
         const hay=[a.label,login,a.type,historyActionName(a.type),historyObjectName(a.type),historyCategory(a)].join(" ").toLowerCase();
         if(f.search&&!hay.includes(f.search.toLowerCase())) return false;
-        if(f.user!=="all"&&a.userId!==f.user)return false;
-        if(f.action!=="all"&&a.type!==f.action)return false;
-        if(f.object!=="all"&&historyObject(a.type)!==f.object)return false;
-        if(f.category!=="all"&&historyCategory(a)!==f.category)return false;
+        if(f.user!=="all"&&a.userId!==f.user) return false;
+        if(f.action!=="all"&&a.type!==f.action) return false;
+        if(f.object!=="all"&&historyObject(a.type)!==f.object) return false;
+        if(f.category!=="all"&&historyCategory(a)!==f.category) return false;
         return historyDateMatch(a);
     });
     items.sort((a,b)=>{
@@ -5051,8 +3454,16 @@ function getFilteredHistory(){
     return items;
 }
 function historyFilterSet(key,value){historyFilters[key]=value;historyPage=1;renderHistory();}
-function clearHistoryFilter(key){const d={search:"",date:"all",user:"all",action:"all",object:"all",category:"all",sort:"newest",from:"",to:""};historyFilters[key]=d[key];if(key==="date"){historyFilters.from="";historyFilters.to="";}historyPage=1;renderHistory();}
-function clearHistoryFilters(){historyFilters={search:"",date:"all",user:"all",action:"all",object:"all",category:"all",sort:"newest",from:"",to:""};historyPage=1;renderHistory();}
+function clearHistoryFilter(key){
+    const d={search:"",date:"all",user:"all",action:"all",object:"all",category:"all",sort:"newest",from:"",to:""};
+    historyFilters[key]=d[key];
+    if(key==="date"){historyFilters.from="";historyFilters.to="";}
+    historyPage=1;renderHistory();
+}
+function clearHistoryFilters(){
+    historyFilters={search:"",date:"all",user:"all",action:"all",object:"all",category:"all",sort:"newest",from:"",to:""};
+    historyPage=1;renderHistory();
+}
 function historyFilterUI(){
     const el=document.getElementById("historyFilters");if(!el)return;
     const users=[...(state.users||[])].sort((a,b)=>String(a.login).localeCompare(String(b.login),"ru"));
@@ -5068,35 +3479,80 @@ function historyFilterUI(){
         <div id="historyCustomFromWrap" class="history-filter-field"><label>Дата от</label><input id="historyFrom" type="date" value="${historyFilters.from}"></div>
         <div id="historyCustomToWrap" class="history-filter-field"><label>Дата до</label><input id="historyTo" type="date" value="${historyFilters.to}"></div>
     </div><div class="history-filter-actions"><span style="font-size:10px;color:#718097;">Фильтры применяются сразу</span><button class="btn" type="button" onclick="clearHistoryFilters()">Сбросить всё</button></div></div>`;
-    ["historyDate","historyUser","historyAction","historyObject","historyCategory","historySort"].forEach(id=>{const key=id.replace("history","").toLowerCase();const map={date:"date",user:"user",action:"action",object:"object",category:"category",sort:"sort"};document.getElementById(id)?.addEventListener("change",e=>historyFilterSet(map[key],e.target.value));});
+
+    ["historyDate","historyUser","historyAction","historyObject","historyCategory","historySort"].forEach(id=>{
+        const key=id.replace("history","").toLowerCase();
+        const map={date:"date",user:"user",action:"action",object:"object",category:"category",sort:"sort"};
+        document.getElementById(id)?.addEventListener("change",e=>historyFilterSet(map[key],e.target.value));
+    });
     document.getElementById("historySearch")?.addEventListener("input",e=>{historyFilters.search=e.target.value;historyPage=1;renderHistory(false);});
     document.getElementById("historyFrom")?.addEventListener("change",e=>{historyFilters.from=e.target.value;historyPage=1;renderHistory(false);});
     document.getElementById("historyTo")?.addEventListener("change",e=>{historyFilters.to=e.target.value;historyPage=1;renderHistory(false);});
-    document.getElementById("historyDate").value=historyFilters.date;document.getElementById("historyUser").value=historyFilters.user;document.getElementById("historyAction").value=historyFilters.action;document.getElementById("historyObject").value=historyFilters.object;document.getElementById("historyCategory").value=historyFilters.category;document.getElementById("historySort").value=historyFilters.sort;
-    const custom=historyFilters.date==="custom";document.getElementById("historyCustomFromWrap").style.display=custom?"flex":"none";document.getElementById("historyCustomToWrap").style.display=custom?"flex":"none";
+
+    document.getElementById("historyDate").value=historyFilters.date;
+    document.getElementById("historyUser").value=historyFilters.user;
+    document.getElementById("historyAction").value=historyFilters.action;
+    document.getElementById("historyObject").value=historyFilters.object;
+    document.getElementById("historyCategory").value=historyFilters.category;
+    document.getElementById("historySort").value=historyFilters.sort;
+
+    const custom=historyFilters.date==="custom";
+    document.getElementById("historyCustomFromWrap").style.display=custom?"flex":"none";
+    document.getElementById("historyCustomToWrap").style.display=custom?"flex":"none";
 }
 function renderHistoryActive(){
-    const el=document.getElementById("historyActive");if(!el)return;const f=historyFilters,ch=[];
-    if(f.search)ch.push(["Поиск: "+f.search,"search"]);if(f.date!=="all")ch.push(["Дата: "+({today:"сегодня",yesterday:"вчера",7:"7 дней",30:"30 дней",custom:"свой диапазон"}[f.date]),"date"]);
-    if(f.user!=="all"){const u=state.users.find(x=>x.id===f.user);ch.push(["Пользователь: "+(u?.login||"удалён"),"user"]);}if(f.action!=="all")ch.push(["Действие: "+historyActionName(f.action),"action"]);if(f.object!=="all")ch.push(["Объект: "+historyObjectName(f.object),"object"]);if(f.category!=="all")ch.push(["Раздел: "+historyCategoryName(f.category),"category"]);if(f.sort!=="newest")ch.push(["Сортировка: "+({oldest:"старые → новые",user:"пользователь А → Я",action:"действие А → Я"}[f.sort]),"sort"]);
+    const el=document.getElementById("historyActive");if(!el)return;
+    const f=historyFilters,ch=[];
+    if(f.search)ch.push(["Поиск: "+f.search,"search"]);
+    if(f.date!=="all")ch.push(["Дата: "+({today:"сегодня",yesterday:"вчера",7:"7 дней",30:"30 дней",custom:"свой диапазон"}[f.date]),"date"]);
+    if(f.user!=="all"){const u=state.users.find(x=>x.id===f.user);ch.push(["Пользователь: "+(u?.login||"удалён"),"user"]);}
+    if(f.action!=="all")ch.push(["Действие: "+historyActionName(f.action),"action"]);
+    if(f.object!=="all")ch.push(["Объект: "+historyObjectName(f.object),"object"]);
+    if(f.category!=="all")ch.push(["Раздел: "+historyCategoryName(f.category),"category"]);
+    if(f.sort!=="newest")ch.push(["Сортировка: "+({oldest:"старые → новые",user:"пользователь А → Я",action:"действие А → Я"}[f.sort]),"sort"]);
     el.innerHTML=ch.length?`<div class="history-active">${ch.map(c=>`<span class="history-chip">${escapeHtml(c[0])} <button class="btn" style="min-width:24px;min-height:24px;padding:0;border:0;background:none;" type="button" onclick="clearHistoryFilter('${c[1]}')">×</button></span>`).join("")}</div>`:"";
 }
 function renderHistoryPagination(totalPages){
-    const el=document.getElementById("historyPagination");if(!el)return;if(totalPages<=1){el.innerHTML="";return;}const pages=[];const add=n=>{if(!pages.includes(n))pages.push(n)};
-    if(totalPages<=7){for(let i=1;i<=totalPages;i++)add(i);}else{add(1);if(historyPage>3)pages.push("…");for(let i=Math.max(2,historyPage-1);i<=Math.min(totalPages-1,historyPage+1);i++)add(i);if(historyPage<totalPages-2)pages.push("…");add(totalPages);}
+    const el=document.getElementById("historyPagination");if(!el)return;
+    if(totalPages<=1){el.innerHTML="";return;}
+    const pages=[];const add=n=>{if(!pages.includes(n))pages.push(n)};
+    if(totalPages<=7){for(let i=1;i<=totalPages;i++)add(i);}
+    else{
+        add(1);
+        if(historyPage>3)pages.push("…");
+        for(let i=Math.max(2,historyPage-1);i<=Math.min(totalPages-1,historyPage+1);i++)add(i);
+        if(historyPage<totalPages-2)pages.push("…");
+        add(totalPages);
+    }
     el.innerHTML=`<div class="history-pagination">${pages.map(x=>x==="…"?`<span class="history-page-dots">…</span>`:`<button type="button" class="btn history-page-btn ${x===historyPage?"active":""}" onclick="setHistoryPage(${x})">${x}</button>`).join("")}</div>`;
 }
 function setHistoryPage(page){historyPage=Number(page)||1;renderHistory(false);}
 function renderHistory(rebuildFilters=true){
-    const el=document.getElementById("historyList");if(!el)return;if(rebuildFilters)historyFilterUI();renderHistoryActive();const items=getFilteredHistory();const totalPages=Math.max(1,Math.ceil(items.length/HISTORY_PAGE_SIZE));historyPage=Math.min(Math.max(1,historyPage),totalPages);const start=(historyPage-1)*HISTORY_PAGE_SIZE,pageItems=items.slice(start,start+HISTORY_PAGE_SIZE);const summary=document.getElementById("historySummary");
+    const el=document.getElementById("historyList");if(!el)return;
+    if(rebuildFilters)historyFilterUI();
+    renderHistoryActive();
+    const items=getFilteredHistory();
+    const totalPages=Math.max(1,Math.ceil(items.length/HISTORY_PAGE_SIZE));
+    historyPage=Math.min(Math.max(1,historyPage),totalPages);
+    const start=(historyPage-1)*HISTORY_PAGE_SIZE;
+    const pageItems=items.slice(start,start+HISTORY_PAGE_SIZE);
+    const summary=document.getElementById("historySummary");
     if(summary)summary.textContent=items.length?`Показано ${start+1}–${Math.min(start+pageItems.length,items.length)} из ${items.length} действий`:"По выбранным фильтрам действий не найдено.";
-    el.innerHTML=pageItems.length?pageItems.map(a=>{const u=state.users.find(x=>x.id===a.userId);return `<div class="history-row"><div><b>${escapeHtml(a.label)}</b><div style="color:#718097;font-size:9px;margin-top:3px;">${escapeHtml(historyObjectName(a.type))} · ${escapeHtml(historyActionName(a.type))}</div></div><div>${escapeHtml(u?.login||"Удалённый пользователь")}</div><div>${formatDate(a.createdAt)}</div><div><button class="btn" type="button" onclick="undoAction('${a.id}')">↶ Отменить</button></div></div>`}).join(""):"<div style='color:#718097;padding:15px 0;'>История пока пуста.</div>";renderHistoryPagination(totalPages);
+    el.innerHTML=pageItems.length?pageItems.map(a=>{
+        const u=state.users.find(x=>x.id===a.userId);
+        return `<div class="history-row"><div><b>${escapeHtml(a.label)}</b><div style="color:#718097;font-size:9px;margin-top:3px;">${escapeHtml(historyObjectName(a.type))} · ${escapeHtml(historyActionName(a.type))}</div></div><div>${escapeHtml(u?.login||"Удалённый пользователь")}</div><div>${formatDate(a.createdAt)}</div><div><button class="btn" type="button" onclick="undoAction('${a.id}')">↶ Отменить</button></div></div>`
+    }).join(""):"<div style='color:#718097;padding:15px 0;'>История пока пуста.</div>";
+    renderHistoryPagination(totalPages);
 }
 function openChangelog(){
-    document.getElementById("pageCatalog").classList.add("hidden"); document.getElementById("pageAdmin").classList.add("hidden"); document.getElementById("pageChangelog").classList.remove("hidden");
-    document.querySelectorAll(".side-btn").forEach(b=>b.classList.remove("active")); document.getElementById("navChangelog")?.classList.add("active");
+    document.getElementById("pageCatalog").classList.add("hidden");
+    document.getElementById("pageAdmin").classList.add("hidden");
+    document.getElementById("pageChangelog").classList.remove("hidden");
+    document.querySelectorAll(".side-btn").forEach(b=>b.classList.remove("active"));
+    document.getElementById("navChangelog")?.classList.add("active");
     document.getElementById("breadcrumb").innerHTML="<strong>Блог изменений</strong>";
-    const b=document.getElementById("newChangelogBtn"); if(b) b.style.display=isSuperAdmin()?"inline-flex":"none";
+    const b=document.getElementById("newChangelogBtn");
+    if(b) b.style.display=isSuperAdmin()?"inline-flex":"none";
     renderChangelog(); closeSidebar();
 }
 function renderChangelog(){
@@ -5110,235 +3566,98 @@ function openChangelogModal(){
 }
 function saveChangelog(){
     if(!isSuperAdmin()) return;
-    const title=document.getElementById("changeTitle")?.value.trim(); const text=document.getElementById("changeText")?.value.trim();
+    const title=document.getElementById("changeTitle")?.value.trim();
+    const text=document.getElementById("changeText")?.value.trim();
     if(!title||!text){toast("Заполните заголовок и текст.","error");return;}
-    const before=snapshotState(); state.changelog.push({id:uid("change"),title,text,createdAt:now(),authorId:currentUserId}); recordAction("changelog_create",`Публикация записи «${title}»`,before); saveState(); closeModal(); renderChangelog(); toast("Запись опубликована.","success");
+    const before=snapshotState();
+    state.changelog.push({id:uid("change"),title,text,createdAt:now(),authorId:currentUserId});
+    recordAction("changelog_create",`Публикация записи «${title}»`,before);
+    saveState(); closeModal(); renderChangelog(); toast("Запись опубликована.","success");
 }
-
-/* =========================================================
-   MODAL
-========================================================= */
 
 function showModal(html){
-
-    document
-        .getElementById(
-            "modal"
-        )
-        .innerHTML =
-        html;
-
-    document
-        .getElementById(
-            "modalBackdrop"
-        )
-        .classList.remove(
-            "hidden"
-        );
+    document.getElementById("modal").innerHTML = html;
+    document.getElementById("modalBackdrop").classList.remove("hidden");
 }
-
 function closeModal(){
-
-    document
-        .getElementById(
-            "modalBackdrop"
-        )
-        .classList.add(
-            "hidden"
-        );
-
-    document
-        .getElementById(
-            "modal"
-        )
-        .innerHTML = "";
-
-    editingPartId =
-        null;
-
-    editingUserId =
-        null;
-
-    selectedFile =
-        null;
+    document.getElementById("modalBackdrop").classList.add("hidden");
+    document.getElementById("modal").innerHTML = "";
+    editingPartId = null;
+    editingUserId = null;
+    selectedFile = null;
 }
-
 function modalBackdropClick(event){
-
-    if(
-        event.target ===
-        document.getElementById(
-            "modalBackdrop"
-        )
-    ){
-
+    if(event.target === document.getElementById("modalBackdrop")){
         closeModal();
     }
 }
 
+function toast(message,type="success"){
+    const container = document.getElementById("toastContainer");
+    const element = document.createElement("div");
+    element.className = "toast " + type;
+    element.textContent = message;
+    container.appendChild(element);
 
-/* =========================================================
-   TOAST
-========================================================= */
-
-function toast(
-    message,
-    type="success"
-){
-
-    const container =
-        document.getElementById(
-            "toastContainer"
-        );
-
-    const element =
-        document.createElement(
-            "div"
-        );
-
-    element.className =
-        "toast " +
-        type;
-
-    element.textContent =
-        message;
-
-    container.appendChild(
-        element
-    );
-
-    setTimeout(
-        ()=>{
-            element.style.opacity =
-                "0";
-
-            element.style.transform =
-                "translateY(10px)";
-
-            setTimeout(
-                ()=>{
-                    element.remove();
-                },
-                250
-            );
-
-        },
-        3000
-    );
+    setTimeout(()=>{
+        element.style.opacity = "0";
+        element.style.transform = "translateY(10px)";
+        setTimeout(()=>{ element.remove(); },250);
+    },3000);
 }
-
-
-/* =========================================================
-   CONTEXT MENU
-========================================================= */
 
 let contextMenu = null;
-
 function closeContextMenu(){
-
-    if(contextMenu){
-
-        contextMenu.remove();
-
-        contextMenu =
-            null;
-    }
+    if(contextMenu){ contextMenu.remove(); contextMenu = null; }
 }
 
-
-/* =========================================================
-   ESC
-========================================================= */
-
-document.addEventListener(
-    "keydown",
-    event=>{
-
-        if(
-            event.key ===
-            "Escape"
-        ){
-
-            closeModal();
-
-            closeContextMenu();
-
-            closeSidebar();
-        }
+document.addEventListener("keydown",event=>{
+    if(event.key === "Escape"){
+        closeModal();
+        closeContextMenu();
+        closeSidebar();
     }
-);
+});
 
-
-function updateSiteVersion(){ document.querySelectorAll(".site-version").forEach(el=>el.textContent=SITE_VERSION); }
+function updateSiteVersion(){
+    document.querySelectorAll(".site-version").forEach(el=>el.textContent=SITE_VERSION);
+}
 function handleVisualViewport(){
     if(!window.visualViewport) return;
     const offset=Math.max(0, window.innerHeight-window.visualViewport.height-window.visualViewport.offsetTop);
     document.documentElement.style.setProperty("--keyboard-offset", offset+"px");
 }
-if(window.visualViewport){ window.visualViewport.addEventListener("resize",handleVisualViewport); window.visualViewport.addEventListener("scroll",handleVisualViewport); }
+if(window.visualViewport){
+    window.visualViewport.addEventListener("resize",handleVisualViewport);
+    window.visualViewport.addEventListener("scroll",handleVisualViewport);
+}
 window.addEventListener("focusin",()=>setTimeout(handleVisualViewport,50));
 window.addEventListener("focusout",()=>setTimeout(handleVisualViewport,150));
-
-/* =========================================================
-   INIT
-========================================================= */
 
 async function boot(){
     updateSiteVersion();
     handleVisualViewport();
 
     try{
-
         await initDB();
-
     }catch(error){
-
-        console.error(
-            "IndexedDB:",
-            error
-        );
+        console.error("IndexedDB:",error);
     }
 
-    /*
-      Если сессия сохранилась --
-      сразу открываем приложение.
-    */
     if(currentUserId){
-
-        const user =
-            getCurrentUser();
-
+        const user = getCurrentUser();
         if(user){
-
             enterApp();
-
             return;
         }
-
-        localStorage.removeItem(
-            SESSION_KEY
-        );
-
-        currentUserId =
-            null;
+        localStorage.removeItem(SESSION_KEY);
+        currentUserId = null;
     }
 
-    /*
-      Вход.
-    */
-    document
-        .getElementById(
-            "authPage"
-        )
-        .classList.remove(
-            "hidden"
-        );
+    document.getElementById("authPage").classList.remove("hidden");
 }
 
-window.addEventListener(
-    "load",
-    boot
-);
+window.addEventListener("load",boot);
 
 </script>
 
