@@ -21,7 +21,6 @@
   *{box-sizing:border-box;margin:0;padding:0}
   html,body{height:100%}
   
-  /* ============ АНИМИРОВАННЫЙ ФОН ============ */
   body{
     font-family:'Segoe UI',system-ui,-apple-system,sans-serif;
     color:var(--text);
@@ -38,27 +37,31 @@
     100% { background-position: 0% 50%; }
   }
 
-  /* ============ НОВЫЙ PIN-ЭКРАН (OTP) ============ */
+  /* ============ PIN-ЭКРАН (НЕПРОЗРАЧНЫЙ) ============ */
   #lock{
     position:fixed;inset:0;z-index:1000;
     display:flex;align-items:center;justify-content:center;
-    background:rgba(10,10,20,0.85);
-    backdrop-filter:blur(20px);
+    /* Полностью непрозрачный фон */
+    background: linear-gradient(-45deg, #0e0f1a, #1a1040, #0b2a6b, #8b1e52, #0e0f1a);
+    background-size: 400% 400%;
+    animation: gradientBG 20s ease infinite;
     transition:opacity .8s ease, visibility .8s;
+    padding: 20px;
+    overflow-y: auto;
   }
   #lock.hidden{opacity:0;visibility:hidden;pointer-events:none}
   
   .lock-card{
-    background:rgba(20, 20, 30, 0.7);
+    background: rgba(15, 15, 25, 0.6);
     border:1px solid rgba(255,255,255,0.1);
     backdrop-filter:blur(24px);
     border-radius:32px;
-    padding:50px 30px;
-    width:min(420px, 90vw);
+    padding:40px 30px;
+    width:min(420px, 100%);
     text-align:center;
     box-shadow:0 30px 80px rgba(0,0,0,.7), inset 0 1px 0 rgba(255,255,255,0.1);
     position: relative;
-    overflow: hidden;
+    margin: auto;
   }
 
   .lock-card h1{
@@ -66,14 +69,14 @@
     background:linear-gradient(90deg,var(--blue-soft),var(--pink-soft));
     -webkit-background-clip:text;background-clip:text;color:transparent;
   }
-  .lock-card p{color:var(--muted);font-size:.9rem;margin-bottom:30px}
+  .lock-card p{color:var(--muted);font-size:.9rem;margin-bottom:20px}
 
   /* Контейнер для OTP */
   .otp-container {
     position: relative;
     width: 220px;
     height: 220px;
-    margin: 0 auto;
+    margin: 0 auto 20px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -129,41 +132,39 @@
     box-shadow: 0 0 25px rgba(255,255,255,0.3);
   }
 
-  /* Скрытый инпут для мобильной клавиатуры */
-  .hidden-input {
-    position: absolute;
-    opacity: 0;
-    width: 1px;
-    height: 1px;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: -1;
+  /* ============ ЭКРАННАЯ КЛАВИАТУРА ============ */
+  .pin-pad {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    max-width: 300px;
+    margin: 0 auto;
   }
-
-  /* Кнопка "Ввести код" */
-  .fill-btn {
-    margin-top: 30px;
-    background: linear-gradient(135deg, var(--blue), var(--pink));
-    color: #fff;
-    border: none;
-    padding: 12px 32px;
+  .pin-pad button {
+    aspect-ratio: 1.6 / 1;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: var(--text);
     border-radius: 14px;
-    font-size: 0.9rem;
-    font-weight: 600;
+    font-size: 1.2rem;
+    font-weight: 500;
     cursor: pointer;
-    transition: all 0.2s ease;
-    box-shadow: 0 5px 20px rgba(255, 95, 162, 0.3);
+    transition: all 0.15s ease;
+    font-family: inherit;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
   }
-  .fill-btn:hover {
-    transform: scale(1.05);
-    box-shadow: 0 8px 25px rgba(255, 95, 162, 0.5);
+  .pin-pad button:hover {
+    background: rgba(255, 255, 255, 0.12);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
   }
-  .hint {
-    margin-top: 20px;
-    font-size: 0.8rem;
-    color: var(--muted);
-    opacity: 0.8;
+  .pin-pad button:active {
+    transform: scale(0.95);
+    background: linear-gradient(135deg, rgba(43,108,255,0.3), rgba(255,95,162,0.3));
+  }
+  .pin-pad button.del {
+    color: var(--pink-soft);
   }
 
   /* Анимация тряски при ошибке */
@@ -181,7 +182,6 @@
 
   .container{max-width:1100px;margin:0 auto;padding:0 24px}
 
-  /* HERO */
   .hero{
     min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;
     text-align:center;position:relative;padding:80px 24px;
@@ -210,6 +210,7 @@
     animation:textShine 4s linear infinite;
   }
   .amp{color:var(--muted);font-weight:300;margin:0 .15em}
+  @keyframes textShine { to { background-position: 200% center; } }
 
   .subtitle{margin-top:20px;color:var(--muted);font-size:1.05rem;z-index:1;}
 
@@ -242,7 +243,6 @@
   .bday .him b{color:var(--blue-soft)}
   .bday .her b{color:var(--pink-soft)}
 
-  /* SECTIONS */
   section{padding:100px 0}
   .section-title{
     font-size:clamp(1.6rem,4vw,2.4rem);font-weight:700;text-align:center;margin-bottom:16px;
@@ -253,7 +253,6 @@
   }
   .section-sub{text-align:center;color:var(--muted);margin-bottom:60px}
 
-  /* TIMELINE */
   .timeline{position:relative;max-width:800px;margin:0 auto}
   .timeline::before{
     content:'';position:absolute;left:50%;top:0;bottom:0;width:2px;
@@ -289,7 +288,6 @@
     .t-item .card{max-width:100%}
   }
 
-  /* GALLERY */
   .gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;}
   .gallery .ph{
     aspect-ratio:1;border-radius:18px;overflow:hidden;position:relative;
@@ -304,7 +302,6 @@
     font-size:.75rem;color:rgba(255,255,255,.7);
   }
 
-  /* PLACES */
   .places{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px;}
   .place{
     background:var(--card);border:1px solid var(--border);border-radius:20px;
@@ -315,7 +312,6 @@
   .place h4{margin-bottom:8px}
   .place p{color:var(--muted);font-size:.92rem;line-height:1.5}
 
-  /* DREAMS */
   .dreams{max-width:700px;margin:0 auto;display:flex;flex-direction:column;gap:14px;}
   .dream{
     display:flex;align-items:center;gap:16px;
@@ -335,7 +331,6 @@
   .dream.done span{text-decoration:line-through;color:var(--muted)}
   .dream span{transition:.25s}
 
-  /* FOOTER */
   footer{
     text-align:center;padding:60px 24px;color:var(--muted);font-size:.85rem;
     border-top:1px solid var(--border);
@@ -367,7 +362,6 @@
     background: rgba(255,255,255,0.05);
   }
 
-  /* MODAL */
   .modal{
     position:fixed;inset:0;z-index:2000;display:none;
     align-items:center;justify-content:center;padding:24px;
@@ -388,7 +382,6 @@
   }
   .modal button:hover { transform: scale(1.05); }
 
-  /* ============ НИЖНЕЕ МЕНЮ (BOTTOM NAV) ============ */
   .bottom-nav {
     position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%);
     display: flex; align-items: center; gap: 8px;
@@ -426,6 +419,7 @@
     .nav-item { padding: 10px 14px; }
     .nav-item span { font-size: 0.65rem; }
     .nav-item svg { width: 20px; height: 20px; }
+    .lock-card { padding: 30px 20px; }
   }
 
   ::selection{background:var(--pink);color:white}
@@ -433,11 +427,11 @@
 </head>
 <body>
 
-<!-- ============ PIN-ЭКРАН (OTP VERIFICATION) ============ -->
+<!-- ============ PIN-ЭКРАН ============ -->
 <div id="lock">
   <div class="lock-card" id="lockCard">
     <h1>Наш уголок</h1>
-    <p>Только для нас двоих 💙💗</p>
+    <p>Введите код доступа</p>
 
     <div class="otp-container" id="otpContainer">
       <div class="orbit-ring"></div>
@@ -447,11 +441,20 @@
       <div class="slot" data-index="3"></div>
     </div>
 
-    <!-- Скрытый инпут для вызова клавиатуры на мобильных -->
-    <input type="tel" maxlength="4" class="hidden-input" id="hiddenInput" autocomplete="one-time-code" />
-
-    <button class="fill-btn" id="fillBtn">Ввести код</button>
-    <p class="hint">Подсказка: мы оба знаем эти 4 цифры 😉</p>
+    <div class="pin-pad" id="pinPad">
+      <button data-k="1">1</button>
+      <button data-k="2">2</button>
+      <button data-k="3">3</button>
+      <button data-k="4">4</button>
+      <button data-k="5">5</button>
+      <button data-k="6">6</button>
+      <button data-k="7">7</button>
+      <button data-k="8">8</button>
+      <button data-k="9">9</button>
+      <button data-k="del" class="del">⌫</button>
+      <button data-k="0">0</button>
+      <button data-k="ok" style="background:linear-gradient(135deg,var(--blue),var(--pink));border:none;color:#fff;">✓</button>
+    </div>
   </div>
 </div>
 
@@ -622,85 +625,102 @@
 </div>
 
 <script>
-/* ========== РАБОТА С LOCAL STORAGE (КЕШ) ========== */
+/* ========== КЕШ ========== */
 const CACHE_KEY_UNLOCKED = 'nv_site_unlocked';
 const CACHE_KEY_DREAMS = 'nv_dreams_state';
 
-/* ========== ЛОГИКА OTP (PIN-КОДА) ========== */
+/* ========== ЛОГИКА PIN-КОДА ========== */
 const PIN = "2568";
 const otpContainer = document.getElementById('otpContainer');
 const slots = document.querySelectorAll('.slot');
-const hiddenInput = document.getElementById('hiddenInput');
-const fillBtn = document.getElementById('fillBtn');
 const lockCard = document.getElementById('lockCard');
+const pinPad = document.getElementById('pinPad');
+let pinInput = "";
 
-// Фокус на скрытый инпут при клике на контейнер (для мобильной клавиатуры)
-otpContainer.addEventListener('click', () => hiddenInput.focus());
-
-// Кнопка "Ввести код" (автоввод)
-fillBtn.addEventListener('click', () => {
-  // Активируем круговую анимацию
-  otpContainer.classList.add('active');
-  hiddenInput.focus();
-  
-  // Сбрасываем предыдущий ввод
-  hiddenInput.value = '';
-  slots.forEach(s => { s.textContent = ''; s.classList.remove('filled'); });
-
-  // Автоматически вводим код с задержкой
-  const digits = PIN.split('');
-  digits.forEach((digit, i) => {
-    setTimeout(() => {
-      hiddenInput.value += digit;
-      updateSlots(hiddenInput.value);
-      
-      if (i === digits.length - 1) {
-        setTimeout(() => checkPin(hiddenInput.value), 400);
-      }
-    }, i * 200); // Задержка 200мс между цифрами
-  });
-});
-
-// Функция обновления слотов
-function updateSlots(val) {
+// Обновление отображения слотов
+function updateSlots() {
   slots.forEach((slot, i) => {
-    if (val[i]) {
-      slot.textContent = val[i];
+    if (pinInput[i]) {
+      slot.textContent = pinInput[i];
       slot.classList.add('filled');
     } else {
       slot.textContent = '';
       slot.classList.remove('filled');
     }
   });
+  
+  // Активируем круговую анимацию при первом вводе
+  if (pinInput.length > 0) {
+    otpContainer.classList.add('active');
+  } else {
+    otpContainer.classList.remove('active');
+  }
 }
 
-// Ввод с клавиатуры (физической или экранной)
-hiddenInput.addEventListener('input', (e) => {
-  const val = e.target.value;
-  otpContainer.classList.add('active');
-  updateSlots(val);
-
-  if (val.length === 4) {
-    checkPin(val);
+// Добавить цифру
+function addDigit(digit) {
+  if (pinInput.length < 4) {
+    pinInput += digit;
+    updateSlots();
+    
+    // Если введены все 4 цифры - проверяем
+    if (pinInput.length === 4) {
+      setTimeout(checkPin, 300);
+    }
   }
-});
+}
 
-// Проверка PIN-кода
-function checkPin(val) {
-  if (val === PIN) {
+// Удалить последнюю цифру
+function deleteDigit() {
+  pinInput = pinInput.slice(0, -1);
+  updateSlots();
+}
+
+// Проверка кода
+function checkPin() {
+  if (pinInput === PIN) {
     localStorage.setItem(CACHE_KEY_UNLOCKED, 'true');
     unlockSite();
   } else {
     lockCard.classList.add('shake');
     setTimeout(() => {
       lockCard.classList.remove('shake');
-      hiddenInput.value = '';
-      updateSlots('');
-      otpContainer.classList.remove('active');
-    }, 500);
+      pinInput = "";
+      updateSlots();
+    }, 450);
   }
 }
 
+// Обработка нажатий на экранную клавиатуру
+pinPad.addEventListener('click', (e) => {
+  const btn = e.target.closest('button');
+  if (!btn) return;
+  const k = btn.dataset.k;
+  
+  if (k === 'del') {
+    deleteDigit();
+  } else if (k === 'ok') {
+    if (pinInput.length === 4) checkPin();
+  } else if (/^[0-9]$/.test(k)) {
+    addDigit(k);
+  }
+});
+
+// Обработка физической клавиатуры
+document.addEventListener('keydown', (e) => {
+  // Только если экран входа ещё активен
+  if (document.getElementById('lock').classList.contains('hidden')) return;
+  
+  if (/^[0-9]$/.test(e.key)) {
+    addDigit(e.key);
+  } else if (e.key === 'Backspace') {
+    deleteDigit();
+  } else if (e.key === 'Enter') {
+    if (pinInput.length === 4) checkPin();
+  }
+});
+
+// Разблокировка сайта
 function unlockSite() {
   document.getElementById('lock').classList.add('hidden');
   document.getElementById('site').classList.add('visible');
@@ -717,14 +737,13 @@ window.addEventListener('DOMContentLoaded', () => {
     unlockSite();
   } else {
     document.body.style.overflow = 'hidden';
-    setTimeout(() => hiddenInput.focus(), 500);
   }
 });
 
 /* ========== КНОПКА ВЫЙТИ ========== */
 document.getElementById('logoutBtn').addEventListener('click', () => {
   localStorage.removeItem(CACHE_KEY_UNLOCKED);
-  location.reload(); // Перезагружаем страницу, чтобы вернуться к экрану входа
+  location.reload();
 });
 
 /* ========== СЧЁТЧИК ========== */
@@ -766,7 +785,7 @@ function startHearts(){
   }
 }
 
-/* ========== МЕЧТЫ (клик = выполнено + сохранение) ========== */
+/* ========== МЕЧТЫ ========== */
 function loadDreams() {
   const saved = localStorage.getItem(CACHE_KEY_DREAMS);
   if (saved) {
@@ -784,17 +803,15 @@ document.querySelectorAll('.dream').forEach((d) => {
   d.addEventListener('click', () => {
     d.classList.toggle('done');
     d.querySelector('.check').textContent = d.classList.contains('done') ? '✓' : '';
-    
     const states = Array.from(document.querySelectorAll('.dream')).map(el => el.classList.contains('done'));
     localStorage.setItem(CACHE_KEY_DREAMS, JSON.stringify(states));
   });
 });
 
-/* ========== НИЖНЕЕ МЕНЮ (НАВИГАЦИЯ) ========== */
+/* ========== НИЖНЕЕ МЕНЮ ========== */
 function initNav() {
   const navItems = document.querySelectorAll('.nav-item');
   const indicator = document.getElementById('navIndicator');
-  const nav = document.getElementById('bottomNav');
 
   function moveIndicator(el) {
     if (!el || !indicator) return;
@@ -812,12 +829,8 @@ function initNav() {
       navItems.forEach(n => n.classList.remove('active'));
       item.classList.add('active');
       moveIndicator(item);
-
-      const targetId = item.dataset.target;
-      const targetSection = document.getElementById(targetId);
-      if (targetSection) {
-        targetSection.scrollIntoView({ behavior: 'smooth' });
-      }
+      const targetSection = document.getElementById(item.dataset.target);
+      if (targetSection) targetSection.scrollIntoView({ behavior: 'smooth' });
     });
   });
 
@@ -828,9 +841,7 @@ function initNav() {
 
   window.addEventListener('scroll', () => {
     let currentSection = '';
-    const sections = document.querySelectorAll('section');
-    
-    sections.forEach(section => {
+    document.querySelectorAll('section').forEach(section => {
       const sectionTop = section.offsetTop;
       const sectionHeight = section.clientHeight;
       if (scrollY >= (sectionTop - sectionHeight / 3)) {
@@ -850,9 +861,9 @@ function initNav() {
 
 /* ========== СЕКРЕТНАЯ КНОПКА ========== */
 const secrets = [
-  { t:"💙 Секрет №1", p:"Здесь ты можешь написать что-то очень личное для Валерии. Например, почему ты выбрал именно её, или что ты чувствуешь, глядя на неё." },
-  { t:"💗 Секрет №2", p:"А это место — под внутренний мем, шутку или песню, которая только ваша. Никто посторонний не поймёт, а вы улыбнётесь." },
-  { t:"✦ Секрет №3", p:"Пасхалка: попробуй набрать 'love' в PIN-поле (не сейчас — оно уже закрыто 😉). Или добавь сюда цитату, которая вам дорога." }
+  { t:"💙 Секрет №1", p:"Здесь ты можешь написать что-то очень личное для Валерии." },
+  { t:"💗 Секрет №2", p:"А это место — под внутренний мем или песню, которая только ваша." },
+  { t:"✦ Секрет №3", p:"Добавь сюда цитату или что-то особенное для вас двоих." }
 ];
 let secretIdx = 0;
 
