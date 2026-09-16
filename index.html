@@ -8,11 +8,8 @@
   :root{
     --blue:#2b6cff;
     --blue-soft:#7aa8ff;
-    --blue-deep:#0b2a6b;
     --pink:#ff5fa2;
     --pink-soft:#ffa5c9;
-    --pink-deep:#8b1e52;
-    --bg:#0e0f1a;
     --card:rgba(255,255,255,0.06);
     --border:rgba(255,255,255,0.12);
     --text:#eef1ff;
@@ -29,7 +26,6 @@
     background: linear-gradient(-45deg, #0e0f1a, #1a1040, #0b2a6b, #8b1e52, #0e0f1a);
     background-size: 400% 400%;
     animation: gradientBG 20s ease infinite;
-    will-change: background-position;
   }
   @keyframes gradientBG {
     0% { background-position: 0% 50%; }
@@ -41,7 +37,6 @@
   #lock{
     position:fixed;inset:0;z-index:1000;
     display:flex;align-items:center;justify-content:center;
-    /* Полностью непрозрачный фон */
     background: linear-gradient(-45deg, #0e0f1a, #1a1040, #0b2a6b, #8b1e52, #0e0f1a);
     background-size: 400% 400%;
     animation: gradientBG 20s ease infinite;
@@ -60,7 +55,6 @@
     width:min(420px, 100%);
     text-align:center;
     box-shadow:0 30px 80px rgba(0,0,0,.7), inset 0 1px 0 rgba(255,255,255,0.1);
-    position: relative;
     margin: auto;
   }
 
@@ -71,7 +65,6 @@
   }
   .lock-card p{color:var(--muted);font-size:.9rem;margin-bottom:20px}
 
-  /* Контейнер для OTP */
   .otp-container {
     position: relative;
     width: 220px;
@@ -82,7 +75,6 @@
     justify-content: center;
   }
 
-  /* Орбита */
   .orbit-ring {
     position: absolute;
     width: 150px;
@@ -93,7 +85,6 @@
     pointer-events: none;
   }
 
-  /* Слоты */
   .slot {
     position: absolute;
     width: 56px;
@@ -113,19 +104,16 @@
     pointer-events: none;
   }
 
-  /* Начальное состояние (в ряд) */
   .otp-container:not(.active) .slot[data-index="0"] { transform: translateX(-90px) rotate(-10deg); }
   .otp-container:not(.active) .slot[data-index="1"] { transform: translateX(-30px) rotate(-5deg); }
   .otp-container:not(.active) .slot[data-index="2"] { transform: translateX(30px) rotate(5deg); }
   .otp-container:not(.active) .slot[data-index="3"] { transform: translateX(90px) rotate(10deg); }
 
-  /* Активное состояние (в круг) */
   .otp-container.active .slot[data-index="0"] { transform: rotate(0deg) translateY(-60px) rotate(0deg); border-color: var(--blue-soft); box-shadow: 0 0 20px rgba(43, 108, 255, 0.4); }
   .otp-container.active .slot[data-index="1"] { transform: rotate(90deg) translateY(-60px) rotate(-90deg); border-color: var(--pink-soft); box-shadow: 0 0 20px rgba(255, 95, 162, 0.4); }
   .otp-container.active .slot[data-index="2"] { transform: rotate(180deg) translateY(-60px) rotate(-180deg); border-color: var(--pink-soft); box-shadow: 0 0 20px rgba(255, 95, 162, 0.4); }
   .otp-container.active .slot[data-index="3"] { transform: rotate(270deg) translateY(-60px) rotate(-270deg); border-color: var(--blue-soft); box-shadow: 0 0 20px rgba(43, 108, 255, 0.4); }
 
-  /* Заполненный слот */
   .slot.filled {
     background: linear-gradient(135deg, rgba(43,108,255,0.2), rgba(255,95,162,0.2));
     border-color: #fff;
@@ -157,17 +145,14 @@
   .pin-pad button:hover {
     background: rgba(255, 255, 255, 0.12);
     transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
   }
   .pin-pad button:active {
     transform: scale(0.95);
     background: linear-gradient(135deg, rgba(43,108,255,0.3), rgba(255,95,162,0.3));
   }
-  .pin-pad button.del {
-    color: var(--pink-soft);
-  }
+  .pin-pad button.del { color: var(--pink-soft); }
+  .pin-pad button.ok { background:linear-gradient(135deg,var(--blue),var(--pink)); border:none; color:#fff; }
 
-  /* Анимация тряски при ошибке */
   .shake { animation: shake .4s; }
   @keyframes shake {
     0%,100%{transform:translateX(0)}
@@ -187,96 +172,39 @@
     text-align:center;position:relative;padding:80px 24px;
   }
   .hearts{position:absolute;inset:0;overflow:hidden;pointer-events:none}
-  .hearts i{
-    position:absolute;font-style:normal;opacity:.15;font-size:2rem;
-    animation:float linear infinite;
-  }
+  .hearts i{position:absolute;font-style:normal;opacity:.15;font-size:2rem;animation:float linear infinite;}
   @keyframes float{from{transform:translateY(0) rotate(0)}to{transform:translateY(-100vh) rotate(360deg)}}
 
-  .couple{
-    font-size:clamp(2.4rem,7vw,5rem);font-weight:800;line-height:1.05;letter-spacing:-.02em;
-    position:relative;z-index:1;
-  }
-  .couple .him{
-    background:linear-gradient(90deg,#7aa8ff,#2b6cff,#7aa8ff);
-    background-size:200% auto;
-    -webkit-background-clip:text;background-clip:text;color:transparent;
-    animation:textShine 4s linear infinite;
-  }
-  .couple .her{
-    background:linear-gradient(90deg,#ff5fa2,#ffa5c9,#ff5fa2);
-    background-size:200% auto;
-    -webkit-background-clip:text;background-clip:text;color:transparent;
-    animation:textShine 4s linear infinite;
-  }
+  .couple{font-size:clamp(2.4rem,7vw,5rem);font-weight:800;line-height:1.05;letter-spacing:-.02em;position:relative;z-index:1;}
+  .couple .him{background:linear-gradient(90deg,#7aa8ff,#2b6cff,#7aa8ff);background-size:200% auto;-webkit-background-clip:text;background-clip:text;color:transparent;animation:textShine 4s linear infinite;}
+  .couple .her{background:linear-gradient(90deg,#ff5fa2,#ffa5c9,#ff5fa2);background-size:200% auto;-webkit-background-clip:text;background-clip:text;color:transparent;animation:textShine 4s linear infinite;}
   .amp{color:var(--muted);font-weight:300;margin:0 .15em}
   @keyframes textShine { to { background-position: 200% center; } }
 
   .subtitle{margin-top:20px;color:var(--muted);font-size:1.05rem;z-index:1;}
 
-  .counter{
-    margin-top:48px;display:flex;gap:14px;flex-wrap:wrap;justify-content:center;z-index:1;
-  }
-  .counter .unit{
-    background:var(--card);border:1px solid var(--border);
-    border-radius:20px;padding:20px 26px;min-width:110px;
-    backdrop-filter:blur(12px);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-  }
-  .counter .unit:hover {
-    transform: translateY(-5px) scale(1.05);
-    box-shadow: 0 10px 30px rgba(255,95,162,0.3);
-    border-color: rgba(255,95,162,0.5);
-  }
-  .counter .num{
-    font-size:2.2rem;font-weight:700;
-    background:linear-gradient(135deg,var(--blue-soft),var(--pink-soft));
-    -webkit-background-clip:text;background-clip:text;color:transparent;
-  }
+  .counter{margin-top:48px;display:flex;gap:14px;flex-wrap:wrap;justify-content:center;z-index:1;}
+  .counter .unit{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:20px 26px;min-width:110px;backdrop-filter:blur(12px);transition: transform 0.3s ease, box-shadow 0.3s ease;}
+  .counter .unit:hover {transform: translateY(-5px) scale(1.05);box-shadow: 0 10px 30px rgba(255,95,162,0.3);border-color: rgba(255,95,162,0.5);}
+  .counter .num{font-size:2.2rem;font-weight:700;background:linear-gradient(135deg,var(--blue-soft),var(--pink-soft));-webkit-background-clip:text;background-clip:text;color:transparent;}
   .counter .lbl{font-size:.8rem;color:var(--muted);margin-top:4px;text-transform:uppercase;letter-spacing:.08em}
 
-  .bday{
-    margin-top:40px;display:flex;gap:20px;flex-wrap:wrap;justify-content:center;
-    font-size:.9rem;color:var(--muted);z-index:1;
-  }
+  .bday{margin-top:40px;display:flex;gap:20px;flex-wrap:wrap;justify-content:center;font-size:.9rem;color:var(--muted);z-index:1;}
   .bday span b{color:var(--text)}
   .bday .him b{color:var(--blue-soft)}
   .bday .her b{color:var(--pink-soft)}
 
   section{padding:100px 0}
-  .section-title{
-    font-size:clamp(1.6rem,4vw,2.4rem);font-weight:700;text-align:center;margin-bottom:16px;
-    background: linear-gradient(90deg, var(--blue-soft), var(--pink-soft), var(--blue-soft));
-    background-size: 200% auto;
-    -webkit-background-clip: text; background-clip: text; color: transparent;
-    animation: textShine 5s linear infinite;
-  }
+  .section-title{font-size:clamp(1.6rem,4vw,2.4rem);font-weight:700;text-align:center;margin-bottom:16px;background: linear-gradient(90deg, var(--blue-soft), var(--pink-soft), var(--blue-soft));background-size: 200% auto;-webkit-background-clip: text; background-clip: text; color: transparent;animation: textShine 5s linear infinite;}
   .section-sub{text-align:center;color:var(--muted);margin-bottom:60px}
 
   .timeline{position:relative;max-width:800px;margin:0 auto}
-  .timeline::before{
-    content:'';position:absolute;left:50%;top:0;bottom:0;width:2px;
-    background:linear-gradient(180deg,var(--blue),var(--pink));
-    transform:translateX(-50%);
-  }
-  .t-item{
-    display:flex;justify-content:flex-end;padding-right:calc(50% + 30px);
-    margin-bottom:50px;position:relative;
-  }
+  .timeline::before{content:'';position:absolute;left:50%;top:0;bottom:0;width:2px;background:linear-gradient(180deg,var(--blue),var(--pink));transform:translateX(-50%);}
+  .t-item{display:flex;justify-content:flex-end;padding-right:calc(50% + 30px);margin-bottom:50px;position:relative;}
   .t-item:nth-child(even){justify-content:flex-start;padding-right:0;padding-left:calc(50% + 30px);}
-  .t-item .dot{
-    position:absolute;left:50%;top:8px;width:16px;height:16px;border-radius:50%;
-    background:linear-gradient(135deg,var(--blue),var(--pink));
-    transform:translateX(-50%);
-    box-shadow:0 0 20px rgba(255,95,162,.7);
-    transition: transform 0.3s;
-  }
+  .t-item .dot{position:absolute;left:50%;top:8px;width:16px;height:16px;border-radius:50%;background:linear-gradient(135deg,var(--blue),var(--pink));transform:translateX(-50%);box-shadow:0 0 20px rgba(255,95,162,.7);transition: transform 0.3s;}
   .t-item:hover .dot { transform: translateX(-50%) scale(1.3); }
-  .t-item .card{
-    background:var(--card);border:1px solid var(--border);
-    border-radius:16px;padding:20px 24px;backdrop-filter:blur(12px);
-    max-width:340px;transition: transform 0.3s, border-color 0.3s;
-  }
+  .t-item .card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px 24px;backdrop-filter:blur(12px);max-width:340px;transition: transform 0.3s, border-color 0.3s;}
   .t-item .card:hover { transform: translateY(-5px); border-color: var(--pink-soft); }
   .t-item .date{font-size:.8rem;color:var(--pink-soft);letter-spacing:.08em;text-transform:uppercase}
   .t-item h4{margin:6px 0 8px;font-size:1.15rem}
@@ -289,97 +217,37 @@
   }
 
   .gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;}
-  .gallery .ph{
-    aspect-ratio:1;border-radius:18px;overflow:hidden;position:relative;
-    background:linear-gradient(135deg,rgba(43,108,255,.25),rgba(255,95,162,.25));
-    border:1px solid var(--border);
-    display:flex;align-items:center;justify-content:center;
-    color:var(--muted);font-size:.85rem;transition:.4s;cursor:pointer;
-  }
+  .gallery .ph{aspect-ratio:1;border-radius:18px;overflow:hidden;position:relative;background:linear-gradient(135deg,rgba(43,108,255,.25),rgba(255,95,162,.25));border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:.85rem;transition:.4s;cursor:pointer;}
   .gallery .ph:hover{transform:translateY(-8px) scale(1.03);box-shadow:0 20px 40px rgba(0,0,0,.5);border-color: var(--blue-soft);}
-  .gallery .ph::after{
-    content:attr(data-label);position:absolute;bottom:12px;left:12px;
-    font-size:.75rem;color:rgba(255,255,255,.7);
-  }
+  .gallery .ph::after{content:attr(data-label);position:absolute;bottom:12px;left:12px;font-size:.75rem;color:rgba(255,255,255,.7);}
 
   .places{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px;}
-  .place{
-    background:var(--card);border:1px solid var(--border);border-radius:20px;
-    padding:28px;backdrop-filter:blur(12px);transition:.4s;
-  }
+  .place{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:28px;backdrop-filter:blur(12px);transition:.4s;}
   .place:hover{border-color:var(--pink-soft);transform:translateY(-6px);box-shadow: 0 15px 30px rgba(43,108,255,0.2);}
   .place .icon{font-size:2rem;margin-bottom:12px}
   .place h4{margin-bottom:8px}
   .place p{color:var(--muted);font-size:.92rem;line-height:1.5}
 
   .dreams{max-width:700px;margin:0 auto;display:flex;flex-direction:column;gap:14px;}
-  .dream{
-    display:flex;align-items:center;gap:16px;
-    background:var(--card);border:1px solid var(--border);
-    border-radius:16px;padding:18px 22px;cursor:pointer;transition:.3s;
-  }
+  .dream{display:flex;align-items:center;gap:16px;background:var(--card);border:1px solid var(--border);border-radius:16px;padding:18px 22px;cursor:pointer;transition:.3s;}
   .dream:hover{background:rgba(255,255,255,.09);transform: translateX(5px);}
-  .dream .check{
-    width:24px;height:24px;border-radius:8px;border:2px solid var(--border);
-    display:flex;align-items:center;justify-content:center;flex-shrink:0;
-    transition:.25s;font-size:.9rem;
-  }
-  .dream.done .check{
-    background:linear-gradient(135deg,var(--blue),var(--pink));
-    border-color:transparent;
-  }
+  .dream .check{width:24px;height:24px;border-radius:8px;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:.25s;font-size:.9rem;}
+  .dream.done .check{background:linear-gradient(135deg,var(--blue),var(--pink));border-color:transparent;}
   .dream.done span{text-decoration:line-through;color:var(--muted)}
   .dream span{transition:.25s}
 
-  footer{
-    text-align:center;padding:60px 24px;color:var(--muted);font-size:.85rem;
-    border-top:1px solid var(--border);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 15px;
-  }
-  .secret-btn{
-    background:transparent;border:1px dashed var(--border);
-    color:var(--muted);padding:10px 20px;border-radius:12px;cursor:pointer;
-    font-size:.8rem;transition:.25s;
-  }
+  footer{text-align:center;padding:60px 24px;color:var(--muted);font-size:.85rem;border-top:1px solid var(--border);display: flex;flex-direction: column;align-items: center;gap: 15px;}
+  .secret-btn{background:transparent;border:1px dashed var(--border);color:var(--muted);padding:10px 20px;border-radius:12px;cursor:pointer;font-size:.8rem;transition:.25s;}
   .secret-btn:hover{color:var(--text);border-color:var(--pink-soft);box-shadow: 0 0 15px rgba(255,95,162,0.3);}
-  
-  .logout-btn {
-    background:transparent;
-    border:1px solid rgba(255,255,255,0.2);
-    color:var(--muted);
-    padding:10px 24px;
-    border-radius:12px;
-    cursor:pointer;
-    font-size:.8rem;
-    transition:.25s;
-  }
-  .logout-btn:hover {
-    color:#fff;
-    border-color: #fff;
-    background: rgba(255,255,255,0.05);
-  }
+  .logout-btn{background:transparent;border:1px solid rgba(255,255,255,0.2);color:var(--muted);padding:10px 24px;border-radius:12px;cursor:pointer;font-size:.8rem;transition:.25s;}
+  .logout-btn:hover {color:#fff;border-color: #fff;background: rgba(255,255,255,0.05);}
 
-  .modal{
-    position:fixed;inset:0;z-index:2000;display:none;
-    align-items:center;justify-content:center;padding:24px;
-    background:rgba(5,6,15,.85);backdrop-filter:blur(8px);
-  }
+  .modal{position:fixed;inset:0;z-index:2000;display:none;align-items:center;justify-content:center;padding:24px;background:rgba(5,6,15,.85);backdrop-filter:blur(8px);}
   .modal.show{display:flex;animation:fadeUp .4s}
-  .modal .box{
-    background:linear-gradient(160deg,rgba(43,108,255,.2),rgba(255,95,162,.2));
-    border:1px solid var(--border);border-radius:24px;
-    padding:40px;max-width:500px;text-align:center;
-  }
+  .modal .box{background:linear-gradient(160deg,rgba(43,108,255,.2),rgba(255,95,162,.2));border:1px solid var(--border);border-radius:24px;padding:40px;max-width:500px;text-align:center;}
   .modal h3{margin-bottom:16px;font-size:1.5rem}
   .modal p{color:var(--muted);line-height:1.6;margin-bottom:24px}
-  .modal button{
-    background:linear-gradient(135deg,var(--blue),var(--pink));
-    color:white;border:none;padding:12px 32px;border-radius:12px;
-    font-size:1rem;cursor:pointer;font-weight:600;transition: transform 0.2s;
-  }
+  .modal button{background:linear-gradient(135deg,var(--blue),var(--pink));color:white;border:none;padding:12px 32px;border-radius:12px;font-size:1rem;cursor:pointer;font-weight:600;transition: transform 0.2s;}
   .modal button:hover { transform: scale(1.05); }
 
   .bottom-nav {
@@ -392,29 +260,14 @@
     transition: opacity 0.5s ease, transform 0.5s ease;
   }
   #site:not(.visible) .bottom-nav { opacity: 0; pointer-events: none; transform: translateX(-50%) translateY(20px); }
-  .nav-item {
-    position: relative; display: flex; flex-direction: column; align-items: center;
-    justify-content: center; gap: 4px; background: transparent; border: none;
-    color: var(--muted); padding: 12px 18px; border-radius: 30px;
-    cursor: pointer; transition: color 0.3s ease, transform 0.2s ease; z-index: 2;
-  }
+  .nav-item {position: relative; display: flex; flex-direction: column; align-items: center;justify-content: center; gap: 4px; background: transparent; border: none;color: var(--muted); padding: 12px 18px; border-radius: 30px;cursor: pointer; transition: color 0.3s ease, transform 0.2s ease; z-index: 2;}
   .nav-item:hover { color: var(--text); transform: translateY(-2px); }
   .nav-item.active { color: #fff; }
   .nav-item svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; transition: transform 0.3s ease; }
   .nav-item.active svg { transform: scale(1.1); }
   .nav-item span { font-size: 0.7rem; font-weight: 500; letter-spacing: 0.02em; }
-  .nav-indicator {
-    position: absolute; top: 6px; bottom: 6px; border-radius: 30px;
-    background: radial-gradient(circle at center, rgba(255, 95, 162, 0.3) 0%, rgba(43, 108, 255, 0.2) 50%, transparent 80%);
-    box-shadow: 0 0 25px rgba(255, 95, 162, 0.4), inset 0 0 15px rgba(43, 108, 255, 0.3);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1); z-index: 1; pointer-events: none;
-  }
-  .nav-hint {
-    position: fixed; bottom: 5px; left: 50%; transform: translateX(-50%);
-    font-size: 0.65rem; color: rgba(255, 255, 255, 0.3); letter-spacing: 0.05em;
-    z-index: 900; pointer-events: none;
-  }
+  .nav-indicator {position: absolute; top: 6px; bottom: 6px; border-radius: 30px;background: radial-gradient(circle at center, rgba(255, 95, 162, 0.3) 0%, rgba(43, 108, 255, 0.2) 50%, transparent 80%);box-shadow: 0 0 25px rgba(255, 95, 162, 0.4), inset 0 0 15px rgba(43, 108, 255, 0.3);border: 1px solid rgba(255, 255, 255, 0.15);transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1); z-index: 1; pointer-events: none;}
+  .nav-hint {position: fixed; bottom: 5px; left: 50%; transform: translateX(-50%);font-size: 0.65rem; color: rgba(255, 255, 255, 0.3); letter-spacing: 0.05em;z-index: 900; pointer-events: none;}
   @media (max-width: 600px) {
     .nav-item { padding: 10px 14px; }
     .nav-item span { font-size: 0.65rem; }
@@ -442,18 +295,18 @@
     </div>
 
     <div class="pin-pad" id="pinPad">
-      <button data-k="1">1</button>
-      <button data-k="2">2</button>
-      <button data-k="3">3</button>
-      <button data-k="4">4</button>
-      <button data-k="5">5</button>
-      <button data-k="6">6</button>
-      <button data-k="7">7</button>
-      <button data-k="8">8</button>
-      <button data-k="9">9</button>
-      <button data-k="del" class="del">⌫</button>
-      <button data-k="0">0</button>
-      <button data-k="ok" style="background:linear-gradient(135deg,var(--blue),var(--pink));border:none;color:#fff;">✓</button>
+      <button type="button" data-k="1">1</button>
+      <button type="button" data-k="2">2</button>
+      <button type="button" data-k="3">3</button>
+      <button type="button" data-k="4">4</button>
+      <button type="button" data-k="5">5</button>
+      <button type="button" data-k="6">6</button>
+      <button type="button" data-k="7">7</button>
+      <button type="button" data-k="8">8</button>
+      <button type="button" data-k="9">9</button>
+      <button type="button" data-k="del" class="del">⌫</button>
+      <button type="button" data-k="0">0</button>
+      <button type="button" data-k="ok" class="ok">✓</button>
     </div>
   </div>
 </div>
@@ -461,10 +314,8 @@
 <!-- ============ САЙТ ============ -->
 <div id="site">
 
-  <!-- HERO -->
   <section class="hero" id="hero">
     <div class="hearts" id="hearts"></div>
-
     <h1 class="couple">
       <span class="him">Никита</span>
       <span class="amp">&</span>
@@ -485,52 +336,20 @@
     </div>
   </section>
 
-  <!-- ИСТОРИЯ -->
   <section class="container" id="history">
     <h2 class="section-title">Наша история</h2>
     <p class="section-sub">С чего всё началось</p>
-
     <div class="timeline">
-      <div class="t-item">
-        <div class="dot"></div>
-        <div class="card">
-          <div class="date">Знакомство</div>
-          <h4>Первая встреча</h4>
-          <p>Здесь будет история о том, как вы познакомились. Добавим позже ✨</p>
-        </div>
-      </div>
-      <div class="t-item">
-        <div class="dot"></div>
-        <div class="card">
-          <div class="date">14 июня 2026</div>
-          <h4>Начало отношений 💙💗</h4>
-          <p>День, с которого мы вместе. Именно отсюда считается наш счётчик.</p>
-        </div>
-      </div>
-      <div class="t-item">
-        <div class="dot"></div>
-        <div class="card">
-          <div class="date">12 сентября 2026</div>
-          <h4>90 дней вместе</h4>
-          <p>Первый маленький юбилей. Спасибо, что ты рядом.</p>
-        </div>
-      </div>
-      <div class="t-item">
-        <div class="dot"></div>
-        <div class="card">
-          <div class="date">Дальше...</div>
-          <h4>Продолжение следует</h4>
-          <p>Здесь будут появляться новые важные даты, путешествия и моменты.</p>
-        </div>
-      </div>
+      <div class="t-item"><div class="dot"></div><div class="card"><div class="date">Знакомство</div><h4>Первая встреча</h4><p>Здесь будет история о том, как вы познакомились. Добавим позже ✨</p></div></div>
+      <div class="t-item"><div class="dot"></div><div class="card"><div class="date">14 июня 2026</div><h4>Начало отношений 💙💗</h4><p>День, с которого мы вместе. Именно отсюда считается наш счётчик.</p></div></div>
+      <div class="t-item"><div class="dot"></div><div class="card"><div class="date">12 сентября 2026</div><h4>90 дней вместе</h4><p>Первый маленький юбилей. Спасибо, что ты рядом.</p></div></div>
+      <div class="t-item"><div class="dot"></div><div class="card"><div class="date">Дальше...</div><h4>Продолжение следует</h4><p>Здесь будут появляться новые важные даты, путешествия и моменты.</p></div></div>
     </div>
   </section>
 
-  <!-- ГАЛЕРЕЯ -->
   <section class="container" id="gallery">
     <h2 class="section-title">Наши моменты</h2>
     <p class="section-sub">Фотографии, которые мы любим</p>
-
     <div class="gallery">
       <div class="ph" data-label="Фото 1">Здесь будет фото</div>
       <div class="ph" data-label="Фото 2">Здесь будет фото</div>
@@ -541,35 +360,19 @@
     </div>
   </section>
 
-  <!-- МЕСТА -->
   <section class="container" id="places">
     <h2 class="section-title">Наши места</h2>
     <p class="section-sub">Точки на карте, которые стали особенными</p>
-
     <div class="places">
-      <div class="place">
-        <div class="icon">☕</div>
-        <h4>Наше кафе</h4>
-        <p>Место, куда хочется возвращаться снова и снова.</p>
-      </div>
-      <div class="place">
-        <div class="icon">🌳</div>
-        <h4>Наш парк</h4>
-        <p>Здесь были долгие прогулки и самые тёплые разговоры.</p>
-      </div>
-      <div class="place">
-        <div class="icon">🌆</div>
-        <h4>Особое место</h4>
-        <p>Добавим позже — у нас ведь будет ещё много таких мест.</p>
-      </div>
+      <div class="place"><div class="icon">☕</div><h4>Наше кафе</h4><p>Место, куда хочется возвращаться снова и снова.</p></div>
+      <div class="place"><div class="icon">🌳</div><h4>Наш парк</h4><p>Здесь были долгие прогулки и самые тёплые разговоры.</p></div>
+      <div class="place"><div class="icon">🌆</div><h4>Особое место</h4><p>Добавим позже — у нас ведь будет ещё много таких мест.</p></div>
     </div>
   </section>
 
-  <!-- МЕЧТЫ -->
   <section class="container" id="dreams">
     <h2 class="section-title">Наши мечты</h2>
     <p class="section-sub">То, что мы хотим сделать вместе</p>
-
     <div class="dreams" id="dreamsList">
       <div class="dream"><div class="check"></div><span>Съездить в совместное путешествие ✈️</span></div>
       <div class="dream"><div class="check"></div><span>Посмотреть вместе закат на море 🌅</span></div>
@@ -582,12 +385,10 @@
   <footer>
     <p>Сделано с любовью 💙💗</p>
     <p style="opacity:.7">Никита & Валерия · 2026</p>
-    
     <button class="secret-btn" id="secretBtn">🤫 Что-то спрятано...</button>
     <button class="logout-btn" id="logoutBtn">Выйти</button>
   </footer>
 
-  <!-- ============ НИЖНЕЕ МЕНЮ ============ -->
   <nav class="bottom-nav" id="bottomNav">
     <div class="nav-indicator" id="navIndicator"></div>
     <button class="nav-item active" data-target="hero">
@@ -612,10 +413,8 @@
     </button>
   </nav>
   <div class="nav-hint">Нажми на иконку, чтобы перейти</div>
-
 </div>
 
-<!-- MODAL -->
 <div class="modal" id="modal">
   <div class="box">
     <h3 id="modalTitle"></h3>
@@ -629,7 +428,7 @@
 const CACHE_KEY_UNLOCKED = 'nv_site_unlocked';
 const CACHE_KEY_DREAMS = 'nv_dreams_state';
 
-/* ========== ЛОГИКА PIN-КОДА ========== */
+/* ========== PIN-КОД ========== */
 const PIN = "2568";
 const otpContainer = document.getElementById('otpContainer');
 const slots = document.querySelectorAll('.slot');
@@ -637,7 +436,6 @@ const lockCard = document.getElementById('lockCard');
 const pinPad = document.getElementById('pinPad');
 let pinInput = "";
 
-// Обновление отображения слотов
 function updateSlots() {
   slots.forEach((slot, i) => {
     if (pinInput[i]) {
@@ -648,36 +446,27 @@ function updateSlots() {
       slot.classList.remove('filled');
     }
   });
-  
-  // Активируем круговую анимацию при первом вводе
-  if (pinInput.length > 0) {
-    otpContainer.classList.add('active');
-  } else {
-    otpContainer.classList.remove('active');
-  }
+  // Круговая анимация активируется при вводе
+  if (pinInput.length > 0) otpContainer.classList.add('active');
+  else otpContainer.classList.remove('active');
 }
 
-// Добавить цифру
-function addDigit(digit) {
+function addDigit(d) {
   if (pinInput.length < 4) {
-    pinInput += digit;
+    pinInput += d;
     updateSlots();
-    
-    // Если введены все 4 цифры - проверяем
-    if (pinInput.length === 4) {
-      setTimeout(checkPin, 300);
-    }
+    // ⚠️ НЕТ автопроверки — ждём нажатия ✓
   }
 }
 
-// Удалить последнюю цифру
 function deleteDigit() {
   pinInput = pinInput.slice(0, -1);
   updateSlots();
 }
 
-// Проверка кода
-function checkPin() {
+// Проверка только при явном нажатии ✓
+function submitPin() {
+  if (pinInput.length !== 4) return;
   if (pinInput === PIN) {
     localStorage.setItem(CACHE_KEY_UNLOCKED, 'true');
     unlockSite();
@@ -691,36 +480,23 @@ function checkPin() {
   }
 }
 
-// Обработка нажатий на экранную клавиатуру
 pinPad.addEventListener('click', (e) => {
   const btn = e.target.closest('button');
   if (!btn) return;
   const k = btn.dataset.k;
-  
-  if (k === 'del') {
-    deleteDigit();
-  } else if (k === 'ok') {
-    if (pinInput.length === 4) checkPin();
-  } else if (/^[0-9]$/.test(k)) {
-    addDigit(k);
-  }
+  if (k === 'del') deleteDigit();
+  else if (k === 'ok') submitPin();
+  else if (/^[0-9]$/.test(k)) addDigit(k);
 });
 
-// Обработка физической клавиатуры
+// Физическая клавиатура (только цифры и Enter)
 document.addEventListener('keydown', (e) => {
-  // Только если экран входа ещё активен
   if (document.getElementById('lock').classList.contains('hidden')) return;
-  
-  if (/^[0-9]$/.test(e.key)) {
-    addDigit(e.key);
-  } else if (e.key === 'Backspace') {
-    deleteDigit();
-  } else if (e.key === 'Enter') {
-    if (pinInput.length === 4) checkPin();
-  }
+  if (/^[0-9]$/.test(e.key)) addDigit(e.key);
+  else if (e.key === 'Backspace') deleteDigit();
+  else if (e.key === 'Enter') submitPin();
 });
 
-// Разблокировка сайта
 function unlockSite() {
   document.getElementById('lock').classList.add('hidden');
   document.getElementById('site').classList.add('visible');
@@ -731,7 +507,7 @@ function unlockSite() {
   initNav();
 }
 
-/* ========== ПРОВЕРКА КЕША ПРИ ЗАГРУЗКЕ ========== */
+/* Проверка кеша */
 window.addEventListener('DOMContentLoaded', () => {
   if (localStorage.getItem(CACHE_KEY_UNLOCKED) === 'true') {
     unlockSite();
@@ -740,35 +516,28 @@ window.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-/* ========== КНОПКА ВЫЙТИ ========== */
+/* Кнопка выйти */
 document.getElementById('logoutBtn').addEventListener('click', () => {
   localStorage.removeItem(CACHE_KEY_UNLOCKED);
   location.reload();
 });
 
-/* ========== СЧЁТЧИК ========== */
+/* Счётчик */
 const START = new Date("2026-06-14T00:00:00");
-
 function startCounter(){
   function tick(){
     const now = new Date();
-    let diff = Math.max(0, now - START);
+    const diff = Math.max(0, now - START);
     const s = Math.floor(diff/1000);
-    const days = Math.floor(s/86400);
-    const hours = Math.floor((s%86400)/3600);
-    const minutes = Math.floor((s%3600)/60);
-    const seconds = s%60;
-
-    document.getElementById('days').textContent = days;
-    document.getElementById('hours').textContent = String(hours).padStart(2,'0');
-    document.getElementById('minutes').textContent = String(minutes).padStart(2,'0');
-    document.getElementById('seconds').textContent = String(seconds).padStart(2,'0');
+    document.getElementById('days').textContent = Math.floor(s/86400);
+    document.getElementById('hours').textContent = String(Math.floor((s%86400)/3600)).padStart(2,'0');
+    document.getElementById('minutes').textContent = String(Math.floor((s%3600)/60)).padStart(2,'0');
+    document.getElementById('seconds').textContent = String(s%60).padStart(2,'0');
   }
-  tick();
-  setInterval(tick, 1000);
+  tick(); setInterval(tick, 1000);
 }
 
-/* ========== СЕРДЕЧКИ НА ФОНЕ ========== */
+/* Сердечки */
 function startHearts(){
   const wrap = document.getElementById('hearts');
   if (!wrap) return;
@@ -785,7 +554,7 @@ function startHearts(){
   }
 }
 
-/* ========== МЕЧТЫ ========== */
+/* Мечты */
 function loadDreams() {
   const saved = localStorage.getItem(CACHE_KEY_DREAMS);
   if (saved) {
@@ -798,7 +567,6 @@ function loadDreams() {
     });
   }
 }
-
 document.querySelectorAll('.dream').forEach((d) => {
   d.addEventListener('click', () => {
     d.classList.toggle('done');
@@ -808,50 +576,42 @@ document.querySelectorAll('.dream').forEach((d) => {
   });
 });
 
-/* ========== НИЖНЕЕ МЕНЮ ========== */
+/* Навигация */
 function initNav() {
   const navItems = document.querySelectorAll('.nav-item');
   const indicator = document.getElementById('navIndicator');
-
   function moveIndicator(el) {
     if (!el || !indicator) return;
     indicator.style.width = `${el.offsetWidth}px`;
     indicator.style.left = `${el.offsetLeft}px`;
   }
-
   setTimeout(() => {
     const active = document.querySelector('.nav-item.active');
     if (active) moveIndicator(active);
   }, 100);
-
   navItems.forEach(item => {
     item.addEventListener('click', () => {
       navItems.forEach(n => n.classList.remove('active'));
       item.classList.add('active');
       moveIndicator(item);
-      const targetSection = document.getElementById(item.dataset.target);
-      if (targetSection) targetSection.scrollIntoView({ behavior: 'smooth' });
+      const target = document.getElementById(item.dataset.target);
+      if (target) target.scrollIntoView({ behavior: 'smooth' });
     });
   });
-
   window.addEventListener('resize', () => {
     const active = document.querySelector('.nav-item.active');
     if (active) moveIndicator(active);
   });
-
   window.addEventListener('scroll', () => {
-    let currentSection = '';
+    let current = '';
     document.querySelectorAll('section').forEach(section => {
-      const sectionTop = section.offsetTop;
-      const sectionHeight = section.clientHeight;
-      if (scrollY >= (sectionTop - sectionHeight / 3)) {
-        currentSection = section.getAttribute('id');
-      }
+      const top = section.offsetTop;
+      const h = section.clientHeight;
+      if (scrollY >= (top - h / 3)) current = section.getAttribute('id');
     });
-
     navItems.forEach(item => {
       item.classList.remove('active');
-      if (item.dataset.target === currentSection) {
+      if (item.dataset.target === current) {
         item.classList.add('active');
         moveIndicator(item);
       }
@@ -859,14 +619,13 @@ function initNav() {
   });
 }
 
-/* ========== СЕКРЕТНАЯ КНОПКА ========== */
+/* Секреты */
 const secrets = [
   { t:"💙 Секрет №1", p:"Здесь ты можешь написать что-то очень личное для Валерии." },
   { t:"💗 Секрет №2", p:"А это место — под внутренний мем или песню, которая только ваша." },
   { t:"✦ Секрет №3", p:"Добавь сюда цитату или что-то особенное для вас двоих." }
 ];
 let secretIdx = 0;
-
 document.getElementById('secretBtn').addEventListener('click', ()=>{
   const s = secrets[secretIdx % secrets.length];
   document.getElementById('modalTitle').textContent = s.t;
@@ -874,7 +633,6 @@ document.getElementById('secretBtn').addEventListener('click', ()=>{
   document.getElementById('modal').classList.add('show');
   secretIdx++;
 });
-
 document.getElementById('modal').addEventListener('click', e=>{
   if(e.target.id === 'modal') e.target.classList.remove('show');
 });
