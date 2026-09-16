@@ -12,39 +12,29 @@
     --pink:#ff5fa2;
     --pink-soft:#ffa5c9;
     --pink-deep:#8b1e52;
-    --bg:#0e0f1a;
-    --card:rgba(255,255,255,0.06);
-    --border:rgba(255,255,255,0.12);
+    --gold:#d4af37;
+    --gold-light:#f9e596;
+    --bg:#0a0a0a;
     --text:#eef1ff;
     --muted:#a7aec7;
   }
   *{box-sizing:border-box;margin:0;padding:0}
-  html,body{height:100%}
-  body{
-    font-family:'Segoe UI',system-ui,-apple-system,sans-serif;
-    background:
-      radial-gradient(1200px 600px at 15% -10%, rgba(43,108,255,.35), transparent 60%),
-      radial-gradient(1000px 600px at 90% 10%, rgba(255,95,162,.30), transparent 60%),
-      var(--bg);
-    color:var(--text);
-    min-height:100vh;
-    overflow-x:hidden;
-  }
+  html,body{height:100%;overflow:hidden;background:var(--bg);font-family:'Segoe UI',system-ui,sans-serif;color:var(--text)}
 
   /* ============ PIN-ЭКРАН ============ */
   #lock{
-    position:fixed;inset:0;z-index:100;
+    position:fixed;inset:0;z-index:1000;
     display:flex;align-items:center;justify-content:center;
     background:
       radial-gradient(800px 500px at 30% 20%, rgba(43,108,255,.4), transparent 60%),
       radial-gradient(800px 500px at 70% 80%, rgba(255,95,162,.35), transparent 60%),
       #0b0c16;
-    transition:opacity .6s ease, visibility .6s;
+    transition:opacity .8s ease, visibility .8s;
   }
   #lock.hidden{opacity:0;visibility:hidden;pointer-events:none}
   .lock-card{
-    background:var(--card);
-    border:1px solid var(--border);
+    background:rgba(255,255,255,0.05);
+    border:1px solid rgba(255,255,255,0.12);
     backdrop-filter:blur(18px);
     border-radius:28px;
     padding:48px 40px;
@@ -58,241 +48,300 @@
     -webkit-background-clip:text;background-clip:text;color:transparent;
   }
   .lock-card p{color:var(--muted);font-size:.9rem;margin-bottom:28px}
-  .pin-dots{
-    display:flex;gap:14px;justify-content:center;margin-bottom:28px;
-  }
+  .pin-dots{display:flex;gap:14px;justify-content:center;margin-bottom:28px}
   .pin-dots span{
     width:16px;height:16px;border-radius:50%;
-    border:2px solid var(--border);
-    transition:.25s;
+    border:2px solid rgba(255,255,255,0.2);transition:.25s;
   }
   .pin-dots span.filled{
     background:linear-gradient(135deg,var(--blue),var(--pink));
     border-color:transparent;
     box-shadow:0 0 18px rgba(255,95,162,.6);
   }
-  .pin-pad{
-    display:grid;grid-template-columns:repeat(3,1fr);gap:12px;
-  }
+  .pin-pad{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
   .pin-pad button{
-    aspect-ratio:1.4/1;
-    background:rgba(255,255,255,.05);
-    border:1px solid var(--border);
-    color:var(--text);
-    border-radius:14px;
-    font-size:1.3rem;font-weight:500;
-    cursor:pointer;
-    transition:.15s;
+    aspect-ratio:1.4/1;background:rgba(255,255,255,.05);
+    border:1px solid rgba(255,255,255,0.12);color:var(--text);
+    border-radius:14px;font-size:1.3rem;font-weight:500;cursor:pointer;transition:.15s;
   }
   .pin-pad button:hover{background:rgba(255,255,255,.12);transform:translateY(-2px)}
   .pin-pad button:active{transform:scale(.96)}
-  .pin-pad button.wide{grid-column:span 3}
   .hint{margin-top:18px;font-size:.8rem;color:var(--muted);opacity:.8}
   .shake{animation:shake .4s}
-  @keyframes shake{
-    0%,100%{transform:translateX(0)}
-    20%{transform:translateX(-10px)}
-    40%{transform:translateX(10px)}
-    60%{transform:translateX(-6px)}
-    80%{transform:translateX(6px)}
+  @keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-10px)}40%{transform:translateX(10px)}60%{transform:translateX(-6px)}80%{transform:translateX(6px)}}
+
+  /* ============ 3D КОМНАТА ============ */
+  #room-container {
+    display: none;
+    position: absolute;
+    inset: 0;
+    perspective: 1000px;
+    overflow: hidden;
+    background: #050505;
+  }
+  #room-container.visible { display: block; }
+
+  .room-3d {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d;
+    transform: rotateX(-5deg) rotateY(0deg);
+    transition: transform 0.5s ease-out;
   }
 
-  /* ============ ОСНОВНОЙ САЙТ ============ */
-  #site{display:none;animation:fadeUp 1s ease}
-  #site.visible{display:block}
-  @keyframes fadeUp{
-    from{opacity:0;transform:translateY(20px)}
-    to{opacity:1;transform:translateY(0)}
+  /* Левая стена (Розовая) */
+  .wall-left {
+    position: absolute;
+    width: 150vw;
+    height: 150vh;
+    left: -50vw;
+    top: -25vh;
+    background: linear-gradient(135deg, var(--pink) 0%, var(--pink-deep) 100%);
+    transform-origin: right center;
+    transform: rotateY(-35deg) translateZ(-20vw);
+    box-shadow: inset -50px 0 100px rgba(0,0,0,0.5);
   }
 
-  .container{max-width:1100px;margin:0 auto;padding:0 24px}
-
-  /* HERO */
-  .hero{
-    min-height:100vh;
-    display:flex;flex-direction:column;justify-content:center;align-items:center;
-    text-align:center;position:relative;padding:80px 24px;
-  }
-  .hearts{position:absolute;inset:0;overflow:hidden;pointer-events:none}
-  .hearts i{
-    position:absolute;font-style:normal;opacity:.15;font-size:2rem;
-    animation:float linear infinite;
-  }
-  @keyframes float{
-    from{transform:translateY(0) rotate(0)}
-    to{transform:translateY(-100vh) rotate(360deg)}
+  /* Правая стена (Синяя) */
+  .wall-right {
+    position: absolute;
+    width: 150vw;
+    height: 150vh;
+    right: -50vw;
+    top: -25vh;
+    background: linear-gradient(-135deg, var(--blue) 0%, var(--blue-deep) 100%);
+    transform-origin: left center;
+    transform: rotateY(35deg) translateZ(-20vw);
+    box-shadow: inset 50px 0 100px rgba(0,0,0,0.5);
   }
 
-  .couple{
-    font-size:clamp(2.4rem,7vw,5rem);
-    font-weight:800;line-height:1.05;letter-spacing:-.02em;
-    position:relative;z-index:1;
-  }
-  .couple .him{
-    background:linear-gradient(90deg,#7aa8ff,#2b6cff);
-    -webkit-background-clip:text;background-clip:text;color:transparent;
-  }
-  .couple .her{
-    background:linear-gradient(90deg,#ff5fa2,#ffa5c9);
-    -webkit-background-clip:text;background-clip:text;color:transparent;
-  }
-  .amp{color:var(--muted);font-weight:300;margin:0 .15em}
-
-  .subtitle{
-    margin-top:20px;color:var(--muted);font-size:1.05rem;z-index:1;
+  /* Пол */
+  .floor {
+    position: absolute;
+    width: 200vw;
+    height: 200vh;
+    left: -50vw;
+    bottom: -50vh;
+    background: linear-gradient(to top, #0a0a0a, #1a1a1a);
+    transform-origin: center top;
+    transform: rotateX(85deg) translateZ(-10vh);
+    box-shadow: inset 0 50px 100px rgba(0,0,0,0.8);
   }
 
-  .counter{
-    margin-top:48px;display:flex;gap:14px;flex-wrap:wrap;justify-content:center;z-index:1;
-  }
-  .counter .unit{
-    background:var(--card);border:1px solid var(--border);
-    border-radius:20px;padding:20px 26px;min-width:110px;
-    backdrop-filter:blur(12px);
-  }
-  .counter .num{
-    font-size:2.2rem;font-weight:700;
-    background:linear-gradient(135deg,var(--blue-soft),var(--pink-soft));
-    -webkit-background-clip:text;background-clip:text;color:transparent;
-  }
-  .counter .lbl{font-size:.8rem;color:var(--muted);margin-top:4px;text-transform:uppercase;letter-spacing:.08em}
-
-  .bday{
-    margin-top:40px;display:flex;gap:20px;flex-wrap:wrap;justify-content:center;
-    font-size:.9rem;color:var(--muted);z-index:1;
-  }
-  .bday span b{color:var(--text)}
-  .bday .him b{color:var(--blue-soft)}
-  .bday .her b{color:var(--pink-soft)}
-
-  /* SECTIONS */
-  section{padding:100px 0}
-  .section-title{
-    font-size:clamp(1.6rem,4vw,2.4rem);
-    font-weight:700;text-align:center;margin-bottom:16px;
-  }
-  .section-sub{text-align:center;color:var(--muted);margin-bottom:60px}
-
-  /* TIMELINE */
-  .timeline{position:relative;max-width:800px;margin:0 auto}
-  .timeline::before{
-    content:'';position:absolute;left:50%;top:0;bottom:0;width:2px;
-    background:linear-gradient(180deg,var(--blue),var(--pink));
-    transform:translateX(-50%);
-  }
-  .t-item{
-    display:flex;justify-content:flex-end;padding-right:calc(50% + 30px);
-    margin-bottom:50px;position:relative;
-  }
-  .t-item:nth-child(even){
-    justify-content:flex-start;padding-right:0;padding-left:calc(50% + 30px);
-  }
-  .t-item .dot{
-    position:absolute;left:50%;top:8px;width:16px;height:16px;border-radius:50%;
-    background:linear-gradient(135deg,var(--blue),var(--pink));
-    transform:translateX(-50%);
-    box-shadow:0 0 20px rgba(255,95,162,.7);
-  }
-  .t-item .card{
-    background:var(--card);border:1px solid var(--border);
-    border-radius:16px;padding:20px 24px;backdrop-filter:blur(12px);
-    max-width:340px;
-  }
-  .t-item .date{font-size:.8rem;color:var(--pink-soft);letter-spacing:.08em;text-transform:uppercase}
-  .t-item h4{margin:6px 0 8px;font-size:1.15rem}
-  .t-item p{color:var(--muted);font-size:.92rem;line-height:1.5}
-  @media(max-width:640px){
-    .timeline::before{left:20px}
-    .t-item, .t-item:nth-child(even){
-      padding:0 0 0 50px;justify-content:flex-start;
-    }
-    .t-item .dot{left:20px}
-    .t-item .card{max-width:100%}
+  /* Потолок */
+  .ceiling {
+    position: absolute;
+    width: 200vw;
+    height: 200vh;
+    left: -50vw;
+    top: -50vh;
+    background: #050505;
+    transform-origin: center bottom;
+    transform: rotateX(-85deg) translateZ(-10vh);
   }
 
-  /* GALLERY */
-  .gallery{
-    display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-    gap:16px;
-  }
-  .gallery .ph{
-    aspect-ratio:1;border-radius:18px;overflow:hidden;position:relative;
-    background:linear-gradient(135deg,rgba(43,108,255,.25),rgba(255,95,162,.25));
-    border:1px solid var(--border);
-    display:flex;align-items:center;justify-content:center;
-    color:var(--muted);font-size:.85rem;
-    transition:.3s;cursor:pointer;
-  }
-  .gallery .ph:hover{transform:translateY(-6px) scale(1.02);box-shadow:0 20px 40px rgba(0,0,0,.4)}
-  .gallery .ph::after{
-    content:attr(data-label);position:absolute;bottom:12px;left:12px;
-    font-size:.75rem;color:rgba(255,255,255,.7);
+  /* Центральный свет/дверь */
+  .center-light {
+    position: absolute;
+    width: 40vw;
+    height: 80vh;
+    left: 30vw;
+    top: 10vh;
+    background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 70%);
+    transform: translateZ(-19vw);
+    pointer-events: none;
   }
 
-  /* PLACES */
-  .places{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px}
-  .place{
-    background:var(--card);border:1px solid var(--border);border-radius:20px;
-    padding:28px;backdrop-filter:blur(12px);transition:.3s;
-  }
-  .place:hover{border-color:var(--pink-soft);transform:translateY(-4px)}
-  .place .icon{font-size:2rem;margin-bottom:12px}
-  .place h4{margin-bottom:8px}
-  .place p{color:var(--muted);font-size:.92rem;line-height:1.5}
-
-  /* DREAMS */
-  .dreams{max-width:700px;margin:0 auto;display:flex;flex-direction:column;gap:14px}
-  .dream{
-    display:flex;align-items:center;gap:16px;
-    background:var(--card);border:1px solid var(--border);
-    border-radius:16px;padding:18px 22px;cursor:pointer;transition:.25s;
-  }
-  .dream:hover{background:rgba(255,255,255,.09)}
-  .dream .check{
-    width:24px;height:24px;border-radius:8px;border:2px solid var(--border);
-    display:flex;align-items:center;justify-content:center;flex-shrink:0;
-    transition:.25s;font-size:.9rem;
-  }
-  .dream.done .check{
-    background:linear-gradient(135deg,var(--blue),var(--pink));
-    border-color:transparent;
-  }
-  .dream.done span{text-decoration:line-through;color:var(--muted)}
-  .dream span{transition:.25s}
-
-  /* FOOTER */
-  footer{
-    text-align:center;padding:60px 24px;color:var(--muted);font-size:.85rem;
-    border-top:1px solid var(--border);
-  }
-  .secret-btn{
-    margin-top:16px;background:transparent;border:1px dashed var(--border);
-    color:var(--muted);padding:10px 20px;border-radius:12px;cursor:pointer;
-    font-size:.8rem;transition:.25s;
-  }
-  .secret-btn:hover{color:var(--text);border-color:var(--pink-soft)}
-
-  /* MODAL */
-  .modal{
-    position:fixed;inset:0;z-index:200;display:none;
-    align-items:center;justify-content:center;padding:24px;
-    background:rgba(5,6,15,.8);backdrop-filter:blur(8px);
-  }
-  .modal.show{display:flex;animation:fadeUp .4s}
-  .modal .box{
-    background:linear-gradient(160deg,rgba(43,108,255,.2),rgba(255,95,162,.2));
-    border:1px solid var(--border);border-radius:24px;
-    padding:40px;max-width:500px;text-align:center;
-  }
-  .modal h3{margin-bottom:16px;font-size:1.5rem}
-  .modal p{color:var(--muted);line-height:1.6;margin-bottom:24px}
-  .modal button{
-    background:linear-gradient(135deg,var(--blue),var(--pink));
-    color:white;border:none;padding:12px 32px;border-radius:12px;
-    font-size:1rem;cursor:pointer;font-weight:600;
+  /* ============ ЧАСЫ (Arachne Style) ============ */
+  .clock-container {
+    position: absolute;
+    top: 30px;
+    right: 30px;
+    width: 180px;
+    height: 180px;
+    z-index: 100;
+    perspective: 500px;
   }
 
-  ::selection{background:var(--pink);color:white}
+  .clock {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: radial-gradient(circle, #111 60%, #000 100%);
+    border: 4px solid var(--gold);
+    box-shadow: 0 0 30px rgba(212, 175, 55, 0.2), inset 0 0 20px rgba(0,0,0,0.9);
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  /* Паутина на фоне часов */
+  .clock::before {
+    content: '';
+    position: absolute;
+    inset: 5px;
+    border-radius: 50%;
+    background-image: 
+      radial-gradient(circle at center, transparent 30%, rgba(212, 175, 55, 0.1) 31%, transparent 32%),
+      repeating-conic-gradient(from 0deg, rgba(212, 175, 55, 0.05) 0deg 5deg, transparent 5deg 15deg);
+    opacity: 0.6;
+  }
+
+  /* Римские цифры */
+  .clock-numbers {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    font-family: 'Times New Roman', serif;
+    font-weight: bold;
+    color: var(--gold);
+    text-shadow: 0 0 5px rgba(212, 175, 55, 0.5);
+  }
+  .clock-numbers span {
+    position: absolute;
+    font-size: 14px;
+    transform: translate(-50%, -50%);
+  }
+  .n12 { top: 15%; left: 50%; }
+  .n3  { top: 50%; left: 85%; }
+  .n6  { top: 85%; left: 50%; }
+  .n9  { top: 50%; left: 15%; }
+  .n1  { top: 20%; left: 72%; }
+  .n2  { top: 30%; left: 87%; }
+  .n4  { top: 70%; left: 87%; }
+  .n5  { top: 80%; left: 72%; }
+  .n7  { top: 80%; left: 28%; }
+  .n8  { top: 70%; left: 13%; }
+  .n10 { top: 30%; left: 13%; }
+  .n11 { top: 20%; left: 28%; }
+
+  /* Стрелки */
+  .hand {
+    position: absolute;
+    bottom: 50%;
+    left: 50%;
+    transform-origin: bottom center;
+    border-radius: 4px;
+    z-index: 10;
+  }
+  .hour-hand {
+    width: 4px;
+    height: 50px;
+    background: linear-gradient(to top, var(--gold), var(--gold-light));
+    box-shadow: 0 0 8px rgba(212, 175, 55, 0.6);
+    transform: translateX(-50%) rotate(0deg);
+  }
+  .min-hand {
+    width: 3px;
+    height: 70px;
+    background: linear-gradient(to top, var(--gold), var(--gold-light));
+    box-shadow: 0 0 8px rgba(212, 175, 55, 0.6);
+    transform: translateX(-50%) rotate(0deg);
+  }
+  .sec-hand {
+    width: 2px;
+    height: 75px;
+    background: #fff;
+    box-shadow: 0 0 10px rgba(255,255,255,0.8);
+    transform: translateX(-50%) rotate(0deg);
+  }
+
+  /* Центральный шар (паук) */
+  .center-dot {
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    background: var(--gold);
+    border-radius: 50%;
+    z-index: 20;
+    box-shadow: 0 0 15px var(--gold);
+  }
+
+  /* Добавляем лапки паука (декоративно) */
+  .center-dot::before, .center-dot::after {
+    content: '';
+    position: absolute;
+    width: 2px;
+    height: 30px;
+    background: var(--gold);
+    top: 50%;
+    left: 50%;
+    transform-origin: top center;
+    opacity: 0.5;
+  }
+  .center-dot::before { transform: translate(-50%, 0) rotate(-45deg); }
+  .center-dot::after { transform: translate(-50%, 0) rotate(45deg); }
+
+  /* ============ UI OVERLAY ============ */
+  .ui-overlay {
+    position: absolute;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 15px;
+    z-index: 200;
+  }
+  .ui-btn {
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    color: #fff;
+    padding: 12px 24px;
+    border-radius: 30px;
+    cursor: pointer;
+    backdrop-filter: blur(10px);
+    transition: 0.3s;
+    font-size: 0.9rem;
+  }
+  .ui-btn:hover {
+    background: rgba(255,255,255,0.2);
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+  }
+
+  /* Панель с контентом (появляется поверх комнаты) */
+  .content-panel {
+    position: absolute;
+    inset: 0;
+    background: rgba(10,10,20,0.95);
+    backdrop-filter: blur(15px);
+    z-index: 500;
+    display: none;
+    overflow-y: auto;
+    padding: 40px;
+    animation: fadeIn 0.4s ease;
+  }
+  .content-panel.show { display: block; }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+  .close-panel {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: transparent;
+    border: none;
+    color: #fff;
+    font-size: 2rem;
+    cursor: pointer;
+    z-index: 600;
+  }
+
+  /* Стили для контента внутри панели (переиспользуем из прошлого) */
+  .section-title { font-size: 2rem; text-align: center; margin-bottom: 20px; background: linear-gradient(90deg, var(--blue-soft), var(--pink-soft)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .section-sub { text-align: center; color: var(--muted); margin-bottom: 40px; }
+  .timeline { position: relative; max-width: 800px; margin: 0 auto; }
+  .timeline::before { content: ''; position: absolute; left: 50%; top: 0; bottom: 0; width: 2px; background: linear-gradient(180deg, var(--blue), var(--pink)); transform: translateX(-50%); }
+  .t-item { display: flex; justify-content: flex-end; padding-right: calc(50% + 30px); margin-bottom: 40px; position: relative; }
+  .t-item:nth-child(even) { justify-content: flex-start; padding-right: 0; padding-left: calc(50% + 30px); }
+  .t-item .dot { position: absolute; left: 50%; top: 8px; width: 16px; height: 16px; border-radius: 50%; background: linear-gradient(135deg, var(--blue), var(--pink)); transform: translateX(-50%); box-shadow: 0 0 20px rgba(255,95,162,.7); }
+  .t-item .card { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 20px; max-width: 320px; }
+  .t-item .date { font-size: 0.8rem; color: var(--pink-soft); text-transform: uppercase; }
+  .t-item h4 { margin: 6px 0 8px; font-size: 1.1rem; }
+  .t-item p { color: var(--muted); font-size: 0.9rem; line-height: 1.5; }
+  .gallery { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; max-width: 800px; margin: 0 auto; }
+  .gallery .ph { aspect-ratio: 1; border-radius: 15px; background: linear-gradient(135deg, rgba(43,108,255,0.2), rgba(255,95,162,0.2)); border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; color: var(--muted); font-size: 0.8rem; }
 </style>
 </head>
 <body>
@@ -302,178 +351,107 @@
   <div class="lock-card" id="lockCard">
     <h1>Наш уголок</h1>
     <p>Только для нас двоих 💙💗</p>
-
-    <div class="pin-dots" id="pinDots">
-      <span></span><span></span><span></span><span></span>
-    </div>
-
+    <div class="pin-dots" id="pinDots"><span></span><span></span><span></span><span></span></div>
     <div class="pin-pad" id="pinPad">
-      <button data-k="1">1</button>
-      <button data-k="2">2</button>
-      <button data-k="3">3</button>
-      <button data-k="4">4</button>
-      <button data-k="5">5</button>
-      <button data-k="6">6</button>
-      <button data-k="7">7</button>
-      <button data-k="8">8</button>
-      <button data-k="9">9</button>
-      <button data-k="del">⌫</button>
-      <button data-k="0">0</button>
+      <button data-k="1">1</button><button data-k="2">2</button><button data-k="3">3</button>
+      <button data-k="4">4</button><button data-k="5">5</button><button data-k="6">6</button>
+      <button data-k="7">7</button><button data-k="8">8</button><button data-k="9">9</button>
+      <button data-k="del">⌫</button><button data-k="0">0</button>
       <button data-k="ok" style="background:linear-gradient(135deg,var(--blue),var(--pink));border:none">✓</button>
     </div>
-
     <div class="hint">Подсказка: мы оба знаем эти 4 цифры 😉</div>
   </div>
 </div>
 
-<!-- ============ САЙТ ============ -->
-<div id="site">
+<!-- ============ 3D КОМНАТА ============ -->
+<div id="room-container">
+  <div class="room-3d">
+    <div class="wall-left"></div>
+    <div class="wall-right"></div>
+    <div class="floor"></div>
+    <div class="ceiling"></div>
+    <div class="center-light"></div>
+  </div>
 
-  <!-- HERO -->
-  <section class="hero">
-    <div class="hearts" id="hearts"></div>
-
-    <h1 class="couple">
-      <span class="him">Никита</span>
-      <span class="amp">&</span>
-      <span class="her">Валерия</span>
-    </h1>
-    <p class="subtitle">Наша история, наши дни, наши мечты</p>
-
-    <div class="counter" id="counter">
-      <div class="unit"><div class="num" id="days">0</div><div class="lbl">дней</div></div>
-      <div class="unit"><div class="num" id="hours">0</div><div class="lbl">часов</div></div>
-      <div class="unit"><div class="num" id="minutes">0</div><div class="lbl">минут</div></div>
-      <div class="unit"><div class="num" id="seconds">0</div><div class="lbl">секунд</div></div>
+  <!-- ЧАСЫ В ПРАВОМ УГЛУ -->
+  <div class="clock-container">
+    <div class="clock">
+      <div class="clock-numbers">
+        <span class="n12">XII</span><span class="n1">I</span><span class="n2">II</span>
+        <span class="n3">III</span><span class="n4">IV</span><span class="n5">V</span>
+        <span class="n6">VI</span><span class="n7">VII</span><span class="n8">VIII</span>
+        <span class="n9">IX</span><span class="n10">X</span><span class="n11">XI</span>
+      </div>
+      <div class="hand hour-hand" id="hourHand"></div>
+      <div class="hand min-hand" id="minHand"></div>
+      <div class="hand sec-hand" id="secHand"></div>
+      <div class="center-dot"></div>
     </div>
+  </div>
 
-    <div class="bday">
-      <span class="him">💙 <b>Никита</b> · 02.01.2003</span>
-      <span class="her">💗 <b>Валерия</b> · 31.12.2003</span>
-    </div>
-  </section>
+  <!-- КНОПКИ УПРАВЛЕНИЯ -->
+  <div class="ui-overlay">
+    <button class="ui-btn" onclick="openPanel('panel-history')">📖 Наша история</button>
+    <button class="ui-btn" onclick="openPanel('panel-gallery')">📸 Моменты</button>
+    <button class="ui-btn" onclick="openPanel('panel-dreams')">✨ Мечты</button>
+  </div>
 
-  <!-- ИСТОРИЯ -->
-  <section class="container">
+  <!-- ПАНЕЛЬ ИСТОРИИ -->
+  <div class="content-panel" id="panel-history">
+    <button class="close-panel" onclick="closePanel('panel-history')">×</button>
     <h2 class="section-title">Наша история</h2>
     <p class="section-sub">С чего всё началось</p>
-
     <div class="timeline">
-      <div class="t-item">
-        <div class="dot"></div>
-        <div class="card">
-          <div class="date">Знакомство</div>
-          <h4>Первая встреча</h4>
-          <p>Здесь будет история о том, как вы познакомились. Добавим позже ✨</p>
-        </div>
-      </div>
-      <div class="t-item">
-        <div class="dot"></div>
-        <div class="card">
-          <div class="date">14 июня 2026</div>
-          <h4>Начало отношений 💙💗</h4>
-          <p>День, с которого мы вместе. Именно отсюда считается наш счётчик.</p>
-        </div>
-      </div>
-      <div class="t-item">
-        <div class="dot"></div>
-        <div class="card">
-          <div class="date">12 сентября 2026</div>
-          <h4>90 дней вместе</h4>
-          <p>Первый маленький юбилей. Спасибо, что ты рядом.</p>
-        </div>
-      </div>
-      <div class="t-item">
-        <div class="dot"></div>
-        <div class="card">
-          <div class="date">Дальше...</div>
-          <h4>Продолжение следует</h4>
-          <p>Здесь будут появляться новые важные даты, путешествия и моменты.</p>
-        </div>
-      </div>
+      <div class="t-item"><div class="dot"></div><div class="card"><div class="date">Знакомство</div><h4>Первая встреча</h4><p>Здесь будет история о том, как вы познакомились.</p></div></div>
+      <div class="t-item"><div class="dot"></div><div class="card"><div class="date">14 июня 2026</div><h4>Начало отношений 💙💗</h4><p>День, с которого мы вместе. Именно отсюда считается наш счётчик.</p></div></div>
+      <div class="t-item"><div class="dot"></div><div class="card"><div class="date">12 сентября 2026</div><h4>90 дней вместе</h4><p>Первый маленький юбилей. Спасибо, что ты рядом.</p></div></div>
+      <div class="t-item"><div class="dot"></div><div class="card"><div class="date">Дальше...</div><h4>Продолжение следует</h4><p>Здесь будут появляться новые важные даты.</p></div></div>
     </div>
-  </section>
+  </div>
 
-  <!-- ГАЛЕРЕЯ -->
-  <section class="container">
+  <!-- ПАНЕЛЬ ГАЛЕРЕИ -->
+  <div class="content-panel" id="panel-gallery">
+    <button class="close-panel" onclick="closePanel('panel-gallery')">×</button>
     <h2 class="section-title">Наши моменты</h2>
     <p class="section-sub">Фотографии, которые мы любим</p>
-
     <div class="gallery">
-      <div class="ph" data-label="Фото 1">Здесь будет фото</div>
-      <div class="ph" data-label="Фото 2">Здесь будет фото</div>
-      <div class="ph" data-label="Фото 3">Здесь будет фото</div>
-      <div class="ph" data-label="Фото 4">Здесь будет фото</div>
-      <div class="ph" data-label="Фото 5">Здесь будет фото</div>
-      <div class="ph" data-label="Фото 6">Здесь будет фото</div>
+      <div class="ph">Здесь будет фото</div>
+      <div class="ph">Здесь будет фото</div>
+      <div class="ph">Здесь будет фото</div>
+      <div class="ph">Здесь будет фото</div>
     </div>
-  </section>
+  </div>
 
-  <!-- МЕСТА -->
-  <section class="container">
-    <h2 class="section-title">Наши места</h2>
-    <p class="section-sub">Точки на карте, которые стали особенными</p>
-
-    <div class="places">
-      <div class="place">
-        <div class="icon">☕</div>
-        <h4>Наше кафе</h4>
-        <p>Место, куда хочется возвращаться снова и снова.</p>
-      </div>
-      <div class="place">
-        <div class="icon">🌳</div>
-        <h4>Наш парк</h4>
-        <p>Здесь были долгие прогулки и самые тёплые разговоры.</p>
-      </div>
-      <div class="place">
-        <div class="icon">🌆</div>
-        <h4>Особое место</h4>
-        <p>Добавим позже — у нас ведь будет ещё много таких мест.</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- МЕЧТЫ -->
-  <section class="container">
+  <!-- ПАНЕЛЬ МЕЧТ -->
+  <div class="content-panel" id="panel-dreams">
+    <button class="close-panel" onclick="closePanel('panel-dreams')">×</button>
     <h2 class="section-title">Наши мечты</h2>
     <p class="section-sub">То, что мы хотим сделать вместе</p>
-
-    <div class="dreams" id="dreams">
-      <div class="dream"><div class="check"></div><span>Съездить в совместное путешествие ✈️</span></div>
-      <div class="dream"><div class="check"></div><span>Посмотреть вместе закат на море 🌅</span></div>
-      <div class="dream"><div class="check"></div><span>Приготовить вместе ужин 🍝</span></div>
-      <div class="dream"><div class="check"></div><span>Завести питомца 🐾</span></div>
-      <div class="dream"><div class="check"></div><span>Отметить 365 дней вместе 🎉</span></div>
+    <div style="max-width:600px;margin:0 auto;display:flex;flex-direction:column;gap:15px;">
+      <div style="background:rgba(255,255,255,0.05);padding:20px;border-radius:15px;display:flex;align-items:center;gap:15px;cursor:pointer;" onclick="this.classList.toggle('done'); this.querySelector('.check').textContent = this.classList.contains('done') ? '✓' : '';">
+        <div class="check" style="width:24px;height:24px;border-radius:8px;border:2px solid rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;"></div>
+        <span>Съездить в совместное путешествие ✈️</span>
+      </div>
+      <div style="background:rgba(255,255,255,0.05);padding:20px;border-radius:15px;display:flex;align-items:center;gap:15px;cursor:pointer;" onclick="this.classList.toggle('done'); this.querySelector('.check').textContent = this.classList.contains('done') ? '✓' : '';">
+        <div class="check" style="width:24px;height:24px;border-radius:8px;border:2px solid rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;"></div>
+        <span>Посмотреть вместе закат на море 🌅</span>
+      </div>
+      <div style="background:rgba(255,255,255,0.05);padding:20px;border-radius:15px;display:flex;align-items:center;gap:15px;cursor:pointer;" onclick="this.classList.toggle('done'); this.querySelector('.check').textContent = this.classList.contains('done') ? '✓' : '';">
+        <div class="check" style="width:24px;height:24px;border-radius:8px;border:2px solid rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;"></div>
+        <span>Отметить 365 дней вместе 🎉</span>
+      </div>
     </div>
-  </section>
-
-  <footer>
-    <p>Сделано с любовью 💙💗</p>
-    <p style="margin-top:8px;opacity:.7">Никита & Валерия · 2026</p>
-    <button class="secret-btn" id="secretBtn">🤫 Что-то спрятано...</button>
-  </footer>
-</div>
-
-<!-- MODAL -->
-<div class="modal" id="modal">
-  <div class="box">
-    <h3 id="modalTitle"></h3>
-    <p id="modalText"></p>
-    <button onclick="document.getElementById('modal').classList.remove('show')">Закрыть</button>
   </div>
 </div>
 
 <script>
-/* ========== PIN ========== */
+/* ========== PIN-КОД ========== */
 const PIN = "2568";
 let input = "";
-
 const dots = document.querySelectorAll('#pinDots span');
 const lockCard = document.getElementById('lockCard');
 
-function renderDots(){
-  dots.forEach((d,i)=>d.classList.toggle('filled', i < input.length));
-}
+function renderDots(){ dots.forEach((d,i)=>d.classList.toggle('filled', i < input.length)); }
 
 document.querySelectorAll('#pinPad button').forEach(btn=>{
   btn.addEventListener('click', ()=>{
@@ -495,10 +473,8 @@ document.addEventListener('keydown', e=>{
 function checkPin(){
   if(input === PIN){
     document.getElementById('lock').classList.add('hidden');
-    document.getElementById('site').classList.add('visible');
-    document.body.style.overflowY = 'auto';
-    startCounter();
-    startHearts();
+    document.getElementById('room-container').classList.add('visible');
+    startClock();
   } else {
     lockCard.classList.add('shake');
     setTimeout(()=>lockCard.classList.remove('shake'), 450);
@@ -506,73 +482,42 @@ function checkPin(){
   }
 }
 
-document.body.style.overflow = 'hidden';
-
-/* ========== СЧЁТЧИК ==========
-   Дата начала отношений: 14 июня 2026 (90 дней до 12.09.2026) */
-const START = new Date("2026-06-14T00:00:00");
-
-function startCounter(){
+/* ========== ЧАСЫ ========== */
+function startClock(){
   function tick(){
     const now = new Date();
-    let diff = Math.max(0, now - START);
-    const s = Math.floor(diff/1000);
-    const days = Math.floor(s/86400);
-    const hours = Math.floor((s%86400)/3600);
-    const minutes = Math.floor((s%3600)/60);
-    const seconds = s%60;
+    const h = now.getHours() % 12;
+    const m = now.getMinutes();
+    const s = now.getSeconds();
 
-    document.getElementById('days').textContent = days;
-    document.getElementById('hours').textContent = String(hours).padStart(2,'0');
-    document.getElementById('minutes').textContent = String(minutes).padStart(2,'0');
-    document.getElementById('seconds').textContent = String(seconds).padStart(2,'0');
+    const hourDeg = h * 30 + m * 0.5;
+    const minDeg = m * 6 + s * 0.1;
+    const secDeg = s * 6;
+
+    document.getElementById('hourHand').style.transform = `translateX(-50%) rotate(${hourDeg}deg)`;
+    document.getElementById('minHand').style.transform = `translateX(-50%) rotate(${minDeg}deg)`;
+    document.getElementById('secHand').style.transform = `translateX(-50%) rotate(${secDeg}deg)`;
   }
   tick();
   setInterval(tick, 1000);
 }
 
-/* ========== СЕРДЕЧКИ НА ФОНЕ ========== */
-function startHearts(){
-  const wrap = document.getElementById('hearts');
-  const symbols = ['💙','💗','♥','✦','🤍'];
-  for(let i=0;i<18;i++){
-    const el = document.createElement('i');
-    el.textContent = symbols[Math.floor(Math.random()*symbols.length)];
-    el.style.left = Math.random()*100 + '%';
-    el.style.bottom = '-40px';
-    el.style.fontSize = (16 + Math.random()*22) + 'px';
-    el.style.animationDuration = (12 + Math.random()*14) + 's';
-    el.style.animationDelay = (Math.random()*12) + 's';
-    wrap.appendChild(el);
-  }
+/* ========== УПРАВЛЕНИЕ ПАНЕЛЯМИ ========== */
+function openPanel(id){
+  document.getElementById(id).classList.add('show');
+}
+function closePanel(id){
+  document.getElementById(id).classList.remove('show');
 }
 
-/* ========== МЕЧТЫ (клик = выполнено) ========== */
-document.querySelectorAll('.dream').forEach(d=>{
-  d.addEventListener('click', ()=>{
-    d.classList.toggle('done');
-    d.querySelector('.check').textContent = d.classList.contains('done') ? '✓' : '';
-  });
+/* ========== ДВИЖЕНИЕ МЫШИ (ЭФФЕКТ 3D) ========== */
+document.getElementById('room-container').addEventListener('mousemove', (e) => {
+  const x = (e.clientX / window.innerWidth - 0.5) * 10;
+  const y = (e.clientY / window.innerHeight - 0.5) * 10;
+  document.querySelector('.room-3d').style.transform = `rotateX(${-5 + y}deg) rotateY(${x}deg)`;
 });
-
-/* ========== СЕКРЕТНАЯ КНОПКА ========== */
-const secrets = [
-  { t:"💙 Секрет №1", p:"Здесь ты можешь написать что-то очень личное для Валерии. Например, почему ты выбрал именно её, или что ты чувствуешь, глядя на неё." },
-  { t:"💗 Секрет №2", p:"А это место — под внутренний мем, шутку или песню, которая только ваша. Никто посторонний не поймёт, а вы улыбнётесь." },
-  { t:"✦ Секрет №3", p:"Пасхалка: попробуй набрать 'love' в PIN-поле (не сейчас — оно уже закрыто 😉). Или добавь сюда цитату, которая вам дорога." }
-];
-let secretIdx = 0;
-
-document.getElementById('secretBtn').addEventListener('click', ()=>{
-  const s = secrets[secretIdx % secrets.length];
-  document.getElementById('modalTitle').textContent = s.t;
-  document.getElementById('modalText').textContent = s.p;
-  document.getElementById('modal').classList.add('show');
-  secretIdx++;
-});
-
-document.getElementById('modal').addEventListener('click', e=>{
-  if(e.target.id === 'modal') e.target.classList.remove('show');
+document.getElementById('room-container').addEventListener('mouseleave', () => {
+  document.querySelector('.room-3d').style.transform = `rotateX(-5deg) rotateY(0deg)`;
 });
 </script>
 </body>
