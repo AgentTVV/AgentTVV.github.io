@@ -1,3665 +1,579 @@
-<meta name='viewport' content='width=device-width, initial-scale=1'/><!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="theme-color" content="#080b14">
-<title>BetaLock -- Производственная система</title>
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Наш уголок 💙💗</title>
 <style>
-:root{
-    --bg:#070a12;
-    --bg2:#0d1220;
-    --panel:rgba(16,22,36,.82);
-    --panel2:#141b2c;
-    --line:rgba(255,255,255,.09);
-    --line2:rgba(255,255,255,.15);
-    --text:#f5f7fc;
-    --muted:#8792a7;
-    --blue:#5b8cff;
-    --purple:#7b61ff;
-    --green:#35d49a;
-    --red:#ff5574;
-    --orange:#ffad5c;
-    --shadow:0 25px 70px rgba(0,0,0,.4);
-    --radius:19px;
-}
-
-*{ box-sizing:border-box; }
-
-html,body{
-    margin:0;
-    min-height:100%;
+  :root{
+    --blue:#2b6cff;
+    --blue-soft:#7aa8ff;
+    --blue-deep:#0b2a6b;
+    --pink:#ff5fa2;
+    --pink-soft:#ffa5c9;
+    --pink-deep:#8b1e52;
+    --bg:#0e0f1a;
+    --card:rgba(255,255,255,0.06);
+    --border:rgba(255,255,255,0.12);
+    --text:#eef1ff;
+    --muted:#a7aec7;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    font-family:'Segoe UI',system-ui,-apple-system,sans-serif;
     background:
-        radial-gradient(circle at 10% 10%,rgba(91,140,255,.12),transparent 30%),
-        radial-gradient(circle at 90% 10%,rgba(123,97,255,.12),transparent 30%),
-        radial-gradient(circle at 50% 100%,rgba(53,212,154,.06),transparent 35%),
-        var(--bg);
+      radial-gradient(1200px 600px at 15% -10%, rgba(43,108,255,.35), transparent 60%),
+      radial-gradient(1000px 600px at 90% 10%, rgba(255,95,162,.30), transparent 60%),
+      var(--bg);
     color:var(--text);
-    font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
-}
-
-body{ overflow-x:hidden; }
-body.sidebar-lock{ overflow:hidden; }
-
-button,input,textarea,select{ font:inherit; }
-button{ cursor:pointer; }
-
-.hidden{ display:none!important; }
-
-/* =====================================================
-   ОБЩИЕ ЭЛЕМЕНТЫ ФОРМ (восстановлено)
-===================================================== */
-
-.field{
-    margin-bottom:16px;
-}
-
-.field label{
-    display:block;
-    color:#b9c2d2;
-    font-size:13px;
-    margin-bottom:8px;
-}
-
-.input,
-.textarea,
-.select{
-    width:100%;
-    background:rgba(255,255,255,.045);
-    color:white;
-    border:1px solid var(--line);
-    border-radius:12px;
-    outline:none;
-    padding:13px 14px;
-}
-
-.textarea{
-    min-height:190px;
-    resize:vertical;
-    font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
-    font-size:12px;
-}
-
-.input:focus,
-.textarea:focus,
-.select:focus{
-    border-color:rgba(91,140,255,.7);
-    box-shadow:0 0 0 4px rgba(91,140,255,.1);
-}
-
-.btn{
-    border:1px solid var(--line);
-    border-radius:12px;
-    background:rgba(255,255,255,.045);
-    color:white;
-    padding:11px 15px;
-    transition:.2s;
-    display:inline-flex;
-    align-items:center;
-    justify-content:center;
-    gap:8px;
-}
-
-.btn:hover{
-    background:rgba(255,255,255,.085);
-    transform:translateY(-1px);
-}
-
-.btn.primary{
-    background:linear-gradient(135deg,var(--blue),var(--purple));
-    border:0;
-    box-shadow:0 10px 30px rgba(91,140,255,.2);
-}
-
-.btn.danger{
-    color:#ff8097;
-    background:rgba(255,85,116,.08);
-    border-color:rgba(255,85,116,.2);
-}
-
-.btn.success{
-    color:#70e7b8;
-    background:rgba(53,212,154,.08);
-    border-color:rgba(53,212,154,.2);
-}
-
-.btn.full{
-    width:100%;
-}
-
-/* =====================================================
-   AUTH
-===================================================== */
-
-#authPage{
     min-height:100vh;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    padding:20px;
-    position:relative;
-    overflow:hidden;
-}
-
-.auth-orb{
-    position:absolute;
-    border-radius:50%;
-    filter:blur(70px);
-    pointer-events:none;
-    opacity:.3;
-}
-
-.auth-orb.one{
-    width:350px;height:350px;background:#4d70ff;left:-120px;top:-100px;
-}
-
-.auth-orb.two{
-    width:350px;height:350px;background:#764dff;right:-120px;bottom:-100px;
-}
-
-/* Стеклянный контейнер на две колонки */
-.auth-container{
-    position:relative;
-    z-index:2;
-    display:flex;
-    width:100%;
-    max-width:880px;
-    border-radius:27px;
-    background:rgba(11,16,28,.82);
-    border:1px solid var(--line2);
-    backdrop-filter:blur(30px);
-    -webkit-backdrop-filter:blur(30px);
-    box-shadow:
-        0 40px 100px rgba(0,0,0,.55),
-        inset 0 1px 0 rgba(255,255,255,.05);
-    overflow:hidden;
-}
-
-/* ---------- ЛЕВАЯ КОЛОНКА: визуал ---------- */
-.auth-visual{
-    flex:1;
-    position:relative;
-    background:
-        linear-gradient(135deg,
-            rgba(91,140,255,.10),
-            rgba(123,97,255,.05),
-            transparent);
-    display:flex;
-    flex-direction:column;
-    justify-content:flex-end;
-    align-items:center;
-    padding-bottom:50px;
-    overflow:hidden;
-    min-height:540px;
-}
-
-/* 1. Падение лампы */
-.lamp-wrapper{
-    position:absolute;
-    top:0;
-    left:50%;
-    transform:translateX(-50%) translateY(-150%);
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    z-index:10;
-    animation:dropLamp 1s cubic-bezier(.25,1,.5,1) forwards;
-}
-
-@keyframes dropLamp{
-    to{ transform:translateX(-50%) translateY(0); }
-}
-
-/* 2. Качание лампы */
-.lamp{
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    transform-origin:top center;
-    animation:swing 3s ease-in-out infinite alternate;
-    animation-delay:1s;
-}
-
-@keyframes swing{
-    0%{ transform:rotate(2.5deg); }
-    100%{ transform:rotate(-2.5deg); }
-}
-
-.lamp-cord{
-    width:2px;
-    height:95px;
-    background:#2a3044;
-}
-
-.lamp-shade{
-    width:80px;
-    height:46px;
-    background:#1a1f33;
-    border-radius:0 0 40px 40px;
-    border-bottom:3px solid var(--blue);
-    box-shadow:0 0 22px rgba(91,140,255,.25);
-    position:relative;
-}
-
-.lamp-light{
-    width:190px;
-    height:190px;
-    background:radial-gradient(circle,
-        rgba(91,140,255,.38) 0%,
-        rgba(123,97,255,.12) 40%,
-        transparent 70%);
-    border-radius:50%;
-    margin-top:-20px;
-    filter:blur(15px);
-    animation:glowPulse 3s infinite alternate;
-}
-
-@keyframes glowPulse{
-    0%{ opacity:.6; transform:scale(.95); }
-    100%{ opacity:1; transform:scale(1.05); }
-}
-
-/* 3. Появление робота */
-.robot-wrapper{
-    opacity:0;
-    transform:scale(.5) translateY(30px);
-    animation:popIn .6s cubic-bezier(.175,.885,.32,1.275) 1.2s forwards;
-    z-index:5;
-    position:relative;
-    margin-bottom:10px;
-}
-
-@keyframes popIn{
-    to{ opacity:1; transform:scale(1) translateY(0); }
-}
-
-.robot-svg{
-    width:120px;
-    height:120px;
-    filter:drop-shadow(0 0 15px rgba(91,140,255,.55));
-    animation:float 4s ease-in-out infinite;
-    animation-delay:1.8s;
-}
-
-@keyframes float{
-    0%,100%{ transform:translateY(0); }
-    50%{ transform:translateY(-10px); }
-}
-
-/* 4. Реалистичное моргание */
-.eye{
-    transform-box:fill-box;
-    transform-origin:center;
-    animation:blink 4s infinite;
-    animation-delay:2s;
-}
-
-@keyframes blink{
-    0%,92%,100%{ transform:scaleY(1); }
-    95%{ transform:scaleY(.1); }
-}
-
-/* ---------- ПРАВАЯ КОЛОНКА: форма ---------- */
-.auth-form-side{
-    flex:1.15;
-    padding:40px 42px;
-    display:flex;
-    flex-direction:column;
-    justify-content:center;
-    opacity:0;
-    transform:translateX(40px);
-    animation:slideInRight .7s ease-out 1.8s forwards;
-}
-
-@keyframes slideInRight{
-    to{ opacity:1; transform:translateX(0); }
-}
-
-.logo{
-    display:flex;
-    align-items:center;
-    gap:12px;
-}
-
-.logo-mark{
-    width:48px;
-    height:48px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    border-radius:15px;
-    background:linear-gradient(135deg,var(--blue),var(--purple));
-    box-shadow:0 12px 35px rgba(91,140,255,.3);
-    font-size:23px;
-    font-weight:900;
-}
-
-.logo-title{
-    font-weight:850;
-    font-size:21px;
-}
-
-.logo-sub{
-    color:var(--muted);
-    font-size:11px;
-    margin-top:3px;
-}
-
-.auth-title{
-    margin:26px 0 8px;
-    font-size:28px;
-}
-
-.auth-description{
-    color:var(--muted);
-    line-height:1.6;
-    margin:0 0 22px;
-    font-size:13px;
-}
-
-.auth-error{
-    color:#ff8098;
-    min-height:20px;
-    font-size:13px;
-    margin:8px 0;
-}
-
-.auth-footnote{
-    text-align:center;
-    margin-top:20px;
-    color:#5f6b81;
-    font-size:10px;
-    line-height:1.5;
-}
-
-/* ---------- Адаптив ---------- */
-@media(max-width:768px){
-    .auth-container{
-        flex-direction:column;
-        max-width:450px;
-    }
-    .auth-visual{
-        min-height:230px;
-        padding-bottom:30px;
-    }
-    .lamp-cord{ height:55px; }
-    .lamp-shade{ width:64px; height:38px; }
-    .lamp-light{ width:150px; height:150px; }
-    .robot-svg{ width:88px; height:88px; }
-    .auth-form-side{ padding:28px 24px; }
-    .auth-title{ font-size:24px; }
-}
-
-/* =====================================================
-   APP
-===================================================== */
-
-#app{
-    min-height:100vh;
-}
-
-.sidebar-overlay{
-    display:none;
-    position:fixed;
-    inset:0;
-    z-index:70;
-    background:rgba(0,0,0,.45);
-    backdrop-filter:blur(2px);
-    -webkit-backdrop-filter:blur(2px);
-    pointer-events:none;
-}
-.sidebar-overlay.active{
-    display:block;
-    pointer-events:auto;
-}
-
-.sidebar{
-    position:fixed;
-    z-index:100;
-    left:0;
-    top:0;
-    bottom:0;
-    width:275px;
-    padding:20px 15px;
-    background:rgba(8,12,21,.91);
-    backdrop-filter:blur(30px);
-    -webkit-backdrop-filter:blur(30px);
-    border-right:1px solid var(--line);
-    box-shadow:20px 0 70px rgba(0,0,0,.25);
-    transition:transform .28s ease;
-    touch-action:pan-y;
-}
-
-.sidebar.closed{
-    transform:translateX(-105%);
-}
-
-.sidebar-header{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:10px;
-    padding:2px 7px 20px;
-}
-
-.sidebar-close{
-    width:34px;
-    height:34px;
-    border-radius:10px;
-    border:1px solid var(--line);
-    color:#aeb8ca;
-    background:rgba(255,255,255,.04);
-}
-
-.sidebar-section-title{
-    padding:8px 10px 7px;
-    color:#68748a;
-    font-size:10px;
-    font-weight:800;
-    text-transform:uppercase;
-    letter-spacing:1px;
-}
-
-.sidebar-nav{
-    display:flex;
-    flex-direction:column;
-    gap:5px;
-}
-
-.side-btn{
-    width:100%;
-    display:flex;
-    align-items:center;
-    gap:11px;
-    padding:12px 12px;
-    border:1px solid transparent;
-    background:transparent;
-    color:#aab4c7;
-    border-radius:12px;
-    text-align:left;
-    transition:.2s;
-}
-
-.side-btn:hover{
-    color:white;
-    background:rgba(255,255,255,.045);
-}
-
-.side-btn.active{
-    color:white;
-    background:
-        linear-gradient(
-            135deg,
-            rgba(91,140,255,.18),
-            rgba(123,97,255,.11)
-        );
-    border-color:rgba(91,140,255,.18);
-}
-
-.side-icon{
-    width:23px;
-    text-align:center;
-}
-
-.sidebar-bottom{
-    position:absolute;
-    left:15px;
-    right:15px;
-    bottom:16px;
-}
-
-.user-mini{
-    padding:12px;
-    border-radius:14px;
-    background:rgba(255,255,255,.035);
-    border:1px solid var(--line);
-    margin-bottom:7px;
-}
-
-.user-role{
-    color:#667289;
-    font-size:9px;
-    text-transform:uppercase;
-    margin-bottom:5px;
-}
-
-.user-email{
-    color:#bdc6d7;
-    font-size:11px;
-    overflow:hidden;
-    text-overflow:ellipsis;
-    white-space:nowrap;
-}
-
-.main{
-    min-height:100vh;
-    margin-left:275px;
-    padding:20px;
-    transition:margin-left .28s ease;
-}
-
-.sidebar.closed + .main{
-    margin-left:0;
-}
-
-.topbar{
-    height:55px;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:15px;
-    margin-bottom:15px;
-}
-
-.topbar-left{
-    display:flex;
-    align-items:center;
-    gap:10px;
-    min-width:0;
-}
-
-.menu-open{
-    width:42px;
-    height:42px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    border-radius:12px;
-    border:1px solid var(--line);
-    background:rgba(255,255,255,.05);
-    color:white;
-}
-
-.breadcrumb{
-    color:var(--muted);
-    font-size:13px;
-    overflow:hidden;
-    text-overflow:ellipsis;
-    white-space:nowrap;
-}
-
-.breadcrumb strong{
-    color:white;
-}
-
-.storage-status{
-    color:#667289;
-    font-size:10px;
-}
-
-/* =====================================================
-   DASHBOARD
-===================================================== */
-
-.hero{
-    border-radius:24px;
-    padding:30px;
-    border:1px solid var(--line);
-    background:
-        linear-gradient(
-            135deg,
-            rgba(91,140,255,.12),
-            rgba(123,97,255,.05),
-            rgba(255,255,255,.015)
-        );
-    box-shadow:var(--shadow);
-    margin-bottom:18px;
-    overflow:hidden;
-    position:relative;
-}
-
-.hero:after{
-    content:"";
-    position:absolute;
-    width:250px;
-    height:250px;
-    right:-100px;
-    top:-130px;
-    border-radius:50%;
-    background:rgba(91,140,255,.1);
-    filter:blur(20px);
-}
-
-.hero h1{
-    margin:0 0 8px;
-    font-size:31px;
-    position:relative;
-    z-index:1;
-}
-
-.hero p{
-    margin:0;
-    max-width:750px;
-    color:var(--muted);
-    line-height:1.6;
-    position:relative;
-    z-index:1;
-}
-
-.stats{
-    display:grid;
-    grid-template-columns:repeat(4,1fr);
-    gap:13px;
-    margin-bottom:18px;
-}
-
-.stat{
-    padding:18px;
-    border:1px solid var(--line);
-    border-radius:17px;
-    background:var(--panel);
-    box-shadow:var(--shadow);
-}
-
-.stat-number{
-    font-size:27px;
-    font-weight:850;
-}
-
-.stat-label{
-    color:var(--muted);
-    font-size:11px;
-    margin-top:4px;
-}
-
-/* =====================================================
-   TOOLBAR
-===================================================== */
-
-.toolbar{
-    display:flex;
-    align-items:center;
-    gap:10px;
-    margin-bottom:17px;
-}
-
-.search{
-    position:relative;
-    flex:1;
-}
-
-.search span{
-    position:absolute;
-    left:13px;
-    top:50%;
-    transform:translateY(-50%);
-    color:#748097;
-}
-
-.search input{
-    width:100%;
-    height:44px;
-    border-radius:12px;
-    padding:0 13px 0 38px;
-    background:rgba(255,255,255,.04);
-    border:1px solid var(--line);
-    outline:none;
-    color:white;
-}
-
-.search input:focus{
-    border-color:rgba(91,140,255,.55);
-}
-
-/* =====================================================
-   CATEGORIES
-===================================================== */
-
-.category-header{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:15px;
-    margin-bottom:17px;
-}
-
-.category-title{
-    font-size:24px;
-    font-weight:850;
-}
-
-.category-description{
-    color:var(--muted);
-    font-size:12px;
-    margin-top:4px;
-}
-
-.parts-layout{
-    display:grid;
-    grid-template-columns:280px 1fr;
-    gap:15px;
-}
-
-.name-list{
-    border:1px solid var(--line);
-    background:var(--panel);
-    border-radius:18px;
-    padding:8px;
-    height:fit-content;
-    max-height:calc(100vh - 160px);
-    overflow:auto;
-}
-
-.name-item{
-    width:100%;
-    text-align:left;
-    border:1px solid transparent;
-    border-radius:12px;
-    background:transparent;
-    color:#aeb8c9;
-    padding:12px;
-    margin-bottom:4px;
-    transition:.2s;
-}
-
-.name-item:hover{
-    background:rgba(255,255,255,.045);
-    color:white;
-}
-
-.name-item.active{
-    color:white;
-    background:
-        linear-gradient(
-            135deg,
-            rgba(91,140,255,.17),
-            rgba(123,97,255,.1)
-        );
-    border-color:rgba(91,140,255,.18);
-}
-
-.name-item-title{
-    font-weight:700;
-    font-size:13px;
-}
-
-.name-item-count{
-    color:#68758b;
-    font-size:10px;
-    margin-top:4px;
-}
-
-
-.folder-list{
-    display:flex;
-    flex-direction:column;
-    gap:7px;
-}
-.folder-item{
-    width:100%;
-    text-align:left;
-    border:1px solid var(--line);
-    border-radius:14px;
-    background:rgba(255,255,255,.025);
-    color:#aeb8c9;
-    padding:12px 13px;
-    transition:.2s;
-}
-.folder-item:hover{
-    background:rgba(255,255,255,.055);
-    color:white;
-    border-color:rgba(91,140,255,.22);
-}
-.folder-item.active{
-    color:white;
-    background:linear-gradient(135deg,rgba(91,140,255,.17),rgba(123,97,255,.1));
-    border-color:rgba(91,140,255,.22);
-}
-.folder-row{
-    display:flex;
-    align-items:center;
-    gap:10px;
-}
-.folder-icon{
-    font-size:18px;
-    width:22px;
-    text-align:center;
-}
-.folder-title{
-    flex:1;
-    min-width:0;
-    font-size:13px;
-    font-weight:750;
-    overflow:hidden;
-    text-overflow:ellipsis;
-    white-space:nowrap;
-}
-.folder-main{
-    flex:1;
-    min-width:0;
-    display:flex;
-    align-items:center;
-    gap:10px;
-    border:0;
-    background:transparent;
-    color:inherit;
-    padding:0;
-    text-align:left;
-}
-.folder-more{
-    width:30px;
-    height:30px;
-    flex:0 0 30px;
-    border:1px solid var(--line);
-    border-radius:9px;
-    background:rgba(255,255,255,.035);
-    color:#aeb8c9;
-}
-.folder-more:hover{
-    background:rgba(255,255,255,.09);
-    color:white;
-}
-.folder-count{
-    color:#6f7c91;
-    font-size:10px;
-}
-.folder-hint{
-    color:#66738a;
-    font-size:9px;
-    margin-top:5px;
-    padding-left:32px;
-}
-.move-select{
-    width:100%;
-    margin-top:6px;
-}
-
-.variants{
-    min-width:0;
-}
-
-.variant-grid{
-    display:grid;
-    grid-template-columns:repeat(auto-fill,minmax(260px,1fr));
-    gap:13px;
-}
-
-.variant-card{
-    background:var(--panel);
-    border:1px solid var(--line);
-    border-radius:18px;
-    padding:17px;
-    box-shadow:var(--shadow);
-    transition:.2s;
-}
-
-.variant-card:hover{
-    transform:translateY(-2px);
-    border-color:rgba(91,140,255,.25);
-}
-
-.variant-number{
-    color:#83a5ff;
-    font-size:11px;
-    font-weight:800;
-    letter-spacing:.4px;
-}
-
-.variant-name{
-    font-size:17px;
-    font-weight:800;
-    margin-top:6px;
-    overflow-wrap:anywhere;
-}
-
-.variant-meta{
-    color:var(--muted);
-    font-size:10px;
-    margin-top:7px;
-}
-
-.gcode-mini{
-    margin-top:13px;
-    background:#060911;
-    border:1px solid var(--line);
-    border-radius:12px;
-    padding:11px;
-    color:#aeb9cd;
-    font:10px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace;
-    white-space:pre-wrap;
-    max-height:76px;
-    overflow:hidden;
-}
-
-.badges{
-    display:flex;
-    flex-wrap:wrap;
-    gap:6px;
-    margin-top:12px;
-}
-
-.badge{
-    display:inline-flex;
-    align-items:center;
-    gap:5px;
-    border-radius:8px;
-    padding:5px 8px;
-    background:rgba(255,255,255,.045);
-    border:1px solid var(--line);
-    color:#98a4b8;
-    font-size:10px;
-}
-
-/* =====================================================
-   EMPTY
-===================================================== */
-
-.empty{
-    padding:45px 20px;
-    border:1px dashed var(--line2);
-    border-radius:19px;
-    text-align:center;
-    color:var(--muted);
-    background:rgba(255,255,255,.018);
-}
-
-.empty-icon{
-    font-size:34px;
-    margin-bottom:10px;
-}
-
-/* =====================================================
-   MODAL
-===================================================== */
-
-.modal-backdrop{
-    position:fixed;
-    inset:0;
-    z-index:200;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    padding:15px;
-    background:rgba(0,0,0,.7);
-    backdrop-filter:blur(9px);
-}
-
-.modal{
-    width:100%;
-    max-width:650px;
-    max-height:94vh;
-    overflow:auto;
-    border-radius:22px;
-    background:#111827;
-    border:1px solid var(--line2);
-    box-shadow:0 40px 100px rgba(0,0,0,.65);
-}
-
-.modal.large{
-    max-width:950px;
-}
-
-.modal-header{
-    padding:19px 21px;
-    border-bottom:1px solid var(--line);
-    display:flex;
-    justify-content:space-between;
-    gap:15px;
-}
-
-.modal-title{
-    font-size:19px;
-    font-weight:850;
-}
-
-.modal-close{
-    width:35px;
-    height:35px;
-    border-radius:10px;
-    background:rgba(255,255,255,.04);
-    border:1px solid var(--line);
-    color:#aeb8ca;
-}
-
-.modal-body{
-    padding:21px;
-}
-
-.modal-footer{
-    padding:15px 21px;
-    border-top:1px solid var(--line);
-    display:flex;
-    justify-content:flex-end;
-    gap:8px;
-    flex-wrap:wrap;
-}
-
-.file-drop{
-    border:1px dashed var(--line2);
-    border-radius:15px;
-    padding:20px;
-    text-align:center;
-    background:rgba(255,255,255,.025);
-    cursor:pointer;
-}
-
-.file-drop:hover{
-    border-color:rgba(91,140,255,.5);
-}
-
-.file-drop input{
-    display:none;
-}
-
-.file-preview{
-    margin-top:12px;
-    border-radius:13px;
-    overflow:hidden;
-    border:1px solid var(--line);
-    background:#070a11;
-}
-
-.file-preview img{
-    max-width:100%;
-    max-height:350px;
-    display:block;
-    margin:auto;
-}
-
-.file-preview iframe{
-    width:100%;
-    height:420px;
-    border:0;
-}
-
-.code-view{
-    margin:0;
-    white-space:pre-wrap;
-    overflow:auto;
-    max-height:400px;
-    padding:15px;
-    border-radius:13px;
-    background:#05070d;
-    border:1px solid var(--line);
-    color:#c3ccdc;
-    font:12px/1.6 ui-monospace,SFMono-Regular,Menlo,monospace;
-}
-
-/* =====================================================
-   ADMIN
-===================================================== */
-
-.admin-table{
-    width:100%;
-    border-collapse:collapse;
-}
-
-.admin-table th{
-    color:#6f7c92;
-    text-align:left;
-    font-size:10px;
-    font-weight:700;
-    padding:11px;
-    border-bottom:1px solid var(--line);
-}
-
-.admin-table td{
-    padding:12px 11px;
-    border-bottom:1px solid var(--line);
-    color:#c0c8d8;
-    font-size:12px;
-}
-
-.admin-table tr:last-child td{
-    border-bottom:0;
-}
-
-.role-admin{
-    color:#8daaff;
-}
-
-.role-user{
-    color:#72e3b5;
-}
-
-/* =====================================================
-   CONTEXT MENU
-===================================================== */
-
-.context-menu{
-    position:fixed;
-    z-index:500;
-    min-width:180px;
-    background:#151d2e;
-    border:1px solid var(--line2);
-    border-radius:12px;
-    padding:5px;
-    box-shadow:0 20px 50px rgba(0,0,0,.5);
-}
-
-.context-menu button{
-    width:100%;
-    padding:10px;
-    background:transparent;
-    border:0;
-    border-radius:8px;
-    text-align:left;
-    color:#c5cddd;
-}
-
-.context-menu button:hover{
-    background:rgba(255,255,255,.06);
-}
-
-.context-menu .danger{
-    color:#ff8198;
-}
-
-/* =====================================================
-   TOAST
-===================================================== */
-
-#toastContainer{
-    position:fixed;
-    right:18px;
-    bottom:calc(18px + var(--keyboard-offset, 0px));
-    z-index:600;
-    display:flex;
-    flex-direction:column;
-    gap:8px;
-}
-
-.toast{
-    min-width:250px;
-    max-width:370px;
-    padding:13px 15px;
-    border-radius:13px;
-    background:#151d2e;
-    border:1px solid var(--line2);
-    box-shadow:0 20px 50px rgba(0,0,0,.45);
-    font-size:12px;
-    animation:toastIn .25s ease;
-}
-
-.toast.success{
-    border-color:rgba(53,212,154,.25);
-}
-
-.toast.error{
-    border-color:rgba(255,85,116,.25);
-}
-
-@keyframes toastIn{
-    from{ opacity:0; transform:translateY(10px); }
-    to{ opacity:1; transform:none; }
-}
-
-/* =====================================================
-   UX / MOBILE / FOLDER SCROLL / FOOTER
-===================================================== */
-.btn, .side-btn, .menu-open, .folder-main, .folder-more{
-    min-width:44px;
-    min-height:44px;
-}
-.folder-list{
-    max-height:calc(5 * 76px);
-    overflow-y:auto;
     overflow-x:hidden;
-    padding-right:4px;
-    overscroll-behavior:contain;
-}
-.folder-list::-webkit-scrollbar{width:7px}
-.folder-list::-webkit-scrollbar-thumb{background:rgba(255,255,255,.14);border-radius:20px}
-.app-footer{
-    text-align:center; padding:22px 10px 10px; color:#647086; font-size:10px;
-}
-.changelog-entry{padding:16px;border:1px solid var(--line);border-radius:15px;background:rgba(255,255,255,.025);margin-bottom:10px}
-.changelog-entry h4{margin:0 0 6px;font-size:14px}
-.changelog-date{color:#738097;font-size:10px;margin-bottom:8px}
-.history-row{display:grid;grid-template-columns:minmax(220px,1.5fr) 1fr 1.25fr auto;gap:10px;align-items:center;padding:11px 0;border-bottom:1px solid var(--line);font-size:11px}
-.history-filters{margin-bottom:12px;padding:12px;border:1px solid var(--line);border-radius:15px;background:rgba(255,255,255,.025)}
-.history-filters-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}
-.history-filter-field{display:flex;flex-direction:column;gap:5px}
-.history-filter-field label{font-size:10px;color:#718097;font-weight:700;text-transform:uppercase;letter-spacing:.04em}
-.history-filter-field input,.history-filter-field select{width:100%;min-height:42px;padding:9px 11px;border-radius:11px;border:1px solid var(--line);background:rgba(0,0,0,.16);color:var(--text);outline:none}
-.history-filter-actions{display:flex;gap:8px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-top:10px}
-.history-active{display:flex;gap:6px;flex-wrap:wrap;min-height:24px}
-.history-chip{display:inline-flex;align-items:center;gap:5px;padding:5px 8px;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.04);font-size:10px;color:#b9c2d2}
-.history-summary{color:#718097;font-size:10px;margin:10px 0}
-.history-pagination{display:flex;gap:6px;justify-content:center;align-items:center;flex-wrap:wrap;padding-top:14px}
-.history-page-btn{min-width:42px;min-height:42px;padding:7px 10px}
-.history-page-btn.active{border-color:rgba(120,180,255,.55);background:rgba(90,150,255,.14)}
-.history-page-dots{color:#718097;padding:0 2px}
-.bulk-toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
-.sticky-actions{position:sticky;bottom:10px;z-index:20}
-@media(max-width:700px){
-    .history-filters-grid{grid-template-columns:1fr}
-    .history-filter-field[style*="grid-column"]{grid-column:auto !important}
-}
-@media(max-width:600px){
-    .folder-list{max-height:380px}
-    .history-row{grid-template-columns:1fr;gap:4px}
-    .app-footer{padding-bottom:calc(14px + env(safe-area-inset-bottom))}
-    .btn{min-height:44px}
-}
+  }
 
-/* =====================================================
-   RESPONSIVE
-===================================================== */
+  /* ============ PIN-ЭКРАН ============ */
+  #lock{
+    position:fixed;inset:0;z-index:100;
+    display:flex;align-items:center;justify-content:center;
+    background:
+      radial-gradient(800px 500px at 30% 20%, rgba(43,108,255,.4), transparent 60%),
+      radial-gradient(800px 500px at 70% 80%, rgba(255,95,162,.35), transparent 60%),
+      #0b0c16;
+    transition:opacity .6s ease, visibility .6s;
+  }
+  #lock.hidden{opacity:0;visibility:hidden;pointer-events:none}
+  .lock-card{
+    background:var(--card);
+    border:1px solid var(--border);
+    backdrop-filter:blur(18px);
+    border-radius:28px;
+    padding:48px 40px;
+    width:min(400px,90vw);
+    text-align:center;
+    box-shadow:0 30px 80px rgba(0,0,0,.6);
+  }
+  .lock-card h1{
+    font-size:1.4rem;font-weight:600;margin-bottom:8px;
+    background:linear-gradient(90deg,var(--blue-soft),var(--pink-soft));
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  .lock-card p{color:var(--muted);font-size:.9rem;margin-bottom:28px}
+  .pin-dots{
+    display:flex;gap:14px;justify-content:center;margin-bottom:28px;
+  }
+  .pin-dots span{
+    width:16px;height:16px;border-radius:50%;
+    border:2px solid var(--border);
+    transition:.25s;
+  }
+  .pin-dots span.filled{
+    background:linear-gradient(135deg,var(--blue),var(--pink));
+    border-color:transparent;
+    box-shadow:0 0 18px rgba(255,95,162,.6);
+  }
+  .pin-pad{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:12px;
+  }
+  .pin-pad button{
+    aspect-ratio:1.4/1;
+    background:rgba(255,255,255,.05);
+    border:1px solid var(--border);
+    color:var(--text);
+    border-radius:14px;
+    font-size:1.3rem;font-weight:500;
+    cursor:pointer;
+    transition:.15s;
+  }
+  .pin-pad button:hover{background:rgba(255,255,255,.12);transform:translateY(-2px)}
+  .pin-pad button:active{transform:scale(.96)}
+  .pin-pad button.wide{grid-column:span 3}
+  .hint{margin-top:18px;font-size:.8rem;color:var(--muted);opacity:.8}
+  .shake{animation:shake .4s}
+  @keyframes shake{
+    0%,100%{transform:translateX(0)}
+    20%{transform:translateX(-10px)}
+    40%{transform:translateX(10px)}
+    60%{transform:translateX(-6px)}
+    80%{transform:translateX(6px)}
+  }
 
-@media(max-width:900px){
+  /* ============ ОСНОВНОЙ САЙТ ============ */
+  #site{display:none;animation:fadeUp 1s ease}
+  #site.visible{display:block}
+  @keyframes fadeUp{
+    from{opacity:0;transform:translateY(20px)}
+    to{opacity:1;transform:translateY(0)}
+  }
 
-    .sidebar{
-        transform:translateX(-105%);
+  .container{max-width:1100px;margin:0 auto;padding:0 24px}
+
+  /* HERO */
+  .hero{
+    min-height:100vh;
+    display:flex;flex-direction:column;justify-content:center;align-items:center;
+    text-align:center;position:relative;padding:80px 24px;
+  }
+  .hearts{position:absolute;inset:0;overflow:hidden;pointer-events:none}
+  .hearts i{
+    position:absolute;font-style:normal;opacity:.15;font-size:2rem;
+    animation:float linear infinite;
+  }
+  @keyframes float{
+    from{transform:translateY(0) rotate(0)}
+    to{transform:translateY(-100vh) rotate(360deg)}
+  }
+
+  .couple{
+    font-size:clamp(2.4rem,7vw,5rem);
+    font-weight:800;line-height:1.05;letter-spacing:-.02em;
+    position:relative;z-index:1;
+  }
+  .couple .him{
+    background:linear-gradient(90deg,#7aa8ff,#2b6cff);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  .couple .her{
+    background:linear-gradient(90deg,#ff5fa2,#ffa5c9);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  .amp{color:var(--muted);font-weight:300;margin:0 .15em}
+
+  .subtitle{
+    margin-top:20px;color:var(--muted);font-size:1.05rem;z-index:1;
+  }
+
+  .counter{
+    margin-top:48px;display:flex;gap:14px;flex-wrap:wrap;justify-content:center;z-index:1;
+  }
+  .counter .unit{
+    background:var(--card);border:1px solid var(--border);
+    border-radius:20px;padding:20px 26px;min-width:110px;
+    backdrop-filter:blur(12px);
+  }
+  .counter .num{
+    font-size:2.2rem;font-weight:700;
+    background:linear-gradient(135deg,var(--blue-soft),var(--pink-soft));
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  .counter .lbl{font-size:.8rem;color:var(--muted);margin-top:4px;text-transform:uppercase;letter-spacing:.08em}
+
+  .bday{
+    margin-top:40px;display:flex;gap:20px;flex-wrap:wrap;justify-content:center;
+    font-size:.9rem;color:var(--muted);z-index:1;
+  }
+  .bday span b{color:var(--text)}
+  .bday .him b{color:var(--blue-soft)}
+  .bday .her b{color:var(--pink-soft)}
+
+  /* SECTIONS */
+  section{padding:100px 0}
+  .section-title{
+    font-size:clamp(1.6rem,4vw,2.4rem);
+    font-weight:700;text-align:center;margin-bottom:16px;
+  }
+  .section-sub{text-align:center;color:var(--muted);margin-bottom:60px}
+
+  /* TIMELINE */
+  .timeline{position:relative;max-width:800px;margin:0 auto}
+  .timeline::before{
+    content:'';position:absolute;left:50%;top:0;bottom:0;width:2px;
+    background:linear-gradient(180deg,var(--blue),var(--pink));
+    transform:translateX(-50%);
+  }
+  .t-item{
+    display:flex;justify-content:flex-end;padding-right:calc(50% + 30px);
+    margin-bottom:50px;position:relative;
+  }
+  .t-item:nth-child(even){
+    justify-content:flex-start;padding-right:0;padding-left:calc(50% + 30px);
+  }
+  .t-item .dot{
+    position:absolute;left:50%;top:8px;width:16px;height:16px;border-radius:50%;
+    background:linear-gradient(135deg,var(--blue),var(--pink));
+    transform:translateX(-50%);
+    box-shadow:0 0 20px rgba(255,95,162,.7);
+  }
+  .t-item .card{
+    background:var(--card);border:1px solid var(--border);
+    border-radius:16px;padding:20px 24px;backdrop-filter:blur(12px);
+    max-width:340px;
+  }
+  .t-item .date{font-size:.8rem;color:var(--pink-soft);letter-spacing:.08em;text-transform:uppercase}
+  .t-item h4{margin:6px 0 8px;font-size:1.15rem}
+  .t-item p{color:var(--muted);font-size:.92rem;line-height:1.5}
+  @media(max-width:640px){
+    .timeline::before{left:20px}
+    .t-item, .t-item:nth-child(even){
+      padding:0 0 0 50px;justify-content:flex-start;
     }
+    .t-item .dot{left:20px}
+    .t-item .card{max-width:100%}
+  }
 
-    .sidebar.open{
-        transform:translateX(0);
-    }
+  /* GALLERY */
+  .gallery{
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:16px;
+  }
+  .gallery .ph{
+    aspect-ratio:1;border-radius:18px;overflow:hidden;position:relative;
+    background:linear-gradient(135deg,rgba(43,108,255,.25),rgba(255,95,162,.25));
+    border:1px solid var(--border);
+    display:flex;align-items:center;justify-content:center;
+    color:var(--muted);font-size:.85rem;
+    transition:.3s;cursor:pointer;
+  }
+  .gallery .ph:hover{transform:translateY(-6px) scale(1.02);box-shadow:0 20px 40px rgba(0,0,0,.4)}
+  .gallery .ph::after{
+    content:attr(data-label);position:absolute;bottom:12px;left:12px;
+    font-size:.75rem;color:rgba(255,255,255,.7);
+  }
 
-    .sidebar.closed{
-        transform:translateX(-105%);
-    }
+  /* PLACES */
+  .places{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px}
+  .place{
+    background:var(--card);border:1px solid var(--border);border-radius:20px;
+    padding:28px;backdrop-filter:blur(12px);transition:.3s;
+  }
+  .place:hover{border-color:var(--pink-soft);transform:translateY(-4px)}
+  .place .icon{font-size:2rem;margin-bottom:12px}
+  .place h4{margin-bottom:8px}
+  .place p{color:var(--muted);font-size:.92rem;line-height:1.5}
 
-    .sidebar-overlay{
-        z-index:70;
-    }
+  /* DREAMS */
+  .dreams{max-width:700px;margin:0 auto;display:flex;flex-direction:column;gap:14px}
+  .dream{
+    display:flex;align-items:center;gap:16px;
+    background:var(--card);border:1px solid var(--border);
+    border-radius:16px;padding:18px 22px;cursor:pointer;transition:.25s;
+  }
+  .dream:hover{background:rgba(255,255,255,.09)}
+  .dream .check{
+    width:24px;height:24px;border-radius:8px;border:2px solid var(--border);
+    display:flex;align-items:center;justify-content:center;flex-shrink:0;
+    transition:.25s;font-size:.9rem;
+  }
+  .dream.done .check{
+    background:linear-gradient(135deg,var(--blue),var(--pink));
+    border-color:transparent;
+  }
+  .dream.done span{text-decoration:line-through;color:var(--muted)}
+  .dream span{transition:.25s}
 
-    .sidebar-overlay.active{
-        display:block;
-        pointer-events:auto;
-    }
+  /* FOOTER */
+  footer{
+    text-align:center;padding:60px 24px;color:var(--muted);font-size:.85rem;
+    border-top:1px solid var(--border);
+  }
+  .secret-btn{
+    margin-top:16px;background:transparent;border:1px dashed var(--border);
+    color:var(--muted);padding:10px 20px;border-radius:12px;cursor:pointer;
+    font-size:.8rem;transition:.25s;
+  }
+  .secret-btn:hover{color:var(--text);border-color:var(--pink-soft)}
 
-    .main{
-        margin-left:0!important;
-        padding:15px;
-    }
+  /* MODAL */
+  .modal{
+    position:fixed;inset:0;z-index:200;display:none;
+    align-items:center;justify-content:center;padding:24px;
+    background:rgba(5,6,15,.8);backdrop-filter:blur(8px);
+  }
+  .modal.show{display:flex;animation:fadeUp .4s}
+  .modal .box{
+    background:linear-gradient(160deg,rgba(43,108,255,.2),rgba(255,95,162,.2));
+    border:1px solid var(--border);border-radius:24px;
+    padding:40px;max-width:500px;text-align:center;
+  }
+  .modal h3{margin-bottom:16px;font-size:1.5rem}
+  .modal p{color:var(--muted);line-height:1.6;margin-bottom:24px}
+  .modal button{
+    background:linear-gradient(135deg,var(--blue),var(--pink));
+    color:white;border:none;padding:12px 32px;border-radius:12px;
+    font-size:1rem;cursor:pointer;font-weight:600;
+  }
 
-    .stats{
-        grid-template-columns:repeat(2,1fr);
-    }
-
-    .parts-layout{
-        grid-template-columns:1fr;
-    }
-
-    .name-list{max-height:none;display:block;overflow:visible;}
-    .folder-list{max-height:calc(5 * 76px);overflow-y:auto;display:block;}
-}
-
-@media(max-width:600px){
-
-    .hero{
-        padding:22px;
-    }
-
-    .hero h1{
-        font-size:25px;
-    }
-
-    .toolbar{
-        flex-direction:column;
-        align-items:stretch;
-    }
-
-    .toolbar .btn{
-        width:100%;
-    }
-
-    .variant-grid{
-        grid-template-columns:1fr;
-    }
-
-    .modal-backdrop{
-        padding:7px;
-    }
-
-    .modal{
-        max-height:97vh;
-        border-radius:18px;
-    }
-
-    .modal-body{
-        padding:17px;
-    }
-
-    .modal-footer{
-        padding:13px 17px;
-    }
-
-    #toastContainer{
-        left:10px;
-        right:10px;
-        bottom:calc(10px + var(--keyboard-offset, 0px));
-    }
-
-    .toast{
-        min-width:0;
-        max-width:none;
-    }
-}
+  ::selection{background:var(--pink);color:white}
 </style>
 </head>
-
 <body>
 
-<!-- =====================================================
-     AUTH
-===================================================== -->
+<!-- ============ PIN-ЭКРАН ============ -->
+<div id="lock">
+  <div class="lock-card" id="lockCard">
+    <h1>Наш уголок</h1>
+    <p>Только для нас двоих 💙💗</p>
 
-<section id="authPage">
-
-    <div class="auth-orb one"></div>
-    <div class="auth-orb two"></div>
-
-    <div class="auth-container">
-
-        <!-- ===== Левая колонка: лампа и робот ===== -->
-        <div class="auth-visual">
-
-            <!-- Лампа -->
-            <div class="lamp-wrapper">
-                <div class="lamp">
-                    <div class="lamp-cord"></div>
-                    <div class="lamp-shade"></div>
-                    <div class="lamp-light"></div>
-                </div>
-            </div>
-
-            <!-- Робот -->
-            <div class="robot-wrapper">
-                <svg class="robot-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                    <!-- Антенна -->
-                    <line x1="50" y1="10" x2="50" y2="25" stroke="#5b8cff" stroke-width="3"/>
-                    <circle cx="50" cy="10" r="4" fill="#7b61ff"/>
-
-                    <!-- Голова -->
-                    <rect x="25" y="25" width="50" height="40" rx="15"
-                          fill="#0d1220" stroke="#5b8cff" stroke-width="3"/>
-
-                    <!-- Глаза -->
-                    <circle class="eye" cx="40" cy="45" r="5" fill="#7b61ff"/>
-                    <circle class="eye" cx="60" cy="45" r="5" fill="#7b61ff"/>
-
-                    <!-- Улыбка -->
-                    <path d="M 40 55 Q 50 65 60 55"
-                          stroke="#5b8cff" stroke-width="3"
-                          fill="none" stroke-linecap="round"/>
-
-                    <!-- Тело -->
-                    <rect x="35" y="65" width="30" height="30" rx="10"
-                          fill="#0d1220" stroke="#5b8cff" stroke-width="3"/>
-
-                    <!-- Наушники -->
-                    <rect x="15" y="35" width="10" height="20" rx="5" fill="#5b8cff"/>
-                    <rect x="75" y="35" width="10" height="20" rx="5" fill="#5b8cff"/>
-
-                    <!-- Индикатор -->
-                    <circle cx="50" cy="80" r="3" fill="#7b61ff"/>
-                </svg>
-            </div>
-
-        </div>
-
-        <!-- ===== Правая колонка: форма входа ===== -->
-        <div class="auth-form-side">
-
-            <div class="logo">
-                <div class="logo-mark">⌬</div>
-                <div>
-                    <div class="logo-title">MiniCAD</div>
-                    <div class="logo-sub">Производственная система</div>
-                </div>
-            </div>
-
-            <h1 class="auth-title">Вход в систему</h1>
-
-            <p class="auth-description">
-                Введите выданные администратором
-                данные для доступа к каталогу.
-            </p>
-
-            <form onsubmit="login(event)">
-
-                <div class="field">
-                    <label>Логин</label>
-                    <input
-                        id="loginInput"
-                        class="input"
-                        autocomplete="username"
-                        required
-                        placeholder="Введите логин">
-                </div>
-
-                <div class="field">
-                    <label>Пароль</label>
-                    <input
-                        id="passwordInput"
-                        class="input"
-                        type="password"
-                        autocomplete="current-password"
-                        required
-                        placeholder="Введите пароль">
-                </div>
-
-                <div id="loginError" class="auth-error"></div>
-
-                <button type="submit" class="btn primary full">
-                    Войти
-                </button>
-
-            </form>
-
-            <div class="auth-footnote">
-                Аккаунты выдаются только администратором.
-            </div>
-
-        </div>
-
+    <div class="pin-dots" id="pinDots">
+      <span></span><span></span><span></span><span></span>
     </div>
 
-</section>
-
-
-<!-- =====================================================
-     APP
-===================================================== -->
-
-<section
-    id="app"
-    class="hidden">
-
-    <aside
-        id="sidebar"
-        class="sidebar">
-
-        <div class="sidebar-header">
-
-            <div class="logo">
-
-                <div class="logo-mark">
-                    ⌬
-                </div>
-
-                <div>
-                    <div class="logo-title">
-                        MiniCAD
-                    </div>
-
-                    <div class="logo-sub">
-                        Production
-                    </div>
-                </div>
-
-            </div>
-
-            <button
-                type="button"
-                class="sidebar-close"
-                onclick="closeSidebar()">
-                ‹
-            </button>
-
-        </div>
-
-
-        <div class="sidebar-section-title">
-            Каталог
-        </div>
-
-        <nav class="sidebar-nav">
-
-            <button
-                type="button"
-                id="navPrograms"
-                class="side-btn active"
-                onclick="openCategory('programs')">
-
-                <span class="side-icon">
-                    ⚙
-                </span>
-
-                <span>
-                    Программы
-                </span>
-
-            </button>
-
-            <button
-                type="button"
-                id="navTools"
-                class="side-btn"
-                onclick="openCategory('tools')">
-
-                <span class="side-icon">
-                    🔧
-                </span>
-
-                <span>
-                    Инструмент
-                </span>
-
-            </button>
-
-            <button
-                type="button"
-                id="navOther"
-                class="side-btn"
-                onclick="openCategory('other')">
-
-                <span class="side-icon">
-                    ◈
-                </span>
-
-                <span>
-                    Прочее
-                </span>
-
-            </button>
-
-            <button type="button" class="side-btn" id="navChangelog" onclick="openChangelog()">
-                <span class="side-icon">📝</span>
-                <span>Блог изменений</span>
-            </button>
-
-        </nav>
-
-
-        <div
-            id="adminNavigation"
-            class="hidden">
-
-            <div
-                class="sidebar-section-title"
-                style="margin-top:18px;">
-                Управление
-            </div>
-
-            <nav class="sidebar-nav">
-
-                <button
-                    type="button"
-                    class="side-btn"
-                    id="navAdmin"
-                    onclick="openAdminPanel()">
-
-                    <span class="side-icon">
-                        🛡
-                    </span>
-
-                    <span>
-                        Администратор
-                    </span>
-
-                </button>
-
-            </nav>
-
-        </div>
-
-
-        <div class="sidebar-bottom">
-
-            <div class="user-mini">
-
-                <div class="user-role">
-                    Текущий пользователь
-                </div>
-
-                <div
-                    id="currentUserName"
-                    class="user-email">
-                </div>
-
-            </div>
-
-            <button
-                type="button"
-                class="side-btn"
-                onclick="logout()">
-
-                <span class="side-icon">
-                    ↪
-                </span>
-
-                Выйти
-
-            </button>
-
-        </div>
-
-    </aside>
-
-
-    <!-- затемнение за панелью -->
-    <div
-        id="sidebarOverlay"
-        class="sidebar-overlay"
-        onclick="closeSidebar()">
+    <div class="pin-pad" id="pinPad">
+      <button data-k="1">1</button>
+      <button data-k="2">2</button>
+      <button data-k="3">3</button>
+      <button data-k="4">4</button>
+      <button data-k="5">5</button>
+      <button data-k="6">6</button>
+      <button data-k="7">7</button>
+      <button data-k="8">8</button>
+      <button data-k="9">9</button>
+      <button data-k="del">⌫</button>
+      <button data-k="0">0</button>
+      <button data-k="ok" style="background:linear-gradient(135deg,var(--blue),var(--pink));border:none">✓</button>
     </div>
 
-
-    <main class="main">
-
-        <div class="topbar">
-
-            <div class="topbar-left">
-
-                <button
-                    type="button"
-                    class="menu-open"
-                    onclick="openSidebar()">
-                    ☰
-                </button>
-
-                <div
-                    id="breadcrumb"
-                    class="breadcrumb">
-                    <strong>
-                        Программы
-                    </strong>
-                </div>
-
-            </div>
-
-            <div style="display:flex;align-items:center;gap:10px;">
-                <button
-                    type="button"
-                    id="returnImpersonationBtn"
-                    class="btn"
-                    style="display:none;padding:8px 11px;font-size:10px;"
-                    onclick="returnFromImpersonation()">
-                    ↩ Вернуться в главный аккаунт
-                </button>
-                <div
-                    id="storageStatus"
-                    class="storage-status">
-                    Локальное хранилище
-                </div>
-            </div>
-
-        </div>
-
-
-        <!-- =================================================
-             DASHBOARD / CATEGORY
-        ================================================= -->
-
-        <section
-            id="pageCatalog">
-
-            <div class="category-header">
-
-                <div>
-
-                    <div
-                        id="categoryTitle"
-                        class="category-title">
-                        Программы
-                    </div>
-
-                    <div
-                        id="categoryDescription"
-                        class="category-description">
-                        Управляющие программы и G-код.
-                    </div>
-
-                </div>
-
-                <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;">
-                    <button
-                        type="button"
-                        id="catalogNewFolderBtn"
-                        class="btn"
-                        onclick="openFolderModal()">
-                        📁 Новая папка
-                    </button>
-                    <button
-                        type="button"
-                        id="catalogAddPartBtn"
-                        class="btn primary"
-                        onclick="openPartModal()">
-                        ＋ Добавить
-                    </button>
-                </div>
-
-            </div>
-
-
-            <div class="toolbar">
-
-                <div class="search">
-
-                    <span>
-                        ⌕
-                    </span>
-
-                    <input
-                        id="partSearch"
-                        placeholder="Поиск по номеру..."
-                        oninput="renderCatalog()">
-
-                </div>
-
-            </div>
-
-
-            <div class="parts-layout">
-
-                <div
-                    id="nameList"
-                    class="name-list">
-                </div>
-
-                <div
-                    id="variantsContainer"
-                    class="variants">
-                </div>
-
-            </div>
-            <div class="app-footer"><span class="site-version">BetaLock v0.01</span></div>
-
-        </section>
-
-
-        <section id="pageChangelog" class="hidden">
-            <div class="category-header">
-                <div>
-                    <div class="category-title">Блог изменений</div>
-                    <div class="category-description">История обновлений сайта.</div>
-                </div>
-                <button type="button" id="newChangelogBtn" class="btn primary" onclick="openChangelogModal()">＋ Новая запись</button>
-            </div>
-            <div id="changelogList"></div>
-            <div class="app-footer"><span class="site-version">BetaLock v0.01</span></div>
-        </section>
-
-        <!-- =================================================
-             ADMIN
-        ================================================= -->
-
-        <section
-            id="pageAdmin"
-            class="hidden">
-
-            <div class="category-header">
-
-                <div>
-
-                    <div class="category-title">
-                        Панель администратора
-                    </div>
-
-                    <div class="category-description">
-                        Управление пользователями и системой.
-                    </div>
-
-                </div>
-
-                <button
-                    type="button"
-                    id="adminCreateUserBtn"
-                    class="btn primary"
-                    onclick="openUserModal()">
-                    ＋ Создать аккаунт
-                </button>
-
-            </div>
-
-
-            <div class="stats">
-
-                <div class="stat">
-
-                    <div
-                        id="adminUserCount"
-                        class="stat-number">
-                        0
-                    </div>
-
-                    <div class="stat-label">
-                        Пользователей
-                    </div>
-
-                </div>
-
-                <div class="stat">
-
-                    <div
-                        id="adminPartCount"
-                        class="stat-number">
-                        0
-                    </div>
-
-                    <div class="stat-label">
-                        Деталей
-                    </div>
-
-                </div>
-
-                <div class="stat">
-
-                    <div
-                        id="adminProgramCount"
-                        class="stat-number">
-                        0
-                    </div>
-
-                    <div class="stat-label">
-                        Программ
-                    </div>
-
-                </div>
-
-                <div class="stat">
-
-                    <div
-                        id="adminToolCount"
-                        class="stat-number">
-                        0
-                    </div>
-
-                    <div class="stat-label">
-                        Инструментов
-                    </div>
-
-                </div>
-
-            </div>
-
-
-            <div class="card" id="adminUsersCard">
-
-                <div
-                    style="
-                        font-size:17px;
-                        font-weight:800;
-                        margin-bottom:15px;
-                    ">
-                    Пользователи
-                </div>
-
-                <div
-                    style="
-                        overflow:auto;
-                    ">
-
-                    <table class="admin-table">
-
-                        <thead>
-
-                            <tr>
-
-                                <th>
-                                    Логин
-                                </th>
-
-                                <th>
-                                    Роль
-                                </th>
-
-                                <th>
-                                    Создан
-                                </th>
-
-                                <th>
-                                    Действия
-                                </th>
-
-                            </tr>
-
-                        </thead>
-
-                        <tbody
-                            id="usersTable">
-                        </tbody>
-
-                    </table>
-
-                </div>
-
-            </div>
-
-            <div class="card" style="margin-top:15px;">
-                <div class="bulk-toolbar"><div style="font-size:17px;font-weight:800;margin-right:auto;">Массовые операции</div><label style="display:flex;align-items:center;gap:7px;min-height:44px;"><input type="checkbox" onchange="toggleBulkChecks(this)"> Выбрать всё</label><button type="button" class="btn danger" onclick="bulkDeleteSelected()">🗑 Удалить выбранное</button></div>
-                <div style="color:#69758b;font-size:11px;">Выбор выполняется чекбоксами в таблице ниже. Пустые папки можно удалить массово.</div>
-            </div>
-
-            <div class="card" style="margin-top:15px;">
-                <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:15px;">
-                    <div>
-                        <div style="font-size:17px;font-weight:800;">Управление каталогом</div>
-                        <div style="color:#69758b;font-size:11px;margin-top:4px;">Администратор и Редактор могут создавать, изменять, перемещать и удалять папки и детали.</div>
-                    </div>
-                    <div class="sticky-actions" style="display:flex;gap:8px;flex-wrap:wrap;">
-                        <button type="button" class="btn" onclick="openFolderModal()">📁 Новая папка</button>
-                        <button type="button" class="btn primary" onclick="openPartModal()">＋ Новая деталь</button>
-                    </div>
-                </div>
-                <div style="overflow:auto;">
-                    <table class="admin-table">
-                        <thead><tr><th>Папка</th><th>Деталь</th><th>Номер</th><th>Раздел</th><th>Действия</th></tr></thead>
-                        <tbody id="adminPartsTable"></tbody>
-                    </table>
-                </div>
-            </div>
-
-            <div class="card" style="margin-top:15px;">
-                <div style="font-size:17px;font-weight:800;margin-bottom:12px;">Папки для массового удаления</div>
-                <div style="overflow:auto;">
-                    <table class="admin-table">
-                        <thead><tr><th>Выбор</th><th>Папка</th><th>Раздел</th><th>Деталей</th></tr></thead>
-                        <tbody id="adminFoldersBulkTable"></tbody>
-                    </table>
-                </div>
-            </div>
-
-            <div id="adminHistoryCard" class="card" style="margin-top:15px;display:none;">
-                <div style="font-size:17px;font-weight:800;margin-bottom:12px;">Журнал действий и откат</div>
-                <div id="historyFilters"></div>
-                <div id="historyActive"></div>
-                <div id="historySummary"></div>
-                <div id="historyList"></div>
-                <div id="historyPagination"></div>
-            </div>
-
-            <div class="app-footer"><span class="site-version">BetaLock v0.01</span></div>
-        </section>
-
-    </main>
-
-</section>
-
-
-<!-- =====================================================
-     MODAL
-===================================================== -->
-
-<div
-    id="modalBackdrop"
-    class="modal-backdrop hidden"
-    onclick="modalBackdropClick(event)">
-
-    <div
-        id="modal"
-        class="modal">
-    </div>
-
+    <div class="hint">Подсказка: мы оба знаем эти 4 цифры 😉</div>
+  </div>
 </div>
 
+<!-- ============ САЙТ ============ -->
+<div id="site">
 
-<div
-    id="toastContainer">
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hearts" id="hearts"></div>
+
+    <h1 class="couple">
+      <span class="him">Никита</span>
+      <span class="amp">&</span>
+      <span class="her">Валерия</span>
+    </h1>
+    <p class="subtitle">Наша история, наши дни, наши мечты</p>
+
+    <div class="counter" id="counter">
+      <div class="unit"><div class="num" id="days">0</div><div class="lbl">дней</div></div>
+      <div class="unit"><div class="num" id="hours">0</div><div class="lbl">часов</div></div>
+      <div class="unit"><div class="num" id="minutes">0</div><div class="lbl">минут</div></div>
+      <div class="unit"><div class="num" id="seconds">0</div><div class="lbl">секунд</div></div>
+    </div>
+
+    <div class="bday">
+      <span class="him">💙 <b>Никита</b> · 02.01.2003</span>
+      <span class="her">💗 <b>Валерия</b> · 31.12.2003</span>
+    </div>
+  </section>
+
+  <!-- ИСТОРИЯ -->
+  <section class="container">
+    <h2 class="section-title">Наша история</h2>
+    <p class="section-sub">С чего всё началось</p>
+
+    <div class="timeline">
+      <div class="t-item">
+        <div class="dot"></div>
+        <div class="card">
+          <div class="date">Знакомство</div>
+          <h4>Первая встреча</h4>
+          <p>Здесь будет история о том, как вы познакомились. Добавим позже ✨</p>
+        </div>
+      </div>
+      <div class="t-item">
+        <div class="dot"></div>
+        <div class="card">
+          <div class="date">14 июня 2026</div>
+          <h4>Начало отношений 💙💗</h4>
+          <p>День, с которого мы вместе. Именно отсюда считается наш счётчик.</p>
+        </div>
+      </div>
+      <div class="t-item">
+        <div class="dot"></div>
+        <div class="card">
+          <div class="date">12 сентября 2026</div>
+          <h4>90 дней вместе</h4>
+          <p>Первый маленький юбилей. Спасибо, что ты рядом.</p>
+        </div>
+      </div>
+      <div class="t-item">
+        <div class="dot"></div>
+        <div class="card">
+          <div class="date">Дальше...</div>
+          <h4>Продолжение следует</h4>
+          <p>Здесь будут появляться новые важные даты, путешествия и моменты.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ГАЛЕРЕЯ -->
+  <section class="container">
+    <h2 class="section-title">Наши моменты</h2>
+    <p class="section-sub">Фотографии, которые мы любим</p>
+
+    <div class="gallery">
+      <div class="ph" data-label="Фото 1">Здесь будет фото</div>
+      <div class="ph" data-label="Фото 2">Здесь будет фото</div>
+      <div class="ph" data-label="Фото 3">Здесь будет фото</div>
+      <div class="ph" data-label="Фото 4">Здесь будет фото</div>
+      <div class="ph" data-label="Фото 5">Здесь будет фото</div>
+      <div class="ph" data-label="Фото 6">Здесь будет фото</div>
+    </div>
+  </section>
+
+  <!-- МЕСТА -->
+  <section class="container">
+    <h2 class="section-title">Наши места</h2>
+    <p class="section-sub">Точки на карте, которые стали особенными</p>
+
+    <div class="places">
+      <div class="place">
+        <div class="icon">☕</div>
+        <h4>Наше кафе</h4>
+        <p>Место, куда хочется возвращаться снова и снова.</p>
+      </div>
+      <div class="place">
+        <div class="icon">🌳</div>
+        <h4>Наш парк</h4>
+        <p>Здесь были долгие прогулки и самые тёплые разговоры.</p>
+      </div>
+      <div class="place">
+        <div class="icon">🌆</div>
+        <h4>Особое место</h4>
+        <p>Добавим позже — у нас ведь будет ещё много таких мест.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- МЕЧТЫ -->
+  <section class="container">
+    <h2 class="section-title">Наши мечты</h2>
+    <p class="section-sub">То, что мы хотим сделать вместе</p>
+
+    <div class="dreams" id="dreams">
+      <div class="dream"><div class="check"></div><span>Съездить в совместное путешествие ✈️</span></div>
+      <div class="dream"><div class="check"></div><span>Посмотреть вместе закат на море 🌅</span></div>
+      <div class="dream"><div class="check"></div><span>Приготовить вместе ужин 🍝</span></div>
+      <div class="dream"><div class="check"></div><span>Завести питомца 🐾</span></div>
+      <div class="dream"><div class="check"></div><span>Отметить 365 дней вместе 🎉</span></div>
+    </div>
+  </section>
+
+  <footer>
+    <p>Сделано с любовью 💙💗</p>
+    <p style="margin-top:8px;opacity:.7">Никита & Валерия · 2026</p>
+    <button class="secret-btn" id="secretBtn">🤫 Что-то спрятано...</button>
+  </footer>
 </div>
 
+<!-- MODAL -->
+<div class="modal" id="modal">
+  <div class="box">
+    <h3 id="modalTitle"></h3>
+    <p id="modalText"></p>
+    <button onclick="document.getElementById('modal').classList.remove('show')">Закрыть</button>
+  </div>
+</div>
 
 <script>
+/* ========== PIN ========== */
+const PIN = "2568";
+let input = "";
 
-/* =========================================================
-   DATABASE
-========================================================= */
+const dots = document.querySelectorAll('#pinDots span');
+const lockCard = document.getElementById('lockCard');
 
-const STORAGE_KEY = "minicad_production_v6";
-const SESSION_KEY = "minicad_session_v6";
-const IMPERSONATION_KEY = "minicad_impersonation_v1";
-const SITE_VERSION = "BetaLock v0.01";
-
-const IDB_NAME = "minicad_production_files_v6";
-const IDB_STORE = "files";
-
-let db = null;
-
-let state = loadState();
-
-let currentUserId =
-    localStorage.getItem(SESSION_KEY) || null;
-
-let currentCategory = "programs";
-
-let selectedPartName = null;
-
-let selectedFile = null;
-
-let editingPartId = null;
-
-let editingUserId = null;
-
-
-function createInitialState(){
-    return {
-        users:[
-            {
-                id:"admin",
-                login:"admin",
-                password:"admin",
-                role:"superadmin",
-                createdAt:new Date().toISOString()
-            }
-        ],
-        folders:[],
-        parts:[],
-        actionHistory:[],
-        changelog:[]
-    };
+function renderDots(){
+  dots.forEach((d,i)=>d.classList.toggle('filled', i < input.length));
 }
 
-function normalizeState(parsed){
-
-    if(!parsed || !Array.isArray(parsed.users) || !Array.isArray(parsed.parts)){
-        return createInitialState();
-    }
-
-    if(!Array.isArray(parsed.folders)){ parsed.folders = []; }
-    if(!Array.isArray(parsed.actionHistory)){ parsed.actionHistory = []; }
-    if(!Array.isArray(parsed.changelog)){ parsed.changelog = []; }
-
-    parsed.parts.forEach(part=>{
-        if(!part.userId && part.ownerId){ part.userId = part.ownerId; }
-        if(!part.userId){ part.userId = "admin"; }
-        if(!part.category){ part.category = "programs"; }
-        if(!part.name){ part.name = "Без названия"; }
-        if(!part.number){ part.number = ""; }
-
-        if(!part.folderId){
-            const sameName = parsed.folders.find(f =>
-                f.category === part.category &&
-                String(f.name).trim().toLowerCase() ===
-                String(part.name).trim().toLowerCase()
-            );
-
-            if(sameName){
-                part.folderId = sameName.id;
-            }else{
-                const folder = {
-                    id:uid("folder"),
-                    category:part.category,
-                    name:part.name.trim(),
-                    createdAt:part.createdAt || now()
-                };
-                parsed.folders.push(folder);
-                part.folderId = folder.id;
-            }
-        }
-    });
-
-    const seen = new Set();
-    parsed.folders = parsed.folders.filter(folder=>{
-        folder.name = String(folder.name || "Без названия").trim();
-        folder.category = folder.category || "programs";
-        const key = folder.category + "::" + folder.name.toLowerCase();
-        if(seen.has(key)) return false;
-        seen.add(key);
-        return true;
-    });
-
-    parsed.parts.forEach(part=>{
-        if(!parsed.folders.some(f=>f.id === part.folderId)){
-            const folder = {
-                id:uid("folder"),
-                category:part.category,
-                name:String(part.name || "Без названия").trim(),
-                createdAt:part.createdAt || now()
-            };
-            parsed.folders.push(folder);
-            part.folderId = folder.id;
-        }
-    });
-
-    let admin = parsed.users.find(u =>
-        String(u.login || "").toLowerCase() === "admin"
-    );
-
-    if(!admin){
-        parsed.users.unshift({
-            id:"admin",
-            login:"admin",
-            password:"admin",
-            role:"superadmin",
-            createdAt:new Date().toISOString()
-        });
-    }else{
-        admin.id = "admin";
-        admin.login = "admin";
-        admin.role = "superadmin";
-        if(!admin.password) admin.password = "admin";
-    }
-
-    parsed.users.forEach(u=>{
-        if(u.id !== "admin" && !["user","admin"].includes(u.role)){
-            u.role = "user";
-        }
-    });
-
-    return parsed;
-}
-
-function loadState(){
-    try{
-        const raw = localStorage.getItem(STORAGE_KEY);
-        if(raw){
-            const parsed = JSON.parse(raw);
-            const normalized = normalizeState(parsed);
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(normalized));
-            return normalized;
-        }
-    }catch(error){ console.error(error); }
-
-    const fresh = createInitialState();
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(fresh));
-    return fresh;
-}
-function saveState(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
-
-function snapshotState(){
-    return JSON.parse(JSON.stringify({users:state.users,folders:state.folders,parts:state.parts,changelog:state.changelog||[]}));
-}
-function recordAction(type,label,before){
-    if(!isAdmin()) return;
-    state.actionHistory = Array.isArray(state.actionHistory) ? state.actionHistory : [];
-    state.actionHistory.unshift({id:uid("action"),type,label,userId:currentUserId,createdAt:now(),before,after:snapshotState()});
-    state.actionHistory = state.actionHistory.slice(0,100);
-}
-function undoAction(id){
-    if(!isSuperAdmin()){toast("Только администратор может выполнять откат.","error");return;}
-    const item=state.actionHistory.find(a=>a.id===id);
-    if(!item){toast("Действие не найдено.","error");return;}
-    if(!confirm("Отменить действие: "+item.label+"?")) return;
-    state.users=item.before.users; state.folders=item.before.folders; state.parts=item.before.parts; state.changelog=item.before.changelog||[];
-    state.actionHistory=state.actionHistory.filter(a=>a.id!==id);
-    saveState(); renderAdminPanel(); renderChangelog(); renderCatalog();
-    toast("Действие отменено.","success");
-}
-
-function uid(prefix="id"){
-    return (
-        prefix + "_" + Date.now().toString(36) + "_" +
-        Math.random().toString(36).slice(2,9)
-    );
-}
-function now(){ return new Date().toISOString(); }
-function escapeHtml(value){
-    return String(value ?? "")
-        .replaceAll("&","&amp;")
-        .replaceAll("<","&lt;")
-        .replaceAll(">","&gt;")
-        .replaceAll('"',"&quot;")
-        .replaceAll("'","&#039;");
-}
-function formatDate(date){
-    if(!date) return "--";
-    return new Date(date).toLocaleString("ru-RU",{
-        day:"2-digit",month:"2-digit",year:"numeric",
-        hour:"2-digit",minute:"2-digit"
-    });
-}
-function getCurrentUser(){ return state.users.find(u => u.id === currentUserId); }
-function isAdmin(){
-    const role = getCurrentUser()?.role;
-    return role === "admin" || role === "superadmin";
-}
-function isSuperAdmin(){ return getCurrentUser()?.role === "superadmin"; }
-function roleLabel(role){
-    if(role === "superadmin") return "Администратор";
-    if(role === "admin") return "Редактор";
-    return "Пользователь";
-}
-function roleClass(role){
-    if(role === "superadmin") return "role-admin";
-    if(role === "admin") return "role-admin";
-    return "role-user";
-}
-function getUserParts(){ return state.parts.filter(p => p.userId === currentUserId); }
-function getVisibleParts(){ return state.parts; }
-function getAllParts(){ return state.parts; }
-function normalizeFolderName(name){
-    return String(name || "").trim().replace(/\s+/g," ");
-}
-function findFolder(folderId){ return state.folders.find(f => f.id === folderId); }
-function findFolderByName(name, category=currentCategory){
-    const normalized = normalizeFolderName(name).toLowerCase();
-    return state.folders.find(f =>
-        f.category === category &&
-        normalizeFolderName(f.name).toLowerCase() === normalized
-    );
-}
-function ensureFolder(name, category=currentCategory){
-    const cleanName = normalizeFolderName(name) || "Без названия";
-    let folder = findFolderByName(cleanName, category);
-    if(!folder){
-        folder = {
-            id:uid("folder"),
-            category,
-            name:cleanName,
-            ownerId:currentUserId || "admin",
-            createdAt:now()
-        };
-        state.folders.push(folder);
-    }
-    return folder;
-}
-function getPartsInFolder(folderId){
-    return getVisibleParts().filter(p => p.folderId === folderId);
-}
-function getVisibleFolders(category){
-    return state.folders
-        .filter(folder => folder.category === category)
-        .sort((a,b)=>
-            a.name.localeCompare(b.name,"ru",{numeric:true,sensitivity:"base"})
-        );
-}
-function categoryName(category){
-    if(category === "programs") return "Программы";
-    if(category === "tools") return "Инструмент";
-    return "Прочее";
-}
-function categoryDescription(category){
-    if(category === "programs") return "Управляющие программы и G-код.";
-    if(category === "tools") return "Инструмент и оснастка.";
-    return "Дополнительные материалы и данные.";
-}
-
-function initDB(){
-    return new Promise((resolve,reject)=>{
-        const request = indexedDB.open(IDB_NAME,1);
-        request.onupgradeneeded = function(){
-            const database = request.result;
-            if(!database.objectStoreNames.contains(IDB_STORE)){
-                database.createObjectStore(IDB_STORE);
-            }
-        };
-        request.onsuccess = function(){ db = request.result; resolve(db); };
-        request.onerror = function(){ reject(request.error); };
-    });
-}
-function saveBlob(fileId,blob){
-    return new Promise((resolve,reject)=>{
-        if(!db){ resolve(); return; }
-        const tx = db.transaction(IDB_STORE,"readwrite");
-        tx.objectStore(IDB_STORE).put(blob,fileId);
-        tx.oncomplete = resolve;
-        tx.onerror = ()=>reject(tx.error);
-    });
-}
-function getBlob(fileId){
-    return new Promise((resolve,reject)=>{
-        if(!db){ resolve(null); return; }
-        const tx = db.transaction(IDB_STORE,"readonly");
-        const request = tx.objectStore(IDB_STORE).get(fileId);
-        request.onsuccess = ()=>{ resolve(request.result || null); };
-        request.onerror = ()=>{ reject(request.error); };
-    });
-}
-function deleteBlob(fileId){
-    return new Promise((resolve,reject)=>{
-        if(!db){ resolve(); return; }
-        const tx = db.transaction(IDB_STORE,"readwrite");
-        tx.objectStore(IDB_STORE).delete(fileId);
-        tx.oncomplete = resolve;
-        tx.onerror = ()=>{ reject(tx.error); };
-    });
-}
-
-function login(event){
-    event.preventDefault();
-    const loginValue = document.getElementById("loginInput").value.trim();
-    const password = document.getElementById("passwordInput").value;
-    const error = document.getElementById("loginError");
-    error.textContent = "";
-
-    const user = state.users.find(u =>
-        u.login.toLowerCase() === loginValue.toLowerCase() &&
-        u.password === password
-    );
-
-    if(!user){
-        error.textContent = "Неверный логин или пароль.";
-        return;
-    }
-
-    currentUserId = user.id;
-    localStorage.setItem(SESSION_KEY,currentUserId);
-    enterApp();
-}
-
-function logout(){
-    if(localStorage.getItem(IMPERSONATION_KEY)){
-        returnFromImpersonation();
-        return;
-    }
-    currentUserId = null;
-    localStorage.removeItem(SESSION_KEY);
-    document.getElementById("app").classList.add("hidden");
-    document.getElementById("authPage").classList.remove("hidden");
-    closeSidebar();
-}
-
-function enterApp(){
-    const user = getCurrentUser();
-    if(!user){ logout(); return; }
-
-    document.getElementById("authPage").classList.add("hidden");
-    document.getElementById("app").classList.remove("hidden");
-
-    document.getElementById("currentUserName").textContent =
-        user.login + " · " + roleLabel(user.role);
-
-    const impersonationBtn = document.getElementById("returnImpersonationBtn");
-    if(impersonationBtn){
-        impersonationBtn.style.display = localStorage.getItem(IMPERSONATION_KEY) ? "inline-flex" : "none";
-    }
-
-    document.getElementById("adminNavigation").classList.toggle("hidden", !isAdmin());
-
-    const addPartBtn = document.getElementById("catalogAddPartBtn");
-    const newFolderBtn = document.getElementById("catalogNewFolderBtn");
-    if(addPartBtn) addPartBtn.style.display = isAdmin() ? "inline-flex" : "none";
-    if(newFolderBtn) newFolderBtn.style.display = isAdmin() ? "inline-flex" : "none";
-
-    currentCategory = "programs";
-    selectedPartName = null;
-    openCategory("programs");
-    closeSidebar();
-}
-
-function openSidebar(){
-    const sidebar = document.getElementById("sidebar");
-    const overlay = document.getElementById("sidebarOverlay");
-    sidebar.classList.add("open");
-    sidebar.classList.remove("closed");
-    if(window.innerWidth <= 900){
-        overlay.classList.add("active");
-        document.body.classList.add("sidebar-lock");
-    }else{
-        overlay.classList.remove("active");
-        document.body.classList.remove("sidebar-lock");
-    }
-}
-function closeSidebar(){
-    const sidebar = document.getElementById("sidebar");
-    const overlay = document.getElementById("sidebarOverlay");
-    sidebar.classList.remove("open");
-    if(window.innerWidth <= 900){ sidebar.classList.add("closed"); }
-    else{ sidebar.classList.remove("closed"); }
-    overlay.classList.remove("active");
-    document.body.classList.remove("sidebar-lock");
-}
-function toggleSidebar(){
-    const sidebar = document.getElementById("sidebar");
-    if(sidebar.classList.contains("open")){ closeSidebar(); }
-    else{ openSidebar(); }
-}
-
-let swipeStartX = null;
-let swipeStartY = null;
-let swipeStartedInSidebar = false;
-
-document.addEventListener("pointerdown",event=>{
-    if(event.pointerType !== "touch" && event.pointerType !== "pen"){ return; }
-    swipeStartX = event.clientX;
-    swipeStartY = event.clientY;
-    const sidebar = document.getElementById("sidebar");
-    swipeStartedInSidebar = sidebar.contains(event.target);
-},{passive:true});
-
-document.addEventListener("pointerup",event=>{
-    if(swipeStartX === null){ return; }
-    const dx = event.clientX - swipeStartX;
-    const dy = event.clientY - swipeStartY;
-    const sidebar = document.getElementById("sidebar");
-    if(swipeStartedInSidebar && sidebar.classList.contains("open") &&
-       dx < -60 && Math.abs(dx) > Math.abs(dy) * 1.25){
-        closeSidebar();
-    }
-    if(!swipeStartedInSidebar && dx > 60 &&
-       Math.abs(dx) > Math.abs(dy) * 1.25 &&
-       swipeStartX < 35 && !sidebar.classList.contains("open")){
-        openSidebar();
-    }
-    swipeStartX = null;
-    swipeStartY = null;
-    swipeStartedInSidebar = false;
-},{passive:true});
-
-window.addEventListener("resize",()=>{
-    const overlay = document.getElementById("sidebarOverlay");
-    const sidebar = document.getElementById("sidebar");
-    if(window.innerWidth > 900){
-        overlay.classList.remove("active");
-        document.body.classList.remove("sidebar-lock");
-        sidebar.classList.remove("closed");
-    }else if(!sidebar.classList.contains("open")){
-        sidebar.classList.add("closed");
-    }
+document.querySelectorAll('#pinPad button').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    const k = btn.dataset.k;
+    if(k === 'del'){ input = input.slice(0,-1); renderDots(); return; }
+    if(k === 'ok'){ checkPin(); return; }
+    if(input.length < 4){ input += k; renderDots(); }
+    if(input.length === 4) setTimeout(checkPin, 200);
+  });
 });
 
-function updateCatalogPermissions(){
-    const admin = isAdmin();
-    ["catalogNewFolderBtn","catalogAddPartBtn","folderAddBtn"].forEach(id=>{
-        const el=document.getElementById(id);
-        if(el) el.classList.toggle("hidden", !admin);
-    });
-}
-
-function openCategory(category){
-    currentCategory = category;
-    selectedPartName = null;
-    document.getElementById("pageCatalog").classList.remove("hidden");
-    document.getElementById("pageAdmin").classList.add("hidden");
-    document.getElementById("pageChangelog").classList.add("hidden");
-    document.getElementById("categoryTitle").textContent = categoryName(category);
-    document.getElementById("categoryDescription").textContent = categoryDescription(category);
-    document.getElementById("breadcrumb").innerHTML = `<strong>${categoryName(category)}</strong>`;
-    document.querySelectorAll(".side-btn").forEach(btn=>btn.classList.remove("active"));
-
-    const navId = category === "programs" ? "navPrograms"
-                : category === "tools" ? "navTools"
-                : "navOther";
-    document.getElementById(navId)?.classList.add("active");
-
-    renderCatalog();
-    updateCatalogPermissions();
-    closeSidebar();
-}
-
-function renderCatalog(){
-    const search = document.getElementById("partSearch").value.trim().toLowerCase();
-    let visibleParts = getVisibleParts().filter(p => p.category === currentCategory);
-
-    if(search){
-        visibleParts = visibleParts.filter(p =>
-            String(p.number || "").toLowerCase().includes(search)
-        );
-    }
-
-    const folders = getVisibleFolders(currentCategory);
-    renderFolderList(folders, visibleParts);
-
-    if(!selectedPartName || !folders.some(f => f.id === selectedPartName)){
-        selectedPartName = folders.length ? folders[0].id : null;
-    }
-    renderFolderVariants(folders, visibleParts);
-}
-
-function renderFolderList(folders, visibleParts){
-    const container = document.getElementById("nameList");
-    container.innerHTML = `
-        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;padding:5px 4px 10px;">
-            <div style="color:#68748a;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1px;">ПАПКИ</div>
-        </div>
-        <div class="folder-list">
-            ${folders.length ? folders.map(folder=>{
-                const count = visibleParts.filter(p=>p.folderId === folder.id).length;
-                const canManage = isAdmin();
-                return `
-                    <div class="folder-item ${selectedPartName === folder.id ? "active" : ""}">
-                        <div class="folder-row">
-                            <button type="button" class="folder-main" onclick="selectFolder('${folder.id}')">
-                                <span class="folder-icon">📁</span>
-                                <span class="folder-title">${escapeHtml(folder.name)}</span>
-                                <span class="folder-count">${count}</span>
-                            </button>
-                            ${canManage ? `
-                                <button type="button" class="folder-more" title="Действия" onclick="event.stopPropagation();openFolderActions('${folder.id}')">⋮</button>
-                            ` : ""}
-                        </div>
-                        <div class="folder-hint">${count === 1 ? "1 деталь" : `${count} деталей`}</div>
-                    </div>
-                `;
-            }).join("") : `
-                <div style="padding:25px 10px;text-align:center;color:#6f7b90;font-size:11px;">
-                    <div style="font-size:27px;margin-bottom:9px;">📁</div>
-                    Папок пока нет.
-                </div>
-            `}
-        </div>
-    `;
-}
-
-function selectFolder(folderId){
-    selectedPartName = folderId;
-    renderCatalog();
-}
-
-function renderFolderVariants(folders, visibleParts){
-    const container = document.getElementById("variantsContainer");
-
-    if(!folders.length){
-        container.innerHTML = `
-            <div class="empty">
-                <div class="empty-icon">📁</div>
-                В категории пока нет деталей.
-                <div style="margin-top:14px;">
-                    ${isAdmin() ? `
-                    <button type="button" class="btn primary" onclick="openPartModal()">
-                        ＋ Добавить деталь
-                    </button>` : ""}
-                </div>
-            </div>
-        `;
-        return;
-    }
-
-    const folder = folders.find(f => f.id === selectedPartName);
-    if(!folder) return;
-
-    const parts = visibleParts
-        .filter(p => p.folderId === folder.id)
-        .sort((a,b)=>
-            String(a.number || "").localeCompare(
-                String(b.number || ""),"ru",{numeric:true,sensitivity:"base"}
-            )
-        );
-
-    container.innerHTML = `
-        <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px;">
-            <div>
-                <div style="color:#8d99ae;font-size:11px;">ПАПКА</div>
-                <div style="font-size:21px;font-weight:850;margin-top:3px;">📁 ${escapeHtml(folder.name)}</div>
-            </div>
-            <div style="color:#69758b;font-size:10px;">
-                ${parts.length} ${parts.length === 1 ? "вариант" : "вариантов"}
-            </div>
-        </div>
-        ${parts.length
-            ? `<div class="variant-grid">${parts.map(part=>renderVariantCard(part)).join("")}</div>`
-            : `<div class="empty">В этой папке нет деталей по заданному номеру.</div>`}
-    `;
-}
-
-function renderVariantCard(part){
-    const preview = String(part.code || "").split("\n").slice(0,4).join("\n");
-    const owner = state.users.find(u=>u.id === part.userId);
-
-    return `
-        <div class="variant-card">
-            <div class="variant-number">№ ${escapeHtml(part.number)}</div>
-            <div class="variant-name">${escapeHtml(part.name)}</div>
-            <div class="variant-meta">
-                Обновлено: ${formatDate(part.updatedAt)}
-                ${owner && isAdmin() ? ` · ${escapeHtml(owner.login)}` : ""}
-            </div>
-            <div class="gcode-mini">${escapeHtml(preview)}</div>
-            <div class="badges">
-                ${part.drawingName ? `<span class="badge">📐 Чертёж</span>` : ""}
-                <span class="badge">G-код</span>
-            </div>
-            <div style="display:flex;gap:7px;margin-top:14px;">
-                <button type="button" class="btn primary" style="flex:1" onclick="openPartViewer('${part.id}')">Открыть</button>
-                ${isAdmin() || part.userId === currentUserId ? `
-                    <button type="button" class="btn" title="Изменить" onclick="openPartModal('${part.id}')">✎</button>
-                ` : ""}
-                ${isAdmin() ? `
-                    <button type="button" class="btn" title="Переместить" onclick="openMovePartModal('${part.id}')">↗</button>
-                ` : ""}
-            </div>
-        </div>
-    `;
-}
-
-function openFolderModal(folderId=null){
-    if(!isAdmin()){ toast("Только администратор может управлять папками.","error"); return; }
-    const folder = folderId ? findFolder(folderId) : null;
-
-    if(folder && !isAdmin() && folder.ownerId !== currentUserId){
-        toast("Нет доступа к этой папке.","error");
-        return;
-    }
-
-    showModal(`
-        <div class="modal-header">
-            <div class="modal-title">${folder ? "Переименовать папку" : "Новая папка"}</div>
-            <button type="button" class="modal-close" onclick="closeModal()">×</button>
-        </div>
-        <div class="modal-body">
-            <div class="field">
-                <label>Название папки</label>
-                <input id="folderName" class="input" maxlength="120" value="${folder ? escapeHtml(folder.name) : ""}" placeholder="Например: Корпус">
-            </div>
-            <div class="field">
-                <label>Раздел</label>
-                <select id="folderCategory" class="select" ${folder ? "disabled" : ""}>
-                    <option value="programs" ${currentCategory === "programs" ? "selected" : ""}>Программы</option>
-                    <option value="tools" ${currentCategory === "tools" ? "selected" : ""}>Инструмент</option>
-                    <option value="other" ${currentCategory === "other" ? "selected" : ""}>Прочее</option>
-                </select>
-            </div>
-        </div>
-        <div class="modal-footer">
-            <button type="button" class="btn" onclick="closeModal()">Отмена</button>
-            <button type="button" class="btn primary" onclick="saveFolder(${folder ? `'${folder.id}'` : "null"})">${folder ? "Сохранить" : "Создать"}</button>
-        </div>
-    `);
-    setTimeout(()=>document.getElementById("folderName")?.focus(),50);
-}
-
-function saveFolder(folderId=null){
-    if(!isAdmin()){ toast("Только администратор может управлять папками.","error"); return; }
-    const before = snapshotState();
-    const name = normalizeFolderName(document.getElementById("folderName")?.value);
-    const category = document.getElementById("folderCategory")?.value || currentCategory;
-    if(!name){ toast("Введите название папки.","error"); return; }
-
-    if(folderId){
-        const folder = findFolder(folderId);
-        if(!folder) return;
-        if(!isAdmin() && folder.ownerId !== currentUserId){ toast("Нет доступа.","error"); return; }
-        const duplicate = state.folders.find(f =>
-            f.id !== folder.id &&
-            f.category === folder.category &&
-            normalizeFolderName(f.name).toLowerCase() === name.toLowerCase()
-        );
-        if(duplicate){ toast("Папка с таким названием уже существует.","error"); return; }
-        folder.name = name;
-        folder.updatedAt = now();
-        recordAction("folder_edit", `Переименование папки «${name}»`, before);
-        saveState();
-        closeModal();
-        selectedPartName = folder.id;
-        renderCatalog();
-        toast("Папка переименована.","success");
-        return;
-    }
-
-    if(findFolderByName(name, category)){ toast("Папка с таким названием уже существует.","error"); return; }
-    const folder = {id:uid("folder"), category, name, ownerId:currentUserId, createdAt:now(), updatedAt:now()};
-    state.folders.push(folder);
-    recordAction("folder_create", `Создание папки «${name}»`, before);
-    saveState();
-    closeModal();
-    currentCategory = category;
-    selectedPartName = folder.id;
-    openCategory(category);
-    toast("Папка создана.","success");
-}
-
-function openFolderActions(folderId){
-    if(!isAdmin()){ toast("Только администратор может управлять папками.","error"); return; }
-    const folder = findFolder(folderId);
-    if(!folder) return;
-    if(!isAdmin() && folder.ownerId !== currentUserId){ toast("Нет доступа.","error"); return; }
-
-    showModal(`
-        <div class="modal-header">
-            <div class="modal-title">📁 ${escapeHtml(folder.name)}</div>
-            <button type="button" class="modal-close" onclick="closeModal()">×</button>
-        </div>
-        <div class="modal-body">
-            <button type="button" class="btn full" onclick="closeModal();openFolderModal('${folder.id}')">✎ Переименовать</button>
-            <div style="height:8px"></div>
-            <button type="button" class="btn danger full" onclick="deleteFolder('${folder.id}')">🗑 Удалить папку</button>
-            <div style="color:#68758b;font-size:10px;line-height:1.5;margin-top:12px;">Удалить папку можно только если внутри нет деталей. Сначала переместите детали в другую папку.</div>
-        </div>
-    `);
-}
-
-function deleteFolder(folderId){
-    if(!isAdmin()){ toast("Только администратор может управлять папками.","error"); return; }
-    const folder = findFolder(folderId);
-    if(!folder) return;
-    if(!isAdmin() && folder.ownerId !== currentUserId){ toast("Нет доступа.","error"); return; }
-
-    const before = snapshotState();
-    const count = state.parts.filter(p=>p.folderId === folderId).length;
-    if(count){
-        toast(`Нельзя удалить папку: внутри ${count} ${count===1?"деталь":"деталей"}. Переместите их сначала.`,"error");
-        return;
-    }
-
-    state.folders = state.folders.filter(f=>f.id !== folderId);
-    if(selectedPartName === folderId) selectedPartName = null;
-    recordAction("folder_delete", `Удаление папки «${folder.name}»`, before);
-    saveState();
-    closeModal();
-    renderCatalog();
-    toast("Папка удалена.","success");
-}
-
-function openPartModal(partId=null){
-    if(!isAdmin()){ toast("Только администратор может изменять каталог.","error"); return; }
-
-    editingPartId = partId;
-    selectedFile = null;
-
-    const part = partId ? state.parts.find(p => p.id === partId) : null;
-
-    if(part && !isAdmin() && part.userId !== currentUserId){
-        toast("Нет доступа.","error");
-        return;
-    }
-
-    const category = part?.category || currentCategory;
-
-    showModal(`
-        <div class="modal-header">
-            <div class="modal-title">${part ? "Редактировать деталь" : "Новая деталь"}</div>
-            <button type="button" class="modal-close" onclick="closeModal()">×</button>
-        </div>
-        <div class="modal-body">
-            <div class="field">
-                <label>Раздел</label>
-                <select id="partCategory" class="select">
-                    <option value="programs" ${category === "programs" ? "selected" : ""}>Программы</option>
-                    <option value="tools" ${category === "tools" ? "selected" : ""}>Инструмент</option>
-                    <option value="other" ${category === "other" ? "selected" : ""}>Прочее</option>
-                </select>
-            </div>
-            <div class="field">
-                <label>Папка</label>
-                <select id="partFolder" class="select">
-                    ${state.folders
-                        .filter(f=>f.category === category)
-                        .sort((a,b)=>a.name.localeCompare(b.name,"ru",{numeric:true,sensitivity:"base"}))
-                        .map(f=>`
-                            <option value="${f.id}" ${part?.folderId === f.id ? "selected" : ""}>
-                                ${escapeHtml(f.name)}
-                            </option>
-                        `).join("")}
-                </select>
-                <div style="color:#66738a;font-size:10px;margin-top:6px;">
-                    Для новой детали папка по названию создастся автоматически.
-                    После создания её можно изменить кнопкой «Переместить».
-                </div>
-            </div>
-            <div class="field">
-                <label>Название детали *</label>
-                <input id="partName" class="input" required value="${escapeHtml(part?.name || "")}" placeholder="Например: Шпилька">
-            </div>
-            <div class="field">
-                <label>Номер детали *</label>
-                <input id="partNumber" class="input" required value="${escapeHtml(part?.number || "")}" placeholder="Например: М8-100">
-            </div>
-            <div class="field">
-                <label>G-код *</label>
-                <textarea id="partCode" class="textarea" placeholder="Вставьте G-код программы...">${escapeHtml(part?.code || "")}</textarea>
-            </div>
-            <div class="field">
-                <label>Чертёж</label>
-                <label class="file-drop">
-                    <input id="drawingInput" type="file"
-                           accept=".jpg,.jpeg,.png,.pdf,image/jpeg,image/png,application/pdf"
-                           onchange="previewDrawing(event)">
-                    <div style="font-size:28px;">📐</div>
-                    <div style="margin-top:8px;color:#bdc6d7;">
-                        ${part?.drawingName ? escapeHtml(part.drawingName) : "Выбрать чертёж"}
-                    </div>
-                    <div style="color:#69758b;font-size:10px;margin-top:5px;">JPG, PNG или PDF</div>
-                </label>
-                <div id="drawingPreview"></div>
-            </div>
-        </div>
-        <div class="modal-footer">
-            ${part ? `
-                <button type="button" class="btn danger" style="margin-right:auto" onclick="deletePart('${part.id}')">Удалить</button>
-            ` : ""}
-            <button type="button" class="btn" onclick="closeModal()">Отмена</button>
-            <button type="button" class="btn primary" onclick="savePart()">Сохранить</button>
-        </div>
-    `);
-}
-
-function previewDrawing(event){
-    const file = event.target.files?.[0];
-    selectedFile = file || null;
-    const container = document.getElementById("drawingPreview");
-
-    if(!file){ container.innerHTML = ""; return; }
-
-    const allowed = ["image/jpeg","image/png","application/pdf"];
-    if(!allowed.includes(file.type)){
-        toast("Разрешены JPG, PNG и PDF.","error");
-        event.target.value = "";
-        selectedFile = null;
-        container.innerHTML = "";
-        return;
-    }
-
-    const url = URL.createObjectURL(file);
-    if(file.type === "application/pdf"){
-        container.innerHTML = `<div class="file-preview"><iframe src="${url}"></iframe></div>`;
-    }else{
-        container.innerHTML = `<div class="file-preview"><img src="${url}" alt="Чертёж"></div>`;
-    }
-}
-
-async function savePart(){
-    if(!isAdmin()){ toast("Только администратор может изменять каталог.","error"); return; }
-
-    const before = snapshotState();
-    const category = document.getElementById("partCategory").value;
-    const name = document.getElementById("partName").value.trim();
-    const number = document.getElementById("partNumber").value.trim();
-    const code = document.getElementById("partCode").value.trim();
-
-    if(!name){ toast("Введите название детали.","error"); return; }
-    if(!number){ toast("Введите номер детали.","error"); return; }
-    if(!code){ toast("Введите G-код.","error"); return; }
-
-    const duplicate = state.parts.find(p =>
-        p.category === category &&
-        String(p.number || "").toLowerCase() === number.toLowerCase() &&
-        p.id !== editingPartId
-    );
-    if(duplicate){
-        toast("Такая деталь с этим номером уже существует в этом разделе.","error");
-        return;
-    }
-
-    let part = editingPartId ? state.parts.find(p => p.id === editingPartId) : null;
-    const oldDrawingId = part?.drawingId || null;
-    const wasExisting = !!part;
-
-    if(part){
-        if(!isAdmin() && part.userId !== currentUserId){
-            toast("Нет доступа.","error");
-            return;
-        }
-        part.category = category;
-        part.name = name;
-        part.number = number;
-        part.code = code;
-        part.updatedAt = now();
-    }else{
-        part = {
-            id:uid("part"),
-            userId:currentUserId,
-            category,
-            name,
-            number,
-            code,
-            folderId:null,
-            drawingId:null,
-            drawingName:null,
-            drawingType:null,
-            createdAt:now(),
-            updatedAt:now()
-        };
-        state.parts.push(part);
-    }
-
-    if(!wasExisting){
-        const folder = ensureFolder(name, category);
-        part.folderId = folder.id;
-    }else{
-        let folder = findFolder(part.folderId);
-        if(!folder || folder.category !== category){
-            folder = ensureFolder(name, category);
-            part.folderId = folder.id;
-        }
-    }
-
-    if(selectedFile){
-        if(oldDrawingId){ await deleteBlob(oldDrawingId); }
-        const drawingId = uid("drawing");
-        await saveBlob(drawingId, selectedFile);
-        part.drawingId = drawingId;
-        part.drawingName = selectedFile.name;
-        part.drawingType = selectedFile.type;
-    }
-
-    recordAction(wasExisting ? "part_edit" : "part_create",
-        `${wasExisting ? "Изменение" : "Создание"} детали «${name} — ${number}»`, before);
-    saveState();
-    closeModal();
-
-    currentCategory = category;
-    selectedPartName = part.folderId;
-    openCategory(category);
-
-    toast(wasExisting
-        ? "Деталь обновлена."
-        : "Деталь добавлена в папку «" + escapeHtml(findFolder(part.folderId)?.name || name) + "».",
-        "success");
-}
-
-function openMovePartModal(partId){
-    if(!isAdmin()){ toast("Только администратор может перемещать детали.","error"); return; }
-
-    const part = state.parts.find(p=>p.id === partId);
-    if(!part) return;
-
-    if(!isAdmin() && part.userId !== currentUserId){
-        toast("Нет доступа.","error");
-        return;
-    }
-
-    const folders = state.folders
-        .filter(f=>f.category === part.category)
-        .sort((a,b)=>a.name.localeCompare(b.name,"ru",{numeric:true,sensitivity:"base"}));
-
-    showModal(`
-        <div class="modal-header">
-            <div>
-                <div style="color:#82a4ff;font-size:10px;font-weight:800;text-transform:uppercase;">
-                    Перемещение детали
-                </div>
-                <div class="modal-title" style="margin-top:5px;">
-                    ${escapeHtml(part.name)}
-                    <span style="color:#8492aa;font-weight:500;">· ${escapeHtml(part.number)}</span>
-                </div>
-            </div>
-            <button type="button" class="modal-close" onclick="closeModal()">×</button>
-        </div>
-        <div class="modal-body">
-            <div class="field">
-                <label>Текущая папка</label>
-                <div style="padding:13px 14px;border-radius:12px;background:rgba(255,255,255,.035);border:1px solid var(--line);color:#aeb8c9;">
-                    📁 ${escapeHtml(findFolder(part.folderId)?.name || "Без папки")}
-                </div>
-            </div>
-            <div class="field">
-                <label>Новая папка</label>
-                <select id="moveFolderSelect" class="select move-select">
-                    ${folders.map(folder=>`
-                        <option value="${folder.id}" ${folder.id === part.folderId ? "selected" : ""}>
-                            ${escapeHtml(folder.name)}
-                        </option>
-                    `).join("")}
-                </select>
-            </div>
-            <div style="padding:12px 13px;border-radius:12px;background:rgba(91,140,255,.06);border:1px solid rgba(91,140,255,.12);color:#8491a8;font-size:11px;line-height:1.55;">
-                Перемещение меняет только папку.
-                Название, номер, G-код и чертёж останутся без изменений.
-            </div>
-        </div>
-        <div class="modal-footer">
-            <button type="button" class="btn" onclick="closeModal()">Отмена</button>
-            <button type="button" class="btn primary" onclick="movePart('${part.id}')">Переместить</button>
-        </div>
-    `);
-}
-
-function movePart(partId){
-    if(!isAdmin()){ toast("Только администратор может перемещать детали.","error"); return; }
-
-    const part = state.parts.find(p=>p.id === partId);
-    if(!part) return;
-
-    if(!isAdmin() && part.userId !== currentUserId){
-        toast("Нет доступа.","error");
-        return;
-    }
-
-    const select = document.getElementById("moveFolderSelect");
-    const folder = state.folders.find(f => f.id === select?.value);
-    if(!folder){ toast("Папка не найдена.","error"); return; }
-
-    const before = snapshotState();
-    const oldFolder = findFolder(part.folderId);
-
-    part.folderId = folder.id;
-    part.updatedAt = now();
-
-    recordAction("part_move", `Перемещение детали «${part.name} — ${part.number}»`, before);
-    saveState();
-    closeModal();
-
-    currentCategory = part.category;
-    selectedPartName = folder.id;
-
-    const search = document.getElementById("partSearch");
-    if(search) search.value = "";
-
-    openCategory(part.category);
-
-    toast(`Деталь перемещена: «${oldFolder?.name || "Без папки"}» → «${folder.name}».`, "success");
-}
-
-async function openPartViewer(partId){
-    const part = state.parts.find(p => p.id === partId);
-    if(!part){ toast("Деталь не найдена.","error"); return; }
-
-    let drawing = `<div class="empty">Чертёж не прикреплён.</div>`;
-
-    if(part.drawingId){
-        const blob = await getBlob(part.drawingId);
-        if(blob){
-            const url = URL.createObjectURL(blob);
-            if(part.drawingType === "application/pdf"){
-                drawing = `<div class="file-preview"><iframe src="${url}"></iframe></div>`;
-            }else{
-                drawing = `<div class="file-preview"><img src="${url}" alt="Чертёж"></div>`;
-            }
-        }
-    }
-
-    showModal(`
-        <div class="modal-header">
-            <div>
-                <div style="color:#82a4ff;font-size:11px;font-weight:800;">
-                    ${escapeHtml(categoryName(part.category))}
-                </div>
-                <div class="modal-title" style="margin-top:5px;">
-                    ${escapeHtml(part.name)}
-                    <span style="color:#8492aa;font-weight:500;">· ${escapeHtml(part.number)}</span>
-                </div>
-            </div>
-            <button type="button" class="modal-close" onclick="closeModal()">×</button>
-        </div>
-        <div class="modal-body">
-            <div style="font-size:10px;color:#718097;font-weight:800;margin-bottom:7px;text-transform:uppercase;">
-                Чертёж
-            </div>
-            ${drawing}
-            <div style="font-size:10px;color:#718097;font-weight:800;margin:22px 0 7px;text-transform:uppercase;">
-                G-код
-            </div>
-            <pre class="code-view">${escapeHtml(part.code)}</pre>
-        </div>
-        <div class="modal-footer">
-            <button type="button" class="btn" onclick="downloadGCode('${part.id}')">⇩ Скачать файл</button>
-            ${part.drawingId ? `
-                <button type="button" class="btn" onclick="downloadDrawing('${part.id}')">⇩ Скачать чертёж</button>
-            ` : ""}
-            ${isAdmin() || part.userId === currentUserId ? `
-                <button type="button" class="btn" onclick="openPartModal('${part.id}')">✎ Изменить</button>
-            ` : ""}
-            <button type="button" class="btn primary" onclick="closeModal()">Закрыть</button>
-        </div>
-    `);
-}
-
-function safeFileName(value){
-    return String(value).replace(/[<>:"/\\|?*]/g,"_").replace(/\s+/g," ").trim();
-}
-
-function downloadGCode(partId){
-    const part = state.parts.find(p => p.id === partId);
-    if(!part) return;
-
-    const filename = safeFileName(part.name + "-" + part.number) + ".nc";
-    const blob = new Blob([part.code],{type:"text/plain;charset=utf-8"});
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = filename;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    setTimeout(()=>{ URL.revokeObjectURL(url); },1000);
-    toast("Файл " + filename + " скачан.","success");
-}
-
-async function downloadDrawing(partId){
-    const part = state.parts.find(p => p.id === partId);
-    if(!part || !part.drawingId){ return; }
-
-    const blob = await getBlob(part.drawingId);
-    if(!blob){ toast("Чертёж не найден.","error"); return; }
-
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = part.drawingName || (safeFileName(part.name + "-" + part.number) + ".pdf");
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    setTimeout(()=>{ URL.revokeObjectURL(url); },1000);
-}
-
-async function deletePart(partId){
-    if(!isAdmin()){ toast("Только администратор может удалять детали.","error"); return; }
-    const part = state.parts.find(p => p.id === partId);
-    if(!part) return;
-
-    if(!confirm(`Удалить "${part.name} -- ${part.number}"?`)){ return; }
-
-    const before = snapshotState();
-    state.parts = state.parts.filter(p => p.id !== partId);
-    recordAction("part_delete", `Удаление детали «${part.name} — ${part.number}»`, before);
-    saveState();
-    closeModal();
-    renderCatalog();
-    toast("Деталь удалена.","success");
-}
-
-function openAdminPanel(){
-    if(!isAdmin()){ toast("Доступ запрещён.","error"); return; }
-
-    document.getElementById("pageCatalog").classList.add("hidden");
-    document.getElementById("pageChangelog").classList.add("hidden");
-    document.getElementById("pageAdmin").classList.remove("hidden");
-    document.getElementById("breadcrumb").innerHTML = "<strong>Администратор</strong>";
-
-    document.querySelectorAll(".side-btn").forEach(btn=>btn.classList.remove("active"));
-    document.getElementById("navAdmin").classList.add("active");
-
-    renderAdminPanel();
-    closeSidebar();
-}
-
-function renderAdminPanel(){
-    if(!isAdmin()) return;
-
-    const users = state.users;
-    const parts = state.parts;
-
-    document.getElementById("adminUserCount").textContent = users.length;
-    document.getElementById("adminPartCount").textContent = parts.length;
-    document.getElementById("adminProgramCount").textContent =
-        parts.filter(p => p.category === "programs").length;
-    document.getElementById("adminToolCount").textContent =
-        parts.filter(p => p.category === "tools").length;
-
-    const createAccountBtn = document.getElementById("adminCreateUserBtn");
-    if(createAccountBtn){
-        createAccountBtn.style.display = isSuperAdmin() ? "inline-flex" : "none";
-    }
-    const usersCard = document.getElementById("adminUsersCard");
-    if(usersCard){
-        usersCard.style.display = isSuperAdmin() ? "block" : "none";
-    }
-
-    const table = document.getElementById("usersTable");
-    table.innerHTML = users.map(user=>`
-        <tr>
-            <td>${escapeHtml(user.login)}</td>
-            <td><span class="${roleClass(user.role)}">${roleLabel(user.role)}</span></td>
-            <td>${formatDate(user.createdAt)}</td>
-            <td>
-                <div style="display:flex;gap:6px;flex-wrap:wrap;">
-                    ${isSuperAdmin() && user.id !== currentUserId ? `
-                        <button type="button" class="btn" style="padding:7px 10px;font-size:10px;" onclick="startImpersonation('${user.id}')">
-                            ⇥ Войти
-                        </button>
-                    ` : ""}
-                    ${isSuperAdmin() && user.id !== "admin" && user.id !== currentUserId ? `
-                        <button type="button" class="btn" style="padding:7px 10px;font-size:10px;" onclick="toggleUserAdmin('${user.id}')">
-                            ${user.role === "admin" ? "Забрать редактор" : "Выдать редактор"}
-                        </button>
-                    ` : ""}
-                    ${isSuperAdmin() && user.id !== "admin" && user.id !== currentUserId ? `
-                        <button type="button" class="btn danger" style="padding:7px 10px;font-size:10px;" onclick="deleteUser('${user.id}')">
-                            Удалить
-                        </button>
-                    ` : ""}
-                    ${user.id === "admin" ? `
-                        <span style="color:#66738a;font-size:10px;align-self:center;">
-                            Системный аккаунт · Администратор
-                        </span>
-                    ` : ""}
-                    ${user.id === currentUserId && user.id !== "admin" ? `
-                        <span style="color:#66738a;font-size:10px;align-self:center;">
-                            Текущий аккаунт
-                        </span>
-                    ` : ""}
-                </div>
-            </td>
-        </tr>
-    `).join("");
-
-    const partsTable = document.getElementById("adminPartsTable");
-    if(partsTable){
-        const sortedParts = [...parts].sort((a,b)=>{
-            const af = (findFolder(a.folderId)?.name || "");
-            const bf = (findFolder(b.folderId)?.name || "");
-            return af.localeCompare(bf,"ru",{numeric:true,sensitivity:"base"}) ||
-                   String(a.number||"").localeCompare(String(b.number||""),"ru",{numeric:true,sensitivity:"base"});
-        });
-        partsTable.innerHTML = sortedParts.length ? sortedParts.map(part=>`
-            <tr>
-                <td><input class="bulk-part" type="checkbox" value="${part.id}"> 📁 ${escapeHtml(findFolder(part.folderId)?.name || "Без папки")}</td>
-                <td>${escapeHtml(part.name)}</td>
-                <td>${escapeHtml(part.number)}</td>
-                <td>${escapeHtml(categoryName(part.category))}</td>
-                <td>
-                    <div style="display:flex;gap:6px;flex-wrap:wrap;">
-                        <button type="button" class="btn" style="padding:7px 10px;font-size:10px;" onclick="openPartModal('${part.id}')">✎ Изменить</button>
-                        <button type="button" class="btn" style="padding:7px 10px;font-size:10px;" onclick="openMovePartModal('${part.id}')">↗ Папка</button>
-                        <button type="button" class="btn danger" style="padding:7px 10px;font-size:10px;" onclick="deletePart('${part.id}')">🗑</button>
-                    </div>
-                </td>
-            </tr>
-        `).join("") : `<tr><td colspan="5" style="color:#69758b;text-align:center;padding:22px;">Каталог пока пуст.</td></tr>`;
-    }
-
-    const folderBulk = document.getElementById("adminFoldersBulkTable");
-    if(folderBulk){
-        folderBulk.innerHTML = state.folders.length
-            ? state.folders.map(f=>`
-                <tr>
-                    <td><input class="bulk-folder" type="checkbox" value="${f.id}"></td>
-                    <td>📁 ${escapeHtml(f.name)}</td>
-                    <td>${escapeHtml(categoryName(f.category))}</td>
-                    <td>${state.parts.filter(p=>p.folderId===f.id).length}</td>
-                </tr>
-            `).join("")
-            : `<tr><td colspan="4" style="color:#69758b;text-align:center;padding:18px;">Папок пока нет.</td></tr>`;
-    }
-
-    const historyCard = document.getElementById("adminHistoryCard");
-    if(historyCard){
-        historyCard.style.display = isSuperAdmin() ? "block" : "none";
-    }
-    if(isSuperAdmin()) renderHistory();
-}
-
-function openUserModal(){
-    if(!isSuperAdmin()){ toast("Только главный администратор может создавать аккаунты.","error"); return; }
-
-    showModal(`
-        <div class="modal-header">
-            <div class="modal-title">Новый аккаунт</div>
-            <button type="button" class="modal-close" onclick="closeModal()">×</button>
-        </div>
-        <div class="modal-body">
-            <div class="field">
-                <label>Логин *</label>
-                <input id="newUserLogin" class="input" autocomplete="off" placeholder="Например: operator01">
-            </div>
-            <div class="field">
-                <label>Пароль *</label>
-                <input id="newUserPassword" class="input" type="text" autocomplete="off" placeholder="Введите пароль">
-            </div>
-            <div class="field">
-                <label>Роль</label>
-                <select id="newUserRole" class="select">
-                    <option value="user">Пользователь</option>
-                    <option value="admin">Редактор</option>
-                </select>
-            </div>
-        </div>
-        <div class="modal-footer">
-            <button type="button" class="btn" onclick="closeModal()">Отмена</button>
-            <button type="button" class="btn primary" onclick="createUser()">Создать аккаунт</button>
-        </div>
-    `);
-}
-
-function createUser(){
-    if(!isSuperAdmin()){ toast("Только главный администратор может создавать аккаунты.","error"); return; }
-
-    const loginValue = document.getElementById("newUserLogin").value.trim();
-    const password = document.getElementById("newUserPassword").value;
-    const role = document.getElementById("newUserRole").value;
-
-    if(!loginValue){ toast("Введите логин.","error"); return; }
-    if(!password){ toast("Введите пароль.","error"); return; }
-
-    if(state.users.some(u => u.login.toLowerCase() === loginValue.toLowerCase())){
-        toast("Такой логин уже существует.","error");
-        return;
-    }
-
-    const before = snapshotState();
-    state.users.push({
-        id:uid("user"),
-        login:loginValue,
-        password,
-        role,
-        createdAt:now()
-    });
-    recordAction("user_create", `Создание аккаунта «${loginValue}»`, before);
-    saveState();
-    closeModal();
-    renderAdminPanel();
-    toast("Аккаунт создан.","success");
-}
-
-function toggleUserAdmin(userId){
-    if(!isSuperAdmin()){ toast("Только главный администратор может менять права.","error"); return; }
-
-    const user = state.users.find(u=>u.id===userId);
-    if(!user || user.id === "admin") return;
-
-    const before = snapshotState();
-    const makeAdmin = user.role !== "admin";
-    if(!confirm(`${makeAdmin ? "Выдать" : "Забрать"} редактор аккаунту "${user.login}"?`)) return;
-
-    user.role = makeAdmin ? "admin" : "user";
-    user.updatedAt = now();
-    recordAction("role_change", `${makeAdmin ? "Выдача прав редактора" : "Забор прав редактора"} «${user.login}»`, before);
-    saveState();
-    renderAdminPanel();
-    toast(makeAdmin ? "Права редактора выданы." : "Права редактора забраны.","success");
-}
-
-function startImpersonation(userId){
-    if(!isSuperAdmin()){ toast("Только главный администратор может входить в другие аккаунты.","error"); return; }
-
-    const target = state.users.find(u=>u.id===userId);
-    if(!target || target.id === currentUserId) return;
-
-    if(!confirm(`Войти как "${target.login}" (${roleLabel(target.role)}) для проверки полномочий?`)) return;
-
-    localStorage.setItem(IMPERSONATION_KEY,currentUserId);
-    currentUserId = target.id;
-    localStorage.setItem(SESSION_KEY,currentUserId);
-    closeModal();
-    enterApp();
-    toast(`Вы вошли как ${target.login}.`,"success");
-}
-
-function returnFromImpersonation(){
-    const originalId = localStorage.getItem(IMPERSONATION_KEY);
-    if(!originalId){ toast("Активная проверка аккаунта не найдена.","error"); return; }
-
-    const original = state.users.find(u=>u.id===originalId);
-    if(!original || !["superadmin"].includes(original.role)){
-        localStorage.removeItem(IMPERSONATION_KEY);
-        toast("Главный аккаунт не найден.","error");
-        logout();
-        return;
-    }
-
-    localStorage.removeItem(IMPERSONATION_KEY);
-    currentUserId = original.id;
-    localStorage.setItem(SESSION_KEY,currentUserId);
-    enterApp();
-    openAdminPanel();
-    toast("Вы вернулись в главный аккаунт.","success");
-}
-
-async function deleteUser(userId){
-    if(!isSuperAdmin()){ toast("Только администратор может удалять аккаунты.","error"); return; }
-
-    const user = state.users.find(u => u.id === userId);
-    if(!user) return;
-
-    if(user.id === "admin" || user.id === currentUserId){
-        toast("Системный аккаунт администратора удалить нельзя.","error");
-        return;
-    }
-
-    if(!confirm(`Удалить аккаунт "${user.login}"?\n\nВсе детали этого пользователя также будут удалены.`)){
-        return;
-    }
-
-    const before = snapshotState();
-    state.parts = state.parts.filter(p => p.userId !== userId);
-    state.users = state.users.filter(u => u.id !== userId);
-    recordAction("user_delete", `Удаление аккаунта «${user.login}»`, before);
-    saveState();
-    renderAdminPanel();
-    toast("Аккаунт удалён.","success");
-}
-
-function bulkDeleteSelected(){
-    if(!isAdmin()){toast("Доступ запрещён.","error");return;}
-    const ids=[...document.querySelectorAll(".bulk-part:checked")].map(x=>x.value);
-    const folderIds=[...document.querySelectorAll(".bulk-folder:checked")].map(x=>x.value);
-    if(!ids.length && !folderIds.length){toast("Выберите элементы.","error");return;}
-    if(!confirm(`Удалить выбранное: ${ids.length} деталей и ${folderIds.length} папок?`)) return;
-    const before=snapshotState();
-    state.parts=state.parts.filter(p=>!ids.includes(p.id));
-    const used=new Set(state.parts.map(p=>p.folderId));
-    state.folders=state.folders.filter(f=>!folderIds.includes(f.id) || used.has(f.id));
-    recordAction("bulk_delete",`Массовое удаление: ${ids.length} деталей, ${folderIds.length} папок`,before);
-    saveState(); renderAdminPanel(); renderCatalog(); toast("Выбранное удалено.","success");
-}
-function toggleBulkChecks(source){
-    document.querySelectorAll(".bulk-part,.bulk-folder").forEach(x=>x.checked=source.checked);
-}
-
-let historyPage = 1;
-const HISTORY_PAGE_SIZE = 10;
-let historyFilters = {search:"",date:"all",user:"all",action:"all",object:"all",category:"all",sort:"newest",from:"",to:""};
-
-function historyObject(type){
-    if(["folder_create","folder_edit","folder_delete"].includes(type)) return "folder";
-    if(["part_create","part_edit","part_move","part_delete"].includes(type)) return "part";
-    if(["user_create","user_delete","role_change"].includes(type)) return "user";
-    if(type==="bulk_delete") return "catalog";
-    return "system";
-}
-function historyObjectName(type){
-    return ({folder:"Папки",part:"Файлы/детали",user:"Пользователи",catalog:"Каталог",system:"Система"})[historyObject(type)]||"Система";
-}
-function historyActionName(type){
-    return ({
-        folder_create:"Создание папки",folder_edit:"Изменение папки",folder_delete:"Удаление папки",
-        part_create:"Создание детали",part_edit:"Изменение детали",part_move:"Перемещение детали",part_delete:"Удаление детали",
-        user_create:"Создание аккаунта",user_delete:"Удаление аккаунта",role_change:"Изменение прав",
-        bulk_delete:"Массовое удаление",changelog_create:"Публикация записи",login:"Вход"
-    })[type]||type||"Действие";
-}
-function historyCategory(a){
-    const src=JSON.stringify(a.before||"")+" "+JSON.stringify(a.after||"")+" "+String(a.label||"");
-    if(/programs|ПРОГРАММЫ/i.test(src)) return "programs";
-    if(/tools|ИНСТРУМЕНТ/i.test(src)) return "tools";
-    if(/other|ПРОЧЕЕ/i.test(src)) return "other";
-    return "all";
-}
-function historyCategoryName(v){
-    return ({programs:"ПРОГРАММЫ",tools:"ИНСТРУМЕНТ",other:"ПРОЧЕЕ",all:"Без категории"})[v]||v;
-}
-function historyDateMatch(a){
-    const d=new Date(a.createdAt); if(Number.isNaN(d.getTime())) return false;
-    const n=new Date(); const start=new Date(n.getFullYear(),n.getMonth(),n.getDate());
-    if(historyFilters.date==="today") return d>=start;
-    if(historyFilters.date==="yesterday"){
-        const y=new Date(start);y.setDate(y.getDate()-1);return d>=y&&d<start;
-    }
-    if(historyFilters.date==="7"){
-        const x=new Date(start);x.setDate(x.getDate()-6);return d>=x;
-    }
-    if(historyFilters.date==="30"){
-        const x=new Date(start);x.setDate(x.getDate()-29);return d>=x;
-    }
-    if(historyFilters.date==="custom"){
-        if(historyFilters.from){const f=new Date(historyFilters.from+"T00:00:00");if(d<f)return false;}
-        if(historyFilters.to){const t=new Date(historyFilters.to+"T23:59:59.999");if(d>t)return false;}
-    }
-    return true;
-}
-function getFilteredHistory(){
-    const f=historyFilters;
-    let items=[...(state.actionHistory||[])].filter(a=>{
-        const u=state.users.find(x=>x.id===a.userId);
-        const login=u?.login||"Удалённый пользователь";
-        const hay=[a.label,login,a.type,historyActionName(a.type),historyObjectName(a.type),historyCategory(a)].join(" ").toLowerCase();
-        if(f.search&&!hay.includes(f.search.toLowerCase())) return false;
-        if(f.user!=="all"&&a.userId!==f.user) return false;
-        if(f.action!=="all"&&a.type!==f.action) return false;
-        if(f.object!=="all"&&historyObject(a.type)!==f.object) return false;
-        if(f.category!=="all"&&historyCategory(a)!==f.category) return false;
-        return historyDateMatch(a);
-    });
-    items.sort((a,b)=>{
-        if(f.sort==="oldest") return new Date(a.createdAt)-new Date(b.createdAt);
-        if(f.sort==="user") return (state.users.find(x=>x.id===a.userId)?.login||"").localeCompare(state.users.find(x=>x.id===b.userId)?.login||"","ru");
-        if(f.sort==="action") return historyActionName(a.type).localeCompare(historyActionName(b.type),"ru");
-        return new Date(b.createdAt)-new Date(a.createdAt);
-    });
-    return items;
-}
-function historyFilterSet(key,value){historyFilters[key]=value;historyPage=1;renderHistory();}
-function clearHistoryFilter(key){
-    const d={search:"",date:"all",user:"all",action:"all",object:"all",category:"all",sort:"newest",from:"",to:""};
-    historyFilters[key]=d[key];
-    if(key==="date"){historyFilters.from="";historyFilters.to="";}
-    historyPage=1;renderHistory();
-}
-function clearHistoryFilters(){
-    historyFilters={search:"",date:"all",user:"all",action:"all",object:"all",category:"all",sort:"newest",from:"",to:""};
-    historyPage=1;renderHistory();
-}
-function historyFilterUI(){
-    const el=document.getElementById("historyFilters");if(!el)return;
-    const users=[...(state.users||[])].sort((a,b)=>String(a.login).localeCompare(String(b.login),"ru"));
-    const types=[...new Set((state.actionHistory||[]).map(a=>a.type))];
-    el.innerHTML=`<div class="history-filters"><div class="history-filters-grid">
-        <div class="history-filter-field" style="grid-column:span 2;"><label>Поиск</label><input id="historySearch" type="search" value="${escapeHtml(historyFilters.search)}" placeholder="Действие, пользователь, папка, деталь..."></div>
-        <div class="history-filter-field"><label>Дата</label><select id="historyDate"><option value="all">Все даты</option><option value="today">Сегодня</option><option value="yesterday">Вчера</option><option value="7">Последние 7 дней</option><option value="30">Последние 30 дней</option><option value="custom">Свой диапазон</option></select></div>
-        <div class="history-filter-field"><label>Пользователь</label><select id="historyUser"><option value="all">Все пользователи</option>${users.map(u=>`<option value="${u.id}">${escapeHtml(u.login)}</option>`).join("")}</select></div>
-        <div class="history-filter-field"><label>Действие</label><select id="historyAction"><option value="all">Все действия</option>${types.map(t=>`<option value="${t}">${escapeHtml(historyActionName(t))}</option>`).join("")}</select></div>
-        <div class="history-filter-field"><label>Объект</label><select id="historyObject"><option value="all">Всё</option><option value="folder">Папки</option><option value="part">Файлы/детали</option><option value="user">Пользователи</option><option value="catalog">Каталог</option><option value="system">Система</option></select></div>
-        <div class="history-filter-field"><label>Раздел</label><select id="historyCategory"><option value="all">Все разделы</option><option value="programs">ПРОГРАММЫ</option><option value="tools">ИНСТРУМЕНТ</option><option value="other">ПРОЧЕЕ</option></select></div>
-        <div class="history-filter-field"><label>Сортировка</label><select id="historySort"><option value="newest">Новые → старые</option><option value="oldest">Старые → новые</option><option value="user">Пользователь А → Я</option><option value="action">Действие А → Я</option></select></div>
-        <div id="historyCustomFromWrap" class="history-filter-field"><label>Дата от</label><input id="historyFrom" type="date" value="${historyFilters.from}"></div>
-        <div id="historyCustomToWrap" class="history-filter-field"><label>Дата до</label><input id="historyTo" type="date" value="${historyFilters.to}"></div>
-    </div><div class="history-filter-actions"><span style="font-size:10px;color:#718097;">Фильтры применяются сразу</span><button class="btn" type="button" onclick="clearHistoryFilters()">Сбросить всё</button></div></div>`;
-
-    ["historyDate","historyUser","historyAction","historyObject","historyCategory","historySort"].forEach(id=>{
-        const key=id.replace("history","").toLowerCase();
-        const map={date:"date",user:"user",action:"action",object:"object",category:"category",sort:"sort"};
-        document.getElementById(id)?.addEventListener("change",e=>historyFilterSet(map[key],e.target.value));
-    });
-    document.getElementById("historySearch")?.addEventListener("input",e=>{historyFilters.search=e.target.value;historyPage=1;renderHistory(false);});
-    document.getElementById("historyFrom")?.addEventListener("change",e=>{historyFilters.from=e.target.value;historyPage=1;renderHistory(false);});
-    document.getElementById("historyTo")?.addEventListener("change",e=>{historyFilters.to=e.target.value;historyPage=1;renderHistory(false);});
-
-    document.getElementById("historyDate").value=historyFilters.date;
-    document.getElementById("historyUser").value=historyFilters.user;
-    document.getElementById("historyAction").value=historyFilters.action;
-    document.getElementById("historyObject").value=historyFilters.object;
-    document.getElementById("historyCategory").value=historyFilters.category;
-    document.getElementById("historySort").value=historyFilters.sort;
-
-    const custom=historyFilters.date==="custom";
-    document.getElementById("historyCustomFromWrap").style.display=custom?"flex":"none";
-    document.getElementById("historyCustomToWrap").style.display=custom?"flex":"none";
-}
-function renderHistoryActive(){
-    const el=document.getElementById("historyActive");if(!el)return;
-    const f=historyFilters,ch=[];
-    if(f.search)ch.push(["Поиск: "+f.search,"search"]);
-    if(f.date!=="all")ch.push(["Дата: "+({today:"сегодня",yesterday:"вчера",7:"7 дней",30:"30 дней",custom:"свой диапазон"}[f.date]),"date"]);
-    if(f.user!=="all"){const u=state.users.find(x=>x.id===f.user);ch.push(["Пользователь: "+(u?.login||"удалён"),"user"]);}
-    if(f.action!=="all")ch.push(["Действие: "+historyActionName(f.action),"action"]);
-    if(f.object!=="all")ch.push(["Объект: "+historyObjectName(f.object),"object"]);
-    if(f.category!=="all")ch.push(["Раздел: "+historyCategoryName(f.category),"category"]);
-    if(f.sort!=="newest")ch.push(["Сортировка: "+({oldest:"старые → новые",user:"пользователь А → Я",action:"действие А → Я"}[f.sort]),"sort"]);
-    el.innerHTML=ch.length?`<div class="history-active">${ch.map(c=>`<span class="history-chip">${escapeHtml(c[0])} <button class="btn" style="min-width:24px;min-height:24px;padding:0;border:0;background:none;" type="button" onclick="clearHistoryFilter('${c[1]}')">×</button></span>`).join("")}</div>`:"";
-}
-function renderHistoryPagination(totalPages){
-    const el=document.getElementById("historyPagination");if(!el)return;
-    if(totalPages<=1){el.innerHTML="";return;}
-    const pages=[];const add=n=>{if(!pages.includes(n))pages.push(n)};
-    if(totalPages<=7){for(let i=1;i<=totalPages;i++)add(i);}
-    else{
-        add(1);
-        if(historyPage>3)pages.push("…");
-        for(let i=Math.max(2,historyPage-1);i<=Math.min(totalPages-1,historyPage+1);i++)add(i);
-        if(historyPage<totalPages-2)pages.push("…");
-        add(totalPages);
-    }
-    el.innerHTML=`<div class="history-pagination">${pages.map(x=>x==="…"?`<span class="history-page-dots">…</span>`:`<button type="button" class="btn history-page-btn ${x===historyPage?"active":""}" onclick="setHistoryPage(${x})">${x}</button>`).join("")}</div>`;
-}
-function setHistoryPage(page){historyPage=Number(page)||1;renderHistory(false);}
-function renderHistory(rebuildFilters=true){
-    const el=document.getElementById("historyList");if(!el)return;
-    if(rebuildFilters)historyFilterUI();
-    renderHistoryActive();
-    const items=getFilteredHistory();
-    const totalPages=Math.max(1,Math.ceil(items.length/HISTORY_PAGE_SIZE));
-    historyPage=Math.min(Math.max(1,historyPage),totalPages);
-    const start=(historyPage-1)*HISTORY_PAGE_SIZE;
-    const pageItems=items.slice(start,start+HISTORY_PAGE_SIZE);
-    const summary=document.getElementById("historySummary");
-    if(summary)summary.textContent=items.length?`Показано ${start+1}–${Math.min(start+pageItems.length,items.length)} из ${items.length} действий`:"По выбранным фильтрам действий не найдено.";
-    el.innerHTML=pageItems.length?pageItems.map(a=>{
-        const u=state.users.find(x=>x.id===a.userId);
-        return `<div class="history-row"><div><b>${escapeHtml(a.label)}</b><div style="color:#718097;font-size:9px;margin-top:3px;">${escapeHtml(historyObjectName(a.type))} · ${escapeHtml(historyActionName(a.type))}</div></div><div>${escapeHtml(u?.login||"Удалённый пользователь")}</div><div>${formatDate(a.createdAt)}</div><div><button class="btn" type="button" onclick="undoAction('${a.id}')">↶ Отменить</button></div></div>`
-    }).join(""):"<div style='color:#718097;padding:15px 0;'>История пока пуста.</div>";
-    renderHistoryPagination(totalPages);
-}
-function openChangelog(){
-    document.getElementById("pageCatalog").classList.add("hidden");
-    document.getElementById("pageAdmin").classList.add("hidden");
-    document.getElementById("pageChangelog").classList.remove("hidden");
-    document.querySelectorAll(".side-btn").forEach(b=>b.classList.remove("active"));
-    document.getElementById("navChangelog")?.classList.add("active");
-    document.getElementById("breadcrumb").innerHTML="<strong>Блог изменений</strong>";
-    const b=document.getElementById("newChangelogBtn");
-    if(b) b.style.display=isSuperAdmin()?"inline-flex":"none";
-    renderChangelog(); closeSidebar();
-}
-function renderChangelog(){
-    const el=document.getElementById("changelogList"); if(!el) return;
-    const arr=[...(state.changelog||[])].sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt));
-    el.innerHTML=arr.length?arr.map(x=>`<div class="changelog-entry"><h4>${escapeHtml(x.title)}</h4><div class="changelog-date">${formatDate(x.createdAt)}</div><div style="white-space:pre-wrap;color:#c5ccda;font-size:12px;line-height:1.6;">${escapeHtml(x.text)}</div></div>`).join(""):"<div class='card'>Пока нет записей об обновлениях.</div>";
-}
-function openChangelogModal(){
-    if(!isSuperAdmin()){toast("Только администратор может редактировать блог.","error");return;}
-    showModal(`<div class="modal-header"><div class="modal-title">Новая запись</div><button class="modal-close" onclick="closeModal()">×</button></div><div class="modal-body"><div class="field"><label>Заголовок</label><input id="changeTitle" class="input" placeholder="Например: BetaLock v0.02"></div><div class="field"><label>Что изменено</label><textarea id="changeText" class="textarea" rows="8" placeholder="Добавлено...&#10;Изменено...&#10;Удалено..."></textarea></div></div><div class="modal-footer"><button class="btn" onclick="closeModal()">Отмена</button><button class="btn primary" onclick="saveChangelog()">Опубликовать</button></div>`);
-}
-function saveChangelog(){
-    if(!isSuperAdmin()) return;
-    const title=document.getElementById("changeTitle")?.value.trim();
-    const text=document.getElementById("changeText")?.value.trim();
-    if(!title||!text){toast("Заполните заголовок и текст.","error");return;}
-    const before=snapshotState();
-    state.changelog.push({id:uid("change"),title,text,createdAt:now(),authorId:currentUserId});
-    recordAction("changelog_create",`Публикация записи «${title}»`,before);
-    saveState(); closeModal(); renderChangelog(); toast("Запись опубликована.","success");
-}
-
-function showModal(html){
-    document.getElementById("modal").innerHTML = html;
-    document.getElementById("modalBackdrop").classList.remove("hidden");
-}
-function closeModal(){
-    document.getElementById("modalBackdrop").classList.add("hidden");
-    document.getElementById("modal").innerHTML = "";
-    editingPartId = null;
-    editingUserId = null;
-    selectedFile = null;
-}
-function modalBackdropClick(event){
-    if(event.target === document.getElementById("modalBackdrop")){
-        closeModal();
-    }
-}
-
-function toast(message,type="success"){
-    const container = document.getElementById("toastContainer");
-    const element = document.createElement("div");
-    element.className = "toast " + type;
-    element.textContent = message;
-    container.appendChild(element);
-
-    setTimeout(()=>{
-        element.style.opacity = "0";
-        element.style.transform = "translateY(10px)";
-        setTimeout(()=>{ element.remove(); },250);
-    },3000);
-}
-
-let contextMenu = null;
-function closeContextMenu(){
-    if(contextMenu){ contextMenu.remove(); contextMenu = null; }
-}
-
-document.addEventListener("keydown",event=>{
-    if(event.key === "Escape"){
-        closeModal();
-        closeContextMenu();
-        closeSidebar();
-    }
+document.addEventListener('keydown', e=>{
+  if(document.getElementById('lock').classList.contains('hidden')) return;
+  if(/^[0-9]$/.test(e.key) && input.length < 4){ input += e.key; renderDots(); if(input.length===4) setTimeout(checkPin,200); }
+  if(e.key === 'Backspace'){ input = input.slice(0,-1); renderDots(); }
+  if(e.key === 'Enter'){ checkPin(); }
 });
 
-function updateSiteVersion(){
-    document.querySelectorAll(".site-version").forEach(el=>el.textContent=SITE_VERSION);
-}
-function handleVisualViewport(){
-    if(!window.visualViewport) return;
-    const offset=Math.max(0, window.innerHeight-window.visualViewport.height-window.visualViewport.offsetTop);
-    document.documentElement.style.setProperty("--keyboard-offset", offset+"px");
-}
-if(window.visualViewport){
-    window.visualViewport.addEventListener("resize",handleVisualViewport);
-    window.visualViewport.addEventListener("scroll",handleVisualViewport);
-}
-window.addEventListener("focusin",()=>setTimeout(handleVisualViewport,50));
-window.addEventListener("focusout",()=>setTimeout(handleVisualViewport,150));
-
-async function boot(){
-    updateSiteVersion();
-    handleVisualViewport();
-
-    try{
-        await initDB();
-    }catch(error){
-        console.error("IndexedDB:",error);
-    }
-
-    if(currentUserId){
-        const user = getCurrentUser();
-        if(user){
-            enterApp();
-            return;
-        }
-        localStorage.removeItem(SESSION_KEY);
-        currentUserId = null;
-    }
-
-    document.getElementById("authPage").classList.remove("hidden");
+function checkPin(){
+  if(input === PIN){
+    document.getElementById('lock').classList.add('hidden');
+    document.getElementById('site').classList.add('visible');
+    document.body.style.overflowY = 'auto';
+    startCounter();
+    startHearts();
+  } else {
+    lockCard.classList.add('shake');
+    setTimeout(()=>lockCard.classList.remove('shake'), 450);
+    input = ""; renderDots();
+  }
 }
 
-window.addEventListener("load",boot);
+document.body.style.overflow = 'hidden';
 
+/* ========== СЧЁТЧИК ==========
+   Дата начала отношений: 14 июня 2026 (90 дней до 12.09.2026) */
+const START = new Date("2026-06-14T00:00:00");
+
+function startCounter(){
+  function tick(){
+    const now = new Date();
+    let diff = Math.max(0, now - START);
+    const s = Math.floor(diff/1000);
+    const days = Math.floor(s/86400);
+    const hours = Math.floor((s%86400)/3600);
+    const minutes = Math.floor((s%3600)/60);
+    const seconds = s%60;
+
+    document.getElementById('days').textContent = days;
+    document.getElementById('hours').textContent = String(hours).padStart(2,'0');
+    document.getElementById('minutes').textContent = String(minutes).padStart(2,'0');
+    document.getElementById('seconds').textContent = String(seconds).padStart(2,'0');
+  }
+  tick();
+  setInterval(tick, 1000);
+}
+
+/* ========== СЕРДЕЧКИ НА ФОНЕ ========== */
+function startHearts(){
+  const wrap = document.getElementById('hearts');
+  const symbols = ['💙','💗','♥','✦','🤍'];
+  for(let i=0;i<18;i++){
+    const el = document.createElement('i');
+    el.textContent = symbols[Math.floor(Math.random()*symbols.length)];
+    el.style.left = Math.random()*100 + '%';
+    el.style.bottom = '-40px';
+    el.style.fontSize = (16 + Math.random()*22) + 'px';
+    el.style.animationDuration = (12 + Math.random()*14) + 's';
+    el.style.animationDelay = (Math.random()*12) + 's';
+    wrap.appendChild(el);
+  }
+}
+
+/* ========== МЕЧТЫ (клик = выполнено) ========== */
+document.querySelectorAll('.dream').forEach(d=>{
+  d.addEventListener('click', ()=>{
+    d.classList.toggle('done');
+    d.querySelector('.check').textContent = d.classList.contains('done') ? '✓' : '';
+  });
+});
+
+/* ========== СЕКРЕТНАЯ КНОПКА ========== */
+const secrets = [
+  { t:"💙 Секрет №1", p:"Здесь ты можешь написать что-то очень личное для Валерии. Например, почему ты выбрал именно её, или что ты чувствуешь, глядя на неё." },
+  { t:"💗 Секрет №2", p:"А это место — под внутренний мем, шутку или песню, которая только ваша. Никто посторонний не поймёт, а вы улыбнётесь." },
+  { t:"✦ Секрет №3", p:"Пасхалка: попробуй набрать 'love' в PIN-поле (не сейчас — оно уже закрыто 😉). Или добавь сюда цитату, которая вам дорога." }
+];
+let secretIdx = 0;
+
+document.getElementById('secretBtn').addEventListener('click', ()=>{
+  const s = secrets[secretIdx % secrets.length];
+  document.getElementById('modalTitle').textContent = s.t;
+  document.getElementById('modalText').textContent = s.p;
+  document.getElementById('modal').classList.add('show');
+  secretIdx++;
+});
+
+document.getElementById('modal').addEventListener('click', e=>{
+  if(e.target.id === 'modal') e.target.classList.remove('show');
+});
 </script>
-
 </body>
 </html>
