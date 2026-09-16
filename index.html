@@ -98,7 +98,7 @@
   }
 
   /* ============ ОСНОВНОЙ САЙТ ============ */
-  #site{display:none;animation:fadeUp 1s ease}
+  #site{display:none;animation:fadeUp 1s ease; padding-bottom: 80px;} /* Отступ снизу для меню */
   #site.visible{display:block}
   @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
 
@@ -291,6 +291,113 @@
   }
   .modal button:hover { transform: scale(1.05); }
 
+  /* ============ НИЖНЕЕ МЕНЮ (BOTTOM NAV) ============ */
+  .bottom-nav {
+    position: fixed;
+    bottom: 25px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(20, 20, 30, 0.7);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 40px;
+    padding: 6px;
+    z-index: 900;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6), 0 0 20px rgba(43, 108, 255, 0.1);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+
+  /* Скрываем меню пока сайт не разблокирован */
+  #site:not(.visible) .bottom-nav {
+    opacity: 0;
+    pointer-events: none;
+    transform: translateX(-50%) translateY(20px);
+  }
+
+  .nav-item {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    background: transparent;
+    border: none;
+    color: var(--muted);
+    padding: 12px 18px;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: color 0.3s ease, transform 0.2s ease;
+    z-index: 2;
+  }
+
+  .nav-item:hover {
+    color: var(--text);
+    transform: translateY(-2px);
+  }
+
+  .nav-item.active {
+    color: #fff;
+  }
+
+  .nav-item svg {
+    width: 22px;
+    height: 22px;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    transition: transform 0.3s ease;
+  }
+
+  .nav-item.active svg {
+    transform: scale(1.1);
+  }
+
+  .nav-item span {
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+  }
+
+  /* Светящийся индикатор */
+  .nav-indicator {
+    position: absolute;
+    top: 6px;
+    bottom: 6px;
+    border-radius: 30px;
+    background: radial-gradient(circle at center, rgba(255, 95, 162, 0.3) 0%, rgba(43, 108, 255, 0.2) 50%, transparent 80%);
+    box-shadow: 0 0 25px rgba(255, 95, 162, 0.4), inset 0 0 15px rgba(43, 108, 255, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  /* Подсказка как на скрине */
+  .nav-hint {
+    position: fixed;
+    bottom: 5px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.65rem;
+    color: rgba(255, 255, 255, 0.3);
+    letter-spacing: 0.05em;
+    z-index: 900;
+    pointer-events: none;
+  }
+
+  @media (max-width: 600px) {
+    .nav-item { padding: 10px 14px; }
+    .nav-item span { font-size: 0.65rem; }
+    .nav-item svg { width: 20px; height: 20px; }
+  }
+
   ::selection{background:var(--pink);color:white}
 </style>
 </head>
@@ -329,7 +436,7 @@
 <div id="site">
 
   <!-- HERO -->
-  <section class="hero">
+  <section class="hero" id="hero">
     <div class="hearts" id="hearts"></div>
 
     <h1 class="couple">
@@ -353,7 +460,7 @@
   </section>
 
   <!-- ИСТОРИЯ -->
-  <section class="container">
+  <section class="container" id="history">
     <h2 class="section-title">Наша история</h2>
     <p class="section-sub">С чего всё началось</p>
 
@@ -394,7 +501,7 @@
   </section>
 
   <!-- ГАЛЕРЕЯ -->
-  <section class="container">
+  <section class="container" id="gallery">
     <h2 class="section-title">Наши моменты</h2>
     <p class="section-sub">Фотографии, которые мы любим</p>
 
@@ -409,7 +516,7 @@
   </section>
 
   <!-- МЕСТА -->
-  <section class="container">
+  <section class="container" id="places">
     <h2 class="section-title">Наши места</h2>
     <p class="section-sub">Точки на карте, которые стали особенными</p>
 
@@ -433,11 +540,11 @@
   </section>
 
   <!-- МЕЧТЫ -->
-  <section class="container">
+  <section class="container" id="dreams">
     <h2 class="section-title">Наши мечты</h2>
     <p class="section-sub">То, что мы хотим сделать вместе</p>
 
-    <div class="dreams" id="dreams">
+    <div class="dreams" id="dreamsList">
       <div class="dream"><div class="check"></div><span>Съездить в совместное путешествие ✈️</span></div>
       <div class="dream"><div class="check"></div><span>Посмотреть вместе закат на море 🌅</span></div>
       <div class="dream"><div class="check"></div><span>Приготовить вместе ужин 🍝</span></div>
@@ -451,6 +558,38 @@
     <p style="margin-top:8px;opacity:.7">Никита & Валерия · 2026</p>
     <button class="secret-btn" id="secretBtn">🤫 Что-то спрятано...</button>
   </footer>
+
+  <!-- ============ НИЖНЕЕ МЕНЮ ============ -->
+  <nav class="bottom-nav" id="bottomNav">
+    <div class="nav-indicator" id="navIndicator"></div>
+    
+    <button class="nav-item active" data-target="hero">
+      <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+      <span>Главная</span>
+    </button>
+    
+    <button class="nav-item" data-target="history">
+      <svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+      <span>История</span>
+    </button>
+    
+    <button class="nav-item" data-target="gallery">
+      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+      <span>Моменты</span>
+    </button>
+    
+    <button class="nav-item" data-target="places">
+      <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+      <span>Места</span>
+    </button>
+    
+    <button class="nav-item" data-target="dreams">
+      <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+      <span>Мечты</span>
+    </button>
+  </nav>
+  <div class="nav-hint">Нажми на иконку, чтобы перейти</div>
+
 </div>
 
 <!-- MODAL -->
@@ -514,6 +653,7 @@ function unlockSite() {
   startCounter();
   startHearts();
   loadDreams(); // Загружаем сохраненные мечты
+  initNav();    // Инициализируем меню
 }
 
 /* ПРОВЕРКА КЕША ПРИ ЗАГРУЗКЕ */
@@ -526,8 +666,7 @@ window.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-/* ========== СЧЁТЧИК ==========
-   Дата начала отношений: 14 июня 2026 (90 дней до 12.09.2026) */
+/* ========== СЧЁТЧИК ========== */
 const START = new Date("2026-06-14T00:00:00");
 
 function startCounter(){
@@ -580,16 +719,82 @@ function loadDreams() {
   }
 }
 
-document.querySelectorAll('.dream').forEach((d, index) => {
+document.querySelectorAll('.dream').forEach((d) => {
   d.addEventListener('click', () => {
     d.classList.toggle('done');
     d.querySelector('.check').textContent = d.classList.contains('done') ? '✓' : '';
     
-    // Сохраняем состояние всех мечт в массив
     const states = Array.from(document.querySelectorAll('.dream')).map(el => el.classList.contains('done'));
     localStorage.setItem(CACHE_KEY_DREAMS, JSON.stringify(states));
   });
 });
+
+/* ========== НИЖНЕЕ МЕНЮ (НАВИГАЦИЯ) ========== */
+function initNav() {
+  const navItems = document.querySelectorAll('.nav-item');
+  const indicator = document.getElementById('navIndicator');
+  const nav = document.getElementById('bottomNav');
+
+  // Функция перемещения индикатора
+  function moveIndicator(el) {
+    if (!el || !indicator) return;
+    indicator.style.width = `${el.offsetWidth}px`;
+    indicator.style.left = `${el.offsetLeft}px`;
+  }
+
+  // Начальное положение индикатора
+  setTimeout(() => {
+    const active = document.querySelector('.nav-item.active');
+    if (active) moveIndicator(active);
+  }, 100);
+
+  // Клик по элементам меню
+  navItems.forEach(item => {
+    item.addEventListener('click', () => {
+      // Убираем активный класс у всех
+      navItems.forEach(n => n.classList.remove('active'));
+      // Добавляем текущему
+      item.classList.add('active');
+      // Двигаем индикатор
+      moveIndicator(item);
+
+      // Плавная прокрутка к цели
+      const targetId = item.dataset.target;
+      const targetSection = document.getElementById(targetId);
+      if (targetSection) {
+        targetSection.scrollIntoView({ behavior: 'smooth' });
+      }
+    });
+  });
+
+  // Обновление позиции индикатора при изменении размера окна
+  window.addEventListener('resize', () => {
+    const active = document.querySelector('.nav-item.active');
+    if (active) moveIndicator(active);
+  });
+
+  // Обновление индикатора при скролле (определяем активную секцию)
+  window.addEventListener('scroll', () => {
+    let currentSection = '';
+    const sections = document.querySelectorAll('section');
+    
+    sections.forEach(section => {
+      const sectionTop = section.offsetTop;
+      const sectionHeight = section.clientHeight;
+      if (scrollY >= (sectionTop - sectionHeight / 3)) {
+        currentSection = section.getAttribute('id');
+      }
+    });
+
+    navItems.forEach(item => {
+      item.classList.remove('active');
+      if (item.dataset.target === currentSection) {
+        item.classList.add('active');
+        moveIndicator(item);
+      }
+    });
+  });
+}
 
 /* ========== СЕКРЕТНАЯ КНОПКА ========== */
 const secrets = [
