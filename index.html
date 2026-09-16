@@ -53,6 +53,865 @@
     border:1px solid rgba(255,255,255,0.1);
     backdrop-filter:blur(24px);
     border-radius:32px;
+    padding:50px 30px;
+    width:min(420px, 90vw);
+    text-align:center;
+    box-shadow:0 30px 80px rgba(0,0,0,.7), inset 0 1px 0 rgba(255,255,255,0.1);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .lock-card h1{
+    font-size:1.5rem;font-weight:600;margin-bottom:8px;
+    background:linear-gradient(90deg,var(--blue-soft),var(--pink-soft));
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  .lock-card p{color:var(--muted);font-size:.9rem;margin-bottom:30px}
+
+  /* Контейнер для OTP */
+  .otp-container {
+    position: relative;
+    width: 220px;
+    height: 220px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Орбита */
+  .orbit-ring {
+    position: absolute;
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    border: 2px dashed rgba(255,255,255,0.15);
+    transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+    pointer-events: none;
+  }
+
+  /* Слоты */
+  .slot {
+    position: absolute;
+    width: 56px;
+    height: 56px;
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 2px solid rgba(255, 255, 255, 0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--text);
+    transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    z-index: 2;
+    pointer-events: none;
+  }
+
+  /* Начальное состояние (в ряд) */
+  .otp-container:not(.active) .slot[data-index="0"] { transform: translateX(-90px) rotate(-10deg); }
+  .otp-container:not(.active) .slot[data-index="1"] { transform: translateX(-30px) rotate(-5deg); }
+  .otp-container:not(.active) .slot[data-index="2"] { transform: translateX(30px) rotate(5deg); }
+  .otp-container:not(.active) .slot[data-index="3"] { transform: translateX(90px) rotate(10deg); }
+
+  /* Активное состояние (в круг) */
+  .otp-container.active .slot[data-index="0"] { transform: rotate(0deg) translateY(-60px) rotate(0deg); border-color: var(--blue-soft); box-shadow: 0 0 20px rgba(43, 108, 255, 0.4); }
+  .otp-container.active .slot[data-index="1"] { transform: rotate(90deg) translateY(-60px) rotate(-90deg); border-color: var(--pink-soft); box-shadow: 0 0 20px rgba(255, 95, 162, 0.4); }
+  .otp-container.active .slot[data-index="2"] { transform: rotate(180deg) translateY(-60px) rotate(-180deg); border-color: var(--pink-soft); box-shadow: 0 0 20px rgba(255, 95, 162, 0.4); }
+  .otp-container.active .slot[data-index="3"] { transform: rotate(270deg) translateY(-60px) rotate(-270deg); border-color: var(--blue-soft); box-shadow: 0 0 20px rgba(43, 108, 255, 0.4); }
+
+  /* Заполненный слот */
+  .slot.filled {
+    background: linear-gradient(135deg, rgba(43,108,255,0.2), rgba(255,95,162,0.2));
+    border-color: #fff;
+    box-shadow: 0 0 25px rgba(255,255,255,0.3);
+  }
+
+  /* Скрытый инпут для мобильной клавиатуры */
+  .hidden-input {
+    position: absolute;
+    opacity: 0;
+    width: 1px;
+    height: 1px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: -1;
+  }
+
+  /* Кнопка "Ввести код" */
+  .fill-btn {
+    margin-top: 30px;
+    background: linear-gradient(135deg, var(--blue), var(--pink));
+    color: #fff;
+    border: none;
+    padding: 12px 32px;
+    border-radius: 14px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 5px 20px rgba(255, 95, 162, 0.3);
+  }
+  .fill-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 25px rgba(255, 95, 162, 0.5);
+  }
+  .hint {
+    margin-top: 20px;
+    font-size: 0.8rem;
+    color: var(--muted);
+    opacity: 0.8;
+  }
+
+  /* Анимация тряски при ошибке */
+  .shake { animation: shake .4s; }
+  @keyframes shake {
+    0%,100%{transform:translateX(0)}
+    20%{transform:translateX(-10px)}40%{transform:translateX(10px)}
+    60%{transform:translateX(-6px)}80%{transform:translateX(6px)}
+  }
+
+  /* ============ ОСНОВНОЙ САЙТ ============ */
+  #site{display:none;animation:fadeUp 1s ease; padding-bottom: 80px;}
+  #site.visible{display:block}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+
+  .container{max-width:1100px;margin:0 auto;padding:0 24px}
+
+  /* HERO */
+  .hero{
+    min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;
+    text-align:center;position:relative;padding:80px 24px;
+  }
+  .hearts{position:absolute;inset:0;overflow:hidden;pointer-events:none}
+  .hearts i{
+    position:absolute;font-style:normal;opacity:.15;font-size:2rem;
+    animation:float linear infinite;
+  }
+  @keyframes float{from{transform:translateY(0) rotate(0)}to{transform:translateY(-100vh) rotate(360deg)}}
+
+  .couple{
+    font-size:clamp(2.4rem,7vw,5rem);font-weight:800;line-height:1.05;letter-spacing:-.02em;
+    position:relative;z-index:1;
+  }
+  .couple .him{
+    background:linear-gradient(90deg,#7aa8ff,#2b6cff,#7aa8ff);
+    background-size:200% auto;
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+    animation:textShine 4s linear infinite;
+  }
+  .couple .her{
+    background:linear-gradient(90deg,#ff5fa2,#ffa5c9,#ff5fa2);
+    background-size:200% auto;
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+    animation:textShine 4s linear infinite;
+  }
+  .amp{color:var(--muted);font-weight:300;margin:0 .15em}
+
+  .subtitle{margin-top:20px;color:var(--muted);font-size:1.05rem;z-index:1;}
+
+  .counter{
+    margin-top:48px;display:flex;gap:14px;flex-wrap:wrap;justify-content:center;z-index:1;
+  }
+  .counter .unit{
+    background:var(--card);border:1px solid var(--border);
+    border-radius:20px;padding:20px 26px;min-width:110px;
+    backdrop-filter:blur(12px);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  .counter .unit:hover {
+    transform: translateY(-5px) scale(1.05);
+    box-shadow: 0 10px 30px rgba(255,95,162,0.3);
+    border-color: rgba(255,95,162,0.5);
+  }
+  .counter .num{
+    font-size:2.2rem;font-weight:700;
+    background:linear-gradient(135deg,var(--blue-soft),var(--pink-soft));
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  .counter .lbl{font-size:.8rem;color:var(--muted);margin-top:4px;text-transform:uppercase;letter-spacing:.08em}
+
+  .bday{
+    margin-top:40px;display:flex;gap:20px;flex-wrap:wrap;justify-content:center;
+    font-size:.9rem;color:var(--muted);z-index:1;
+  }
+  .bday span b{color:var(--text)}
+  .bday .him b{color:var(--blue-soft)}
+  .bday .her b{color:var(--pink-soft)}
+
+  /* SECTIONS */
+  section{padding:100px 0}
+  .section-title{
+    font-size:clamp(1.6rem,4vw,2.4rem);font-weight:700;text-align:center;margin-bottom:16px;
+    background: linear-gradient(90deg, var(--blue-soft), var(--pink-soft), var(--blue-soft));
+    background-size: 200% auto;
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+    animation: textShine 5s linear infinite;
+  }
+  .section-sub{text-align:center;color:var(--muted);margin-bottom:60px}
+
+  /* TIMELINE */
+  .timeline{position:relative;max-width:800px;margin:0 auto}
+  .timeline::before{
+    content:'';position:absolute;left:50%;top:0;bottom:0;width:2px;
+    background:linear-gradient(180deg,var(--blue),var(--pink));
+    transform:translateX(-50%);
+  }
+  .t-item{
+    display:flex;justify-content:flex-end;padding-right:calc(50% + 30px);
+    margin-bottom:50px;position:relative;
+  }
+  .t-item:nth-child(even){justify-content:flex-start;padding-right:0;padding-left:calc(50% + 30px);}
+  .t-item .dot{
+    position:absolute;left:50%;top:8px;width:16px;height:16px;border-radius:50%;
+    background:linear-gradient(135deg,var(--blue),var(--pink));
+    transform:translateX(-50%);
+    box-shadow:0 0 20px rgba(255,95,162,.7);
+    transition: transform 0.3s;
+  }
+  .t-item:hover .dot { transform: translateX(-50%) scale(1.3); }
+  .t-item .card{
+    background:var(--card);border:1px solid var(--border);
+    border-radius:16px;padding:20px 24px;backdrop-filter:blur(12px);
+    max-width:340px;transition: transform 0.3s, border-color 0.3s;
+  }
+  .t-item .card:hover { transform: translateY(-5px); border-color: var(--pink-soft); }
+  .t-item .date{font-size:.8rem;color:var(--pink-soft);letter-spacing:.08em;text-transform:uppercase}
+  .t-item h4{margin:6px 0 8px;font-size:1.15rem}
+  .t-item p{color:var(--muted);font-size:.92rem;line-height:1.5}
+  @media(max-width:640px){
+    .timeline::before{left:20px}
+    .t-item, .t-item:nth-child(even){padding:0 0 0 50px;justify-content:flex-start;}
+    .t-item .dot{left:20px}
+    .t-item .card{max-width:100%}
+  }
+
+  /* GALLERY */
+  .gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;}
+  .gallery .ph{
+    aspect-ratio:1;border-radius:18px;overflow:hidden;position:relative;
+    background:linear-gradient(135deg,rgba(43,108,255,.25),rgba(255,95,162,.25));
+    border:1px solid var(--border);
+    display:flex;align-items:center;justify-content:center;
+    color:var(--muted);font-size:.85rem;transition:.4s;cursor:pointer;
+  }
+  .gallery .ph:hover{transform:translateY(-8px) scale(1.03);box-shadow:0 20px 40px rgba(0,0,0,.5);border-color: var(--blue-soft);}
+  .gallery .ph::after{
+    content:attr(data-label);position:absolute;bottom:12px;left:12px;
+    font-size:.75rem;color:rgba(255,255,255,.7);
+  }
+
+  /* PLACES */
+  .places{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px;}
+  .place{
+    background:var(--card);border:1px solid var(--border);border-radius:20px;
+    padding:28px;backdrop-filter:blur(12px);transition:.4s;
+  }
+  .place:hover{border-color:var(--pink-soft);transform:translateY(-6px);box-shadow: 0 15px 30px rgba(43,108,255,0.2);}
+  .place .icon{font-size:2rem;margin-bottom:12px}
+  .place h4{margin-bottom:8px}
+  .place p{color:var(--muted);font-size:.92rem;line-height:1.5}
+
+  /* DREAMS */
+  .dreams{max-width:700px;margin:0 auto;display:flex;flex-direction:column;gap:14px;}
+  .dream{
+    display:flex;align-items:center;gap:16px;
+    background:var(--card);border:1px solid var(--border);
+    border-radius:16px;padding:18px 22px;cursor:pointer;transition:.3s;
+  }
+  .dream:hover{background:rgba(255,255,255,.09);transform: translateX(5px);}
+  .dream .check{
+    width:24px;height:24px;border-radius:8px;border:2px solid var(--border);
+    display:flex;align-items:center;justify-content:center;flex-shrink:0;
+    transition:.25s;font-size:.9rem;
+  }
+  .dream.done .check{
+    background:linear-gradient(135deg,var(--blue),var(--pink));
+    border-color:transparent;
+  }
+  .dream.done span{text-decoration:line-through;color:var(--muted)}
+  .dream span{transition:.25s}
+
+  /* FOOTER */
+  footer{
+    text-align:center;padding:60px 24px;color:var(--muted);font-size:.85rem;
+    border-top:1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+  }
+  .secret-btn{
+    background:transparent;border:1px dashed var(--border);
+    color:var(--muted);padding:10px 20px;border-radius:12px;cursor:pointer;
+    font-size:.8rem;transition:.25s;
+  }
+  .secret-btn:hover{color:var(--text);border-color:var(--pink-soft);box-shadow: 0 0 15px rgba(255,95,162,0.3);}
+  
+  .logout-btn {
+    background:transparent;
+    border:1px solid rgba(255,255,255,0.2);
+    color:var(--muted);
+    padding:10px 24px;
+    border-radius:12px;
+    cursor:pointer;
+    font-size:.8rem;
+    transition:.25s;
+  }
+  .logout-btn:hover {
+    color:#fff;
+    border-color: #fff;
+    background: rgba(255,255,255,0.05);
+  }
+
+  /* MODAL */
+  .modal{
+    position:fixed;inset:0;z-index:2000;display:none;
+    align-items:center;justify-content:center;padding:24px;
+    background:rgba(5,6,15,.85);backdrop-filter:blur(8px);
+  }
+  .modal.show{display:flex;animation:fadeUp .4s}
+  .modal .box{
+    background:linear-gradient(160deg,rgba(43,108,255,.2),rgba(255,95,162,.2));
+    border:1px solid var(--border);border-radius:24px;
+    padding:40px;max-width:500px;text-align:center;
+  }
+  .modal h3{margin-bottom:16px;font-size:1.5rem}
+  .modal p{color:var(--muted);line-height:1.6;margin-bottom:24px}
+  .modal button{
+    background:linear-gradient(135deg,var(--blue),var(--pink));
+    color:white;border:none;padding:12px 32px;border-radius:12px;
+    font-size:1rem;cursor:pointer;font-weight:600;transition: transform 0.2s;
+  }
+  .modal button:hover { transform: scale(1.05); }
+
+  /* ============ НИЖНЕЕ МЕНЮ (BOTTOM NAV) ============ */
+  .bottom-nav {
+    position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%);
+    display: flex; align-items: center; gap: 8px;
+    background: rgba(20, 20, 30, 0.7); backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 40px;
+    padding: 6px; z-index: 900;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6), 0 0 20px rgba(43, 108, 255, 0.1);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+  #site:not(.visible) .bottom-nav { opacity: 0; pointer-events: none; transform: translateX(-50%) translateY(20px); }
+  .nav-item {
+    position: relative; display: flex; flex-direction: column; align-items: center;
+    justify-content: center; gap: 4px; background: transparent; border: none;
+    color: var(--muted); padding: 12px 18px; border-radius: 30px;
+    cursor: pointer; transition: color 0.3s ease, transform 0.2s ease; z-index: 2;
+  }
+  .nav-item:hover { color: var(--text); transform: translateY(-2px); }
+  .nav-item.active { color: #fff; }
+  .nav-item svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; transition: transform 0.3s ease; }
+  .nav-item.active svg { transform: scale(1.1); }
+  .nav-item span { font-size: 0.7rem; font-weight: 500; letter-spacing: 0.02em; }
+  .nav-indicator {
+    position: absolute; top: 6px; bottom: 6px; border-radius: 30px;
+    background: radial-gradient(circle at center, rgba(255, 95, 162, 0.3) 0%, rgba(43, 108, 255, 0.2) 50%, transparent 80%);
+    box-shadow: 0 0 25px rgba(255, 95, 162, 0.4), inset 0 0 15px rgba(43, 108, 255, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1); z-index: 1; pointer-events: none;
+  }
+  .nav-hint {
+    position: fixed; bottom: 5px; left: 50%; transform: translateX(-50%);
+    font-size: 0.65rem; color: rgba(255, 255, 255, 0.3); letter-spacing: 0.05em;
+    z-index: 900; pointer-events: none;
+  }
+  @media (max-width: 600px) {
+    .nav-item { padding: 10px 14px; }
+    .nav-item span { font-size: 0.65rem; }
+    .nav-item svg { width: 20px; height: 20px; }
+  }
+
+  ::selection{background:var(--pink);color:white}
+</style>
+</head>
+<body>
+
+<!-- ============ PIN-ЭКРАН (OTP VERIFICATION) ============ -->
+<div id="lock">
+  <div class="lock-card" id="lockCard">
+    <h1>Наш уголок</h1>
+    <p>Только для нас двоих 💙💗</p>
+
+    <div class="otp-container" id="otpContainer">
+      <div class="orbit-ring"></div>
+      <div class="slot" data-index="0"></div>
+      <div class="slot" data-index="1"></div>
+      <div class="slot" data-index="2"></div>
+      <div class="slot" data-index="3"></div>
+    </div>
+
+    <!-- Скрытый инпут для вызова клавиатуры на мобильных -->
+    <input type="tel" maxlength="4" class="hidden-input" id="hiddenInput" autocomplete="one-time-code" />
+
+    <button class="fill-btn" id="fillBtn">Ввести код</button>
+    <p class="hint">Подсказка: мы оба знаем эти 4 цифры 😉</p>
+  </div>
+</div>
+
+<!-- ============ САЙТ ============ -->
+<div id="site">
+
+  <!-- HERO -->
+  <section class="hero" id="hero">
+    <div class="hearts" id="hearts"></div>
+
+    <h1 class="couple">
+      <span class="him">Никита</span>
+      <span class="amp">&</span>
+      <span class="her">Валерия</span>
+    </h1>
+    <p class="subtitle">Наша история, наши дни, наши мечты</p>
+
+    <div class="counter" id="counter">
+      <div class="unit"><div class="num" id="days">0</div><div class="lbl">дней</div></div>
+      <div class="unit"><div class="num" id="hours">0</div><div class="lbl">часов</div></div>
+      <div class="unit"><div class="num" id="minutes">0</div><div class="lbl">минут</div></div>
+      <div class="unit"><div class="num" id="seconds">0</div><div class="lbl">секунд</div></div>
+    </div>
+
+    <div class="bday">
+      <span class="him">💙 <b>Никита</b> · 02.01.2003</span>
+      <span class="her">💗 <b>Валерия</b> · 31.12.2003</span>
+    </div>
+  </section>
+
+  <!-- ИСТОРИЯ -->
+  <section class="container" id="history">
+    <h2 class="section-title">Наша история</h2>
+    <p class="section-sub">С чего всё началось</p>
+
+    <div class="timeline">
+      <div class="t-item">
+        <div class="dot"></div>
+        <div class="card">
+          <div class="date">Знакомство</div>
+          <h4>Первая встреча</h4>
+          <p>Здесь будет история о том, как вы познакомились. Добавим позже ✨</p>
+        </div>
+      </div>
+      <div class="t-item">
+        <div class="dot"></div>
+        <div class="card">
+          <div class="date">14 июня 2026</div>
+          <h4>Начало отношений 💙💗</h4>
+          <p>День, с которого мы вместе. Именно отсюда считается наш счётчик.</p>
+        </div>
+      </div>
+      <div class="t-item">
+        <div class="dot"></div>
+        <div class="card">
+          <div class="date">12 сентября 2026</div>
+          <h4>90 дней вместе</h4>
+          <p>Первый маленький юбилей. Спасибо, что ты рядом.</p>
+        </div>
+      </div>
+      <div class="t-item">
+        <div class="dot"></div>
+        <div class="card">
+          <div class="date">Дальше...</div>
+          <h4>Продолжение следует</h4>
+          <p>Здесь будут появляться новые важные даты, путешествия и моменты.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ГАЛЕРЕЯ -->
+  <section class="container" id="gallery">
+    <h2 class="section-title">Наши моменты</h2>
+    <p class="section-sub">Фотографии, которые мы любим</p>
+
+    <div class="gallery">
+      <div class="ph" data-label="Фото 1">Здесь будет фото</div>
+      <div class="ph" data-label="Фото 2">Здесь будет фото</div>
+      <div class="ph" data-label="Фото 3">Здесь будет фото</div>
+      <div class="ph" data-label="Фото 4">Здесь будет фото</div>
+      <div class="ph" data-label="Фото 5">Здесь будет фото</div>
+      <div class="ph" data-label="Фото 6">Здесь будет фото</div>
+    </div>
+  </section>
+
+  <!-- МЕСТА -->
+  <section class="container" id="places">
+    <h2 class="section-title">Наши места</h2>
+    <p class="section-sub">Точки на карте, которые стали особенными</p>
+
+    <div class="places">
+      <div class="place">
+        <div class="icon">☕</div>
+        <h4>Наше кафе</h4>
+        <p>Место, куда хочется возвращаться снова и снова.</p>
+      </div>
+      <div class="place">
+        <div class="icon">🌳</div>
+        <h4>Наш парк</h4>
+        <p>Здесь были долгие прогулки и самые тёплые разговоры.</p>
+      </div>
+      <div class="place">
+        <div class="icon">🌆</div>
+        <h4>Особое место</h4>
+        <p>Добавим позже — у нас ведь будет ещё много таких мест.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- МЕЧТЫ -->
+  <section class="container" id="dreams">
+    <h2 class="section-title">Наши мечты</h2>
+    <p class="section-sub">То, что мы хотим сделать вместе</p>
+
+    <div class="dreams" id="dreamsList">
+      <div class="dream"><div class="check"></div><span>Съездить в совместное путешествие ✈️</span></div>
+      <div class="dream"><div class="check"></div><span>Посмотреть вместе закат на море 🌅</span></div>
+      <div class="dream"><div class="check"></div><span>Приготовить вместе ужин 🍝</span></div>
+      <div class="dream"><div class="check"></div><span>Завести питомца 🐾</span></div>
+      <div class="dream"><div class="check"></div><span>Отметить 365 дней вместе 🎉</span></div>
+    </div>
+  </section>
+
+  <footer>
+    <p>Сделано с любовью 💙💗</p>
+    <p style="opacity:.7">Никита & Валерия · 2026</p>
+    
+    <button class="secret-btn" id="secretBtn">🤫 Что-то спрятано...</button>
+    <button class="logout-btn" id="logoutBtn">Выйти</button>
+  </footer>
+
+  <!-- ============ НИЖНЕЕ МЕНЮ ============ -->
+  <nav class="bottom-nav" id="bottomNav">
+    <div class="nav-indicator" id="navIndicator"></div>
+    <button class="nav-item active" data-target="hero">
+      <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+      <span>Главная</span>
+    </button>
+    <button class="nav-item" data-target="history">
+      <svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+      <span>История</span>
+    </button>
+    <button class="nav-item" data-target="gallery">
+      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+      <span>Моменты</span>
+    </button>
+    <button class="nav-item" data-target="places">
+      <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+      <span>Места</span>
+    </button>
+    <button class="nav-item" data-target="dreams">
+      <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+      <span>Мечты</span>
+    </button>
+  </nav>
+  <div class="nav-hint">Нажми на иконку, чтобы перейти</div>
+
+</div>
+
+<!-- MODAL -->
+<div class="modal" id="modal">
+  <div class="box">
+    <h3 id="modalTitle"></h3>
+    <p id="modalText"></p>
+    <button onclick="document.getElementById('modal').classList.remove('show')">Закрыть</button>
+  </div>
+</div>
+
+<script>
+/* ========== РАБОТА С LOCAL STORAGE (КЕШ) ========== */
+const CACHE_KEY_UNLOCKED = 'nv_site_unlocked';
+const CACHE_KEY_DREAMS = 'nv_dreams_state';
+
+/* ========== ЛОГИКА OTP (PIN-КОДА) ========== */
+const PIN = "2568";
+const otpContainer = document.getElementById('otpContainer');
+const slots = document.querySelectorAll('.slot');
+const hiddenInput = document.getElementById('hiddenInput');
+const fillBtn = document.getElementById('fillBtn');
+const lockCard = document.getElementById('lockCard');
+
+// Фокус на скрытый инпут при клике на контейнер (для мобильной клавиатуры)
+otpContainer.addEventListener('click', () => hiddenInput.focus());
+
+// Кнопка "Ввести код" (автоввод)
+fillBtn.addEventListener('click', () => {
+  // Активируем круговую анимацию
+  otpContainer.classList.add('active');
+  hiddenInput.focus();
+  
+  // Сбрасываем предыдущий ввод
+  hiddenInput.value = '';
+  slots.forEach(s => { s.textContent = ''; s.classList.remove('filled'); });
+
+  // Автоматически вводим код с задержкой
+  const digits = PIN.split('');
+  digits.forEach((digit, i) => {
+    setTimeout(() => {
+      hiddenInput.value += digit;
+      updateSlots(hiddenInput.value);
+      
+      if (i === digits.length - 1) {
+        setTimeout(() => checkPin(hiddenInput.value), 400);
+      }
+    }, i * 200); // Задержка 200мс между цифрами
+  });
+});
+
+// Функция обновления слотов
+function updateSlots(val) {
+  slots.forEach((slot, i) => {
+    if (val[i]) {
+      slot.textContent = val[i];
+      slot.classList.add('filled');
+    } else {
+      slot.textContent = '';
+      slot.classList.remove('filled');
+    }
+  });
+}
+
+// Ввод с клавиатуры (физической или экранной)
+hiddenInput.addEventListener('input', (e) => {
+  const val = e.target.value;
+  otpContainer.classList.add('active');
+  updateSlots(val);
+
+  if (val.length === 4) {
+    checkPin(val);
+  }
+});
+
+// Проверка PIN-кода
+function checkPin(val) {
+  if (val === PIN) {
+    localStorage.setItem(CACHE_KEY_UNLOCKED, 'true');
+    unlockSite();
+  } else {
+    lockCard.classList.add('shake');
+    setTimeout(() => {
+      lockCard.classList.remove('shake');
+      hiddenInput.value = '';
+      updateSlots('');
+      otpContainer.classList.remove('active');
+    }, 500);
+  }
+}
+
+function unlockSite() {
+  document.getElementById('lock').classList.add('hidden');
+  document.getElementById('site').classList.add('visible');
+  document.body.style.overflowY = 'auto';
+  startCounter();
+  startHearts();
+  loadDreams();
+  initNav();
+}
+
+/* ========== ПРОВЕРКА КЕША ПРИ ЗАГРУЗКЕ ========== */
+window.addEventListener('DOMContentLoaded', () => {
+  if (localStorage.getItem(CACHE_KEY_UNLOCKED) === 'true') {
+    unlockSite();
+  } else {
+    document.body.style.overflow = 'hidden';
+    setTimeout(() => hiddenInput.focus(), 500);
+  }
+});
+
+/* ========== КНОПКА ВЫЙТИ ========== */
+document.getElementById('logoutBtn').addEventListener('click', () => {
+  localStorage.removeItem(CACHE_KEY_UNLOCKED);
+  location.reload(); // Перезагружаем страницу, чтобы вернуться к экрану входа
+});
+
+/* ========== СЧЁТЧИК ========== */
+const START = new Date("2026-06-14T00:00:00");
+
+function startCounter(){
+  function tick(){
+    const now = new Date();
+    let diff = Math.max(0, now - START);
+    const s = Math.floor(diff/1000);
+    const days = Math.floor(s/86400);
+    const hours = Math.floor((s%86400)/3600);
+    const minutes = Math.floor((s%3600)/60);
+    const seconds = s%60;
+
+    document.getElementById('days').textContent = days;
+    document.getElementById('hours').textContent = String(hours).padStart(2,'0');
+    document.getElementById('minutes').textContent = String(minutes).padStart(2,'0');
+    document.getElementById('seconds').textContent = String(seconds).padStart(2,'0');
+  }
+  tick();
+  setInterval(tick, 1000);
+}
+
+/* ========== СЕРДЕЧКИ НА ФОНЕ ========== */
+function startHearts(){
+  const wrap = document.getElementById('hearts');
+  if (!wrap) return;
+  const symbols = ['💙','💗','♥','✦','🤍'];
+  for(let i=0;i<18;i++){
+    const el = document.createElement('i');
+    el.textContent = symbols[Math.floor(Math.random()*symbols.length)];
+    el.style.left = Math.random()*100 + '%';
+    el.style.bottom = '-40px';
+    el.style.fontSize = (16 + Math.random()*22) + 'px';
+    el.style.animationDuration = (12 + Math.random()*14) + 's';
+    el.style.animationDelay = (Math.random()*12) + 's';
+    wrap.appendChild(el);
+  }
+}
+
+/* ========== МЕЧТЫ (клик = выполнено + сохранение) ========== */
+function loadDreams() {
+  const saved = localStorage.getItem(CACHE_KEY_DREAMS);
+  if (saved) {
+    const states = JSON.parse(saved);
+    document.querySelectorAll('.dream').forEach((d, i) => {
+      if (states[i]) {
+        d.classList.add('done');
+        d.querySelector('.check').textContent = '✓';
+      }
+    });
+  }
+}
+
+document.querySelectorAll('.dream').forEach((d) => {
+  d.addEventListener('click', () => {
+    d.classList.toggle('done');
+    d.querySelector('.check').textContent = d.classList.contains('done') ? '✓' : '';
+    
+    const states = Array.from(document.querySelectorAll('.dream')).map(el => el.classList.contains('done'));
+    localStorage.setItem(CACHE_KEY_DREAMS, JSON.stringify(states));
+  });
+});
+
+/* ========== НИЖНЕЕ МЕНЮ (НАВИГАЦИЯ) ========== */
+function initNav() {
+  const navItems = document.querySelectorAll('.nav-item');
+  const indicator = document.getElementById('navIndicator');
+  const nav = document.getElementById('bottomNav');
+
+  function moveIndicator(el) {
+    if (!el || !indicator) return;
+    indicator.style.width = `${el.offsetWidth}px`;
+    indicator.style.left = `${el.offsetLeft}px`;
+  }
+
+  setTimeout(() => {
+    const active = document.querySelector('.nav-item.active');
+    if (active) moveIndicator(active);
+  }, 100);
+
+  navItems.forEach(item => {
+    item.addEventListener('click', () => {
+      navItems.forEach(n => n.classList.remove('active'));
+      item.classList.add('active');
+      moveIndicator(item);
+
+      const targetId = item.dataset.target;
+      const targetSection = document.getElementById(targetId);
+      if (targetSection) {
+        targetSection.scrollIntoView({ behavior: 'smooth' });
+      }
+    });
+  });
+
+  window.addEventListener('resize', () => {
+    const active = document.querySelector('.nav-item.active');
+    if (active) moveIndicator(active);
+  });
+
+  window.addEventListener('scroll', () => {
+    let currentSection = '';
+    const sections = document.querySelectorAll('section');
+    
+    sections.forEach(section => {
+      const sectionTop = section.offsetTop;
+      const sectionHeight = section.clientHeight;
+      if (scrollY >= (sectionTop - sectionHeight / 3)) {
+        currentSection = section.getAttribute('id');
+      }
+    });
+
+    navItems.forEach(item => {
+      item.classList.remove('active');
+      if (item.dataset.target === currentSection) {
+        item.classList.add('active');
+        moveIndicator(item);
+      }
+    });
+  });
+}
+
+/* ========== СЕКРЕТНАЯ КНОПКА ========== */
+const secrets = [
+  { t:"💙 Секрет №1", p:"Здесь ты можешь написать что-то очень личное для Валерии. Например, почему ты выбрал именно её, или что ты чувствуешь, глядя на неё." },
+  { t:"💗 Секрет №2", p:"А это место — под внутренний мем, шутку или песню, которая только ваша. Никто посторонний не поймёт, а вы улыбнётесь." },
+  { t:"✦ Секрет №3", p:"Пасхалка: попробуй набрать 'love' в PIN-поле (не сейчас — оно уже закрыто 😉). Или добавь сюда цитату, которая вам дорога." }
+];
+let secretIdx = 0;
+
+document.getElementById('secretBtn').addEventListener('click', ()=>{
+  const s = secrets[secretIdx % secrets.length];
+  document.getElementById('modalTitle').textContent = s.t;
+  document.getElementById('modalText').textContent = s.p;
+  document.getElementById('modal').classList.add('show');
+  secretIdx++;
+});
+
+document.getElementById('modal').addEventListener('click', e=>{
+  if(e.target.id === 'modal') e.target.classList.remove('show');
+});
+</script>
+</body>
+</html>
+    --pink-deep:#8b1e52;
+    --bg:#0e0f1a;
+    --card:rgba(255,255,255,0.06);
+    --border:rgba(255,255,255,0.12);
+    --text:#eef1ff;
+    --muted:#a7aec7;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  
+  /* ============ АНИМИРОВАННЫЙ ФОН ============ */
+  body{
+    font-family:'Segoe UI',system-ui,-apple-system,sans-serif;
+    color:var(--text);
+    min-height:100vh;
+    overflow-x:hidden;
+    background: linear-gradient(-45deg, #0e0f1a, #1a1040, #0b2a6b, #8b1e52, #0e0f1a);
+    background-size: 400% 400%;
+    animation: gradientBG 20s ease infinite;
+    will-change: background-position;
+  }
+  @keyframes gradientBG {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  /* ============ НОВЫЙ PIN-ЭКРАН (OTP) ============ */
+  #lock{
+    position:fixed;inset:0;z-index:1000;
+    display:flex;align-items:center;justify-content:center;
+    background:rgba(10,10,20,0.85);
+    backdrop-filter:blur(20px);
+    transition:opacity .8s ease, visibility .8s;
+  }
+  #lock.hidden{opacity:0;visibility:hidden;pointer-events:none}
+  
+  .lock-card{
+    background:rgba(20, 20, 30, 0.7);
+    border:1px solid rgba(255,255,255,0.1);
+    backdrop-filter:blur(24px);
+    border-radius:32px;
     padding:40px 30px;
     width:min(420px, 90vw);
     text-align:center;
