@@ -32,6 +32,14 @@ button{font:inherit;border:0;cursor:pointer}.container{width:min(1050px,calc(100
 .hero{text-align:center;padding:78px 0 55px}.small{color:var(--muted);font-size:14px;margin-bottom:10px}.hero h1{font-size:clamp(42px,11vw,82px);line-height:.98;letter-spacing:-3px;background:linear-gradient(100deg,#fff,#9cc8ff,#ff91c1,#fff);background-size:220% auto;-webkit-background-clip:text;color:transparent;animation:grad 6s linear infinite;margin-bottom:18px}@keyframes grad{to{background-position:220% center}}.sub{max-width:620px;margin:auto;color:var(--muted);line-height:1.6}
 .counter{width:min(680px,100%);margin:28px auto 0;padding:20px;border:1px solid var(--line);border-radius:25px;background:rgba(255,255,255,.055);backdrop-filter:blur(15px)}.ct{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:10px}.time{font-size:clamp(20px,5vw,32px);font-weight:800}.date{font-size:13px;color:var(--muted);margin-top:7px}
 section{padding:42px 0}.label{font-size:12px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--blue);margin-bottom:7px}.head{margin-bottom:21px}.head h2{font-size:30px;letter-spacing:-1px}.head p{color:var(--muted);margin-top:7px}
+
+/* переключатель сортировки */
+.sortRow{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+.sortRow .head{margin-bottom:0;flex:1;min-width:200px}
+.sortToggle{display:flex;gap:4px;padding:4px;background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:14px;flex:none}
+.sortToggle button{padding:8px 12px;border-radius:10px;background:transparent;color:var(--muted);font-size:12px;font-weight:700;transition:.15s;white-space:nowrap}
+.sortToggle button.active{color:#fff;background:linear-gradient(135deg,var(--blue),var(--pink));box-shadow:0 4px 12px rgba(98,168,255,.25)}
+
 .timeline{display:grid;gap:13px;position:relative}.timeline:before{content:"";position:absolute;left:19px;top:14px;bottom:14px;width:1px;background:linear-gradient(var(--blue),var(--pink),transparent)}.event{position:relative;padding:20px 20px 20px 52px}.event:before{content:"";position:absolute;left:12px;top:22px;width:15px;height:15px;border-radius:50%;background:linear-gradient(135deg,var(--blue),var(--pink));box-shadow:0 0 20px rgba(98,168,255,.5)}.event .edate{font-size:12px;color:var(--blue);font-weight:700;margin-bottom:7px}.event h3{font-size:19px;margin-bottom:7px}.event p{color:var(--muted);line-height:1.55}
 .gallery{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.photo{aspect-ratio:1;overflow:hidden;border-radius:21px;border:1px solid var(--line);background:rgba(255,255,255,.05);cursor:pointer}.photo img{width:100%;height:100%;object-fit:cover;display:block;transition:.5s}.photo:hover img{transform:scale(1.06)}
 .places{display:grid;grid-template-columns:repeat(3,1fr);gap:13px}.place{padding:22px;min-height:165px}.pi{font-size:34px;margin-bottom:15px}.place h3{font-size:18px;margin-bottom:7px}.place p{color:var(--muted);font-size:14px;line-height:1.5}.place a{display:inline-block;margin-top:13px;color:var(--blue);text-decoration:none;font-size:13px}
@@ -84,7 +92,7 @@ section{padding:42px 0}.label{font-size:12px;font-weight:800;letter-spacing:2px;
 .hintBox b{color:#fff}
 
 @media(max-width:700px){.gallery{grid-template-columns:repeat(2,1fr)}.places{grid-template-columns:1fr}.hero{padding:62px 0 44px}.hero h1{letter-spacing:-2px}.photo{border-radius:16px}}
-@media(max-width:390px){.bdays{grid-template-columns:1fr}.eForm .row{grid-template-columns:1fr}.modalBox{border-radius:18px}}
+@media(max-width:390px){.bdays{grid-template-columns:1fr}.eForm .row{grid-template-columns:1fr}.modalBox{border-radius:18px}.sortToggle{width:100%}.sortToggle button{flex:1}}
 </style>
 </head>
 <body>
@@ -122,7 +130,20 @@ section{padding:42px 0}.label{font-size:12px;font-weight:800;letter-spacing:2px;
   <div class="counter"><div class="ct">Мы вместе</div><div class="time" id="time">Загрузка...</div><div class="date" id="startDate">💙💗</div></div>
 </div></section>
 
-<section id="history"><div class="container"><div class="head"><div class="label">Наша история</div><h2>С самых важных моментов</h2><p>То, что хочется помнить.</p></div><div class="timeline" id="events"><div class="empty card">Загружаем историю...</div></div></div></section>
+<section id="history"><div class="container">
+  <div class="sortRow">
+    <div class="head">
+      <div class="label">Наша история</div>
+      <h2>С самых важных моментов</h2>
+      <p>То, что хочется помнить.</p>
+    </div>
+    <div class="sortToggle" id="sortToggle">
+      <button data-mode="asc" onclick="setSort('asc')">↑ Старые</button>
+      <button data-mode="desc" onclick="setSort('desc')">↓ Новые</button>
+    </div>
+  </div>
+  <div class="timeline" id="events"><div class="empty card">Загружаем историю...</div></div>
+</div></section>
 
 <section id="gallerySection"><div class="container"><div class="head"><div class="label">Воспоминания</div><h2>Наша галерея 📸</h2><p>Фотографии, которые хочется пересматривать.</p></div><div class="gallery" id="gallery"><div class="empty card" style="grid-column:1/-1">📸<br>Фотографии появятся здесь</div></div></div></section>
 
@@ -214,6 +235,7 @@ let DRAFT = null;
 let editorTab = "events";
 let secrets = [];
 let secretIndex = -1;
+let sortMode = localStorage.getItem("nv_sort_events") || "asc"; // asc | desc
 
 /* ===== УТИЛИТЫ ===== */
 function esc(v){
@@ -307,6 +329,7 @@ function renderAll(){
   renderDreams();
   renderSecrets();
   renderStartDate();
+  updateSortToggle();
 }
 
 function renderStartDate(){
@@ -315,9 +338,30 @@ function renderStartDate(){
   if(el) el.textContent = "с " + d.toLocaleDateString("ru-RU",{day:"numeric",month:"long",year:"numeric"}) + " 💙💗";
 }
 
+/* ==== сортировка ==== */
+function setSort(mode){
+  sortMode = mode;
+  localStorage.setItem("nv_sort_events", mode);
+  renderEvents();
+  updateSortToggle();
+  toast(mode === "asc" ? "↑ Сначала старые" : "↓ Сначала новые");
+}
+function updateSortToggle(){
+  document.querySelectorAll("#sortToggle button").forEach(b=>{
+    b.classList.toggle("active", b.dataset.mode === sortMode);
+  });
+}
+function sortedEvents(list){
+  return [...list].sort((a,b)=>{
+    const da = new Date(a.date || 0).getTime() || 0;
+    const db = new Date(b.date || 0).getTime() || 0;
+    return sortMode === "asc" ? da - db : db - da;
+  });
+}
+
 function renderEvents(){
   const el = document.getElementById("events");
-  const list = DATA.events || [];
+  const list = sortedEvents(DATA.events || []);
   if(!list.length){
     el.innerHTML = `<div class="empty card">Пока здесь пусто ❤️</div>`;
     return;
@@ -461,6 +505,9 @@ function renderEditor(){
   const body = document.getElementById("editorBody");
 
   if(editorTab === "events"){
+    const sorted = sortedEvents(DRAFT.events || []);
+    // находим оригинальные индексы, чтобы удаление работало корректно
+    const idxMap = sorted.map(x => DRAFT.events.indexOf(x));
     body.innerHTML = `
       <form class="eForm" onsubmit="addEvent(event,this)">
         <label>Дата</label>
@@ -472,13 +519,13 @@ function renderEditor(){
         <button type="submit">+ Добавить в историю</button>
       </form>
       <div class="eList">
-        ${(DRAFT.events||[]).map((x,i)=>`
+        ${sorted.map((x,k)=>`
           <div class="eItem">
             <div class="eItemInfo">
               <b>${esc(x.title)}</b>
               <small>${esc(fmtDate(x.date))}${x.description ? " · "+esc(x.description.slice(0,40)) : ""}</small>
             </div>
-            <button class="eDel" onclick="delItem('events',${i})">Удалить</button>
+            <button class="eDel" onclick="delItem('events',${idxMap[k]})">Удалить</button>
           </div>
         `).join("") || `<div class="eEmpty">Пока ничего нет — добавьте первое событие ✨</div>`}
       </div>
@@ -516,11 +563,9 @@ function renderEditor(){
         <label>Мечта</label>
         <input type="text" name="title" required placeholder="Например: Съездить в Париж 🗼">
         <label>Уже сбылось?</label>
-        <div class="row">
-          <label style="display:flex;align-items:center;gap:8px;font-size:13px;color:#fff;text-transform:none;letter-spacing:0;font-weight:500;padding:10px;background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:11px">
-            <input type="checkbox" name="done" style="width:auto"> Да, сбылась
-          </label>
-        </div>
+        <label style="display:flex;align-items:center;gap:8px;font-size:13px;color:#fff;text-transform:none;letter-spacing:0;font-weight:500;padding:10px;background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:11px">
+          <input type="checkbox" name="done" style="width:auto"> Да, сбылась
+        </label>
         <button type="submit">+ Добавить мечту</button>
       </form>
       <div class="eList">
@@ -681,6 +726,12 @@ function delItem(key, i){
 
 /* ===== JSON ВЫВОД ===== */
 function showJSON(){
+  // сортируем события по дате перед сохранением (по возрастанию — так аккуратнее в файле)
+  DRAFT.events.sort((a,b) => {
+    const da = new Date(a.date || 0).getTime() || 0;
+    const db = new Date(b.date || 0).getTime() || 0;
+    return da - db;
+  });
   const json = JSON.stringify(DRAFT, null, 2);
   document.getElementById("jsonText").value = json;
   document.getElementById("jsonModal").classList.add("open");
