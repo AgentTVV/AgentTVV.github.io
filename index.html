@@ -46,6 +46,17 @@ section{padding:42px 0}.label{font-size:12px;font-weight:800;letter-spacing:2px;
 .photo:hover img{transform:scale(1.06)}
 .photoCaption{position:absolute;left:0;right:0;bottom:0;padding:26px 10px 8px;background:linear-gradient(transparent,rgba(0,0,0,.8));font-size:12px;font-weight:600;color:#fff;text-align:center;pointer-events:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
+/* вкусняшки */
+.dishes{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+.dish{overflow:hidden;padding:0;display:flex;flex-direction:column}
+.dishImg{aspect-ratio:4/3;overflow:hidden;background:rgba(255,255,255,.05);position:relative}
+.dishImg img{width:100%;height:100%;object-fit:cover;display:block;transition:.5s}
+.dish:hover .dishImg img{transform:scale(1.04)}
+.dishImgEmpty{aspect-ratio:4/3;display:flex;align-items:center;justify-content:center;font-size:44px;color:var(--muted);background:rgba(255,255,255,.04)}
+.dishBody{padding:18px 20px 20px}
+.dishBody h3{font-size:19px;margin-bottom:9px}
+.dishBody .recipe{color:var(--muted);font-size:14px;line-height:1.6;white-space:pre-wrap;word-break:break-word}
+
 .places{display:grid;grid-template-columns:repeat(3,1fr);gap:13px}.place{padding:22px;min-height:165px}.pi{font-size:34px;margin-bottom:15px}.place h3{font-size:18px;margin-bottom:7px}.place p{color:var(--muted);font-size:14px;line-height:1.5}.place a{display:inline-block;margin-top:13px;color:var(--blue);text-decoration:none;font-size:13px}
 .dreams{display:grid;gap:10px}.dream{width:100%;display:flex;align-items:center;gap:13px;text-align:left;color:#fff;padding:17px;background:rgba(255,255,255,.055);border:1px solid var(--line);border-radius:19px}.check{width:25px;height:25px;flex:none;display:grid;place-items:center;border-radius:8px;border:1px solid rgba(255,255,255,.3)}.dream.done .check{background:linear-gradient(135deg,var(--blue),var(--pink));border:0}.dream.done .dt{text-decoration:line-through;color:#7d839a}
 .bdays{display:grid;grid-template-columns:1fr 1fr;gap:13px}.birthday{padding:23px;text-align:center}.bi{font-size:34px}.birthday h3{margin:9px 0 5px}.birthday p{color:var(--muted)}
@@ -86,6 +97,7 @@ section{padding:42px 0}.label{font-size:12px;font-weight:800;letter-spacing:2px;
 .eForm select option{background:#161a2c;color:#fff}
 .eForm input:focus,.eForm textarea:focus,.eForm select:focus{outline:none;border-color:var(--blue)}
 .eForm textarea{min-height:60px;resize:vertical;font-family:inherit}
+.eForm textarea.recipeInput{min-height:110px}
 .eForm button[type=submit]{padding:11px;background:linear-gradient(135deg,var(--blue),var(--pink));color:#fff;border-radius:11px;font-weight:800;font-size:13px}
 .eForm .row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .eForm .hint{font-size:11px;color:var(--muted);line-height:1.45;margin-top:-2px}
@@ -112,7 +124,7 @@ section{padding:42px 0}.label{font-size:12px;font-weight:800;letter-spacing:2px;
 .hintBox b{color:#fff}
 .hintBox code{word-break:break-all;font-size:11px}
 
-@media(max-width:700px){.gallery{grid-template-columns:repeat(2,1fr)}.places{grid-template-columns:1fr}.hero{padding:62px 0 44px}.hero h1{letter-spacing:-2px}.photo{border-radius:16px}}
+@media(max-width:700px){.gallery{grid-template-columns:repeat(2,1fr)}.places{grid-template-columns:1fr}.dishes{grid-template-columns:1fr}.hero{padding:62px 0 44px}.hero h1{letter-spacing:-2px}.photo{border-radius:16px}}
 @media(max-width:390px){.bdays{grid-template-columns:1fr}.eForm .row{grid-template-columns:1fr}.modalBox{border-radius:18px}.sortToggle{width:100%}.sortToggle button{flex:1}}
 </style>
 </head>
@@ -172,6 +184,8 @@ section{padding:42px 0}.label{font-size:12px;font-weight:800;letter-spacing:2px;
 
 <section id="dreamsSection"><div class="container"><div class="head"><div class="label">Наши мечты</div><h2>То, что ещё впереди ✨</h2><p>От маленьких желаний до больших планов.</p></div><div class="dreams" id="dreams"><div class="empty card">Загрузка...</div></div></div></section>
 
+<section id="dishesSection"><div class="container"><div class="head"><div class="label">Наши вкусняшки</div><h2>Что мы готовим 🍰</h2><p>Наши любимые блюда и рецепты.</p></div><div class="dishes" id="dishes"><div class="empty card" style="grid-column:1/-1">🍰<br>Блюда появятся здесь</div></div></div></section>
+
 <section><div class="container"><div class="head"><div class="label">Даты</div><h2>Наши дни рождения 🎂</h2></div><div class="bdays">
 <div class="birthday card"><div class="bi">🧑🏻</div><h3>Никита</h3><p>02 января 2003</p></div>
 <div class="birthday card"><div class="bi">👩🏻</div><h3>Валерия</h3><p>31 декабря 2003</p></div>
@@ -208,6 +222,7 @@ section{padding:42px 0}.label{font-size:12px;font-weight:800;letter-spacing:2px;
       <button data-tab="events" onclick="setTab('events')">📖 История</button>
       <button data-tab="places" onclick="setTab('places')">📍 Места</button>
       <button data-tab="dreams" onclick="setTab('dreams')">✨ Мечты</button>
+      <button data-tab="dishes" onclick="setTab('dishes')">🍰 Вкусняшки</button>
       <button data-tab="secrets" onclick="setTab('secrets')">💗 Секреты</button>
       <button data-tab="photos" onclick="setTab('photos')">📸 Фото</button>
       <button data-tab="settings" onclick="setTab('settings')">⚙ Общее</button>
@@ -249,7 +264,7 @@ const PIN = "2568";
 const START_DEFAULT = "2026-06-13T00:00:00";
 
 let entered = "";
-let DATA = {startDate:"2026-06-13", events:[], places:[], dreams:[], secrets:[], photos:[]};
+let DATA = {startDate:"2026-06-13", events:[], places:[], dreams:[], dishes:[], secrets:[], photos:[]};
 let DRAFT = null;
 let editorTab = "events";
 let editing = null;
@@ -340,6 +355,7 @@ async function loadData(){
       events: Array.isArray(j.events) ? j.events : [],
       places: Array.isArray(j.places) ? j.places : [],
       dreams: Array.isArray(j.dreams) ? j.dreams : [],
+      dishes: Array.isArray(j.dishes) ? j.dishes : [],
       secrets: Array.isArray(j.secrets) ? j.secrets : [],
       photos: Array.isArray(j.photos) ? j.photos : []
     };
@@ -354,6 +370,7 @@ function renderAll(){
   renderPhotos();
   renderPlaces();
   renderDreams();
+  renderDishes();
   renderSecrets();
   renderStartDate();
   updateSortToggle();
@@ -456,6 +473,30 @@ function toggleDream(i){
   s[i] = !current;
   localStorage.setItem("nv_dreams", JSON.stringify(s));
   renderDreams();
+}
+function renderDishes(){
+  const el = document.getElementById("dishes");
+  const list = DATA.dishes || [];
+  if(!list.length){
+    el.innerHTML = `<div class="empty card" style="grid-column:1/-1">🍰<br>Блюда появятся здесь</div>`;
+    return;
+  }
+  el.innerHTML = list.map(x => {
+    const hasImg = x.image_url;
+    return `
+      <article class="dish card">
+        ${hasImg
+          ? `<div class="dishImg" onclick="openLightbox('${escAttr(x.image_url)}')" style="cursor:pointer">
+               <img src="${escAttr(x.image_url)}" alt="${escAttr(x.title || "")}" loading="lazy" onerror="this.style.opacity=.3">
+             </div>`
+          : `<div class="dishImgEmpty">🍽</div>`}
+        <div class="dishBody">
+          <h3>${esc(x.title || "")}</h3>
+          ${x.recipe ? `<div class="recipe">${esc(x.recipe)}</div>` : ""}
+        </div>
+      </article>
+    `;
+  }).join("");
 }
 function renderSecrets(){
   secrets = DATA.secrets || [];
@@ -579,6 +620,35 @@ function updatePhotoPreview(form){
   if(preview) preview.innerHTML = photoPreviewHTML(title, ext, external);
 }
 
+/* === Хелперы для фото блюда === */
+function parseDishPhoto(item){
+  const url = item?.image_url || "";
+  if(!url) return {photo_title:"", ext:"jpg", external:""};
+  if(url.startsWith("images/")){
+    const rest = url.slice(7);
+    const dot = rest.lastIndexOf(".");
+    const ext = dot > 0 ? rest.slice(dot+1).toLowerCase() : "jpg";
+    const fileBase = dot > 0 ? rest.slice(0, dot) : rest;
+    return {photo_title: fileBase, ext, external:""};
+  }
+  return {photo_title:"", ext:"jpg", external:url};
+}
+function dishPreviewHTML(photo_title, ext, external){
+  if(external){
+    return `🌐 <b>Ссылка на фото:</b><br><code>${esc(external)}</code>`;
+  }
+  const name = (photo_title || "Название блюда").trim();
+  return `📁 Загрузите файл <b>${esc(name)}.${esc(ext)}</b> в папку <b>images</b> на GitHub.<br>После этого фото появится на сайте.`;
+}
+function updateDishPreview(form){
+  const title = form.querySelector('[name=title]').value.trim();
+  const ptRaw = form.querySelector('[name=photo_title]').value.trim();
+  const ext = form.querySelector('[name=ext]').value;
+  const external = form.querySelector('[name=external_url]').value.trim();
+  const preview = form.querySelector('#dishPreview');
+  if(preview) preview.innerHTML = dishPreviewHTML(ptRaw || title, ext, external);
+}
+
 function renderEditor(){
   document.querySelectorAll(".modalTabs button").forEach(b=>{
     b.classList.toggle("active", b.dataset.tab === editorTab);
@@ -684,6 +754,60 @@ function renderEditor(){
             </div>
           `;
         }).join("") || `<div class="eEmpty">Пока ничего нет ✨</div>`}
+      </div>
+    `;
+  }
+  else if(editorTab === "dishes"){
+    const ed = editing && editing.key === "dishes" ? DRAFT.dishes[editing.index] : null;
+    const dp = ed ? parseDishPhoto(ed) : {photo_title:"", ext:"jpg", external:""};
+    body.innerHTML = `
+      <div class="hintBox">
+        <b>Как это работает:</b><br>
+        1. Введите название блюда, рецепт и (по желанию) название фото.<br>
+        2. Нажмите «Сохранить — получить JSON» и вставьте новый data.json на GitHub.<br>
+        3. Загрузите фото в папку <b>images</b> с указанным названием.<br>
+        4. Блюдо с фото появится в разделе «Наши вкусняшки» 🍰
+      </div>
+      <form class="${formClass("dishes")}" onsubmit="submitDish(event,this)">
+        ${formTitle("dishes", "Добавить блюдо", "Редактировать блюдо")}
+        <label>Название блюда</label>
+        <input type="text" name="title" required placeholder="Например: Шоколадный торт"
+               value="${escAttr(ed?.title || "")}" oninput="updateDishPreview(this.form)">
+        <label>Рецепт</label>
+        <textarea name="recipe" class="recipeInput" placeholder="Ингредиенты и как готовить...">${esc(ed?.recipe || "")}</textarea>
+        <label>Название фото (по умолчанию — как блюдо)</label>
+        <input type="text" name="photo_title" placeholder="Например: Шоколадный торт"
+               value="${escAttr(dp.photo_title)}" oninput="updateDishPreview(this.form)">
+        <label>Расширение файла</label>
+        <select name="ext" onchange="updateDishPreview(this.form)">
+          <option value="jpg"  ${dp.ext==="jpg"?"selected":""}>jpg</option>
+          <option value="jpeg" ${dp.ext==="jpeg"?"selected":""}>jpeg</option>
+          <option value="png"  ${dp.ext==="png"?"selected":""}>png</option>
+          <option value="webp" ${dp.ext==="webp"?"selected":""}>webp</option>
+          <option value="gif"  ${dp.ext==="gif"?"selected":""}>gif</option>
+        </select>
+        <label>Или ссылка на фото из интернета</label>
+        <input type="url" name="external_url" placeholder="https://..." value="${escAttr(dp.external)}" oninput="updateDishPreview(this.form)">
+        <div class="hintBox" id="dishPreview">${dishPreviewHTML(dp.photo_title || ed?.title || "", dp.ext, dp.external)}</div>
+        ${formButtons("dishes")}
+      </form>
+      <div class="eList">
+        ${(DRAFT.dishes||[]).map((x,i)=>{
+          const active = isEditing("dishes", i);
+          return `
+            <div class="eItem ${active?"editing":""}">
+              ${x.image_url ? `<img src="${escAttr(x.image_url)}" alt="" onerror="this.style.opacity=.3">` : `<div style="width:42px;height:42px;border-radius:9px;display:grid;place-items:center;background:rgba(255,255,255,.05);flex:none">🍽</div>`}
+              <div class="eItemInfo">
+                <b>${esc(x.title || "Без названия")}</b>
+                <small>${esc((x.recipe||"").slice(0,60))}</small>
+              </div>
+              <div class="eItemBtns">
+                <button class="eEdit" onclick="startEdit('dishes',${i})">✏️</button>
+                <button class="eDel" onclick="delItem('dishes',${i})">🗑</button>
+              </div>
+            </div>
+          `;
+        }).join("") || `<div class="eEmpty">Пока ничего нет 🍰</div>`}
       </div>
     `;
   }
@@ -826,6 +950,24 @@ function submitDream(e, form){
     DRAFT.dreams[editing.index] = obj; editing = null; toast("Мечта обновлена ✅");
   } else {
     DRAFT.dreams.push(obj); toast("Мечта добавлена ✅");
+  }
+  form.reset(); renderEditor();
+}
+function submitDish(e, form){
+  e.preventDefault();
+  const fd = new FormData(form);
+  const title = fd.get("title").trim();
+  const recipe = fd.get("recipe").trim();
+  const ptRaw = (fd.get("photo_title")||"").trim();
+  const photoTitle = ptRaw || title;
+  const ext = (fd.get("ext") || "jpg").toLowerCase();
+  const external = (fd.get("external_url")||"").trim();
+  const image_url = external || `images/${photoTitle}.${ext}`;
+  const obj = { title, recipe, image_url };
+  if(editing && editing.key === "dishes"){
+    DRAFT.dishes[editing.index] = obj; editing = null; toast("Блюдо обновлено ✅");
+  } else {
+    DRAFT.dishes.push(obj); toast("Блюдо добавлено ✅");
   }
   form.reset(); renderEditor();
 }
