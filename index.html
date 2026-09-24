@@ -181,14 +181,14 @@ footer{text-align:center;color:var(--muted);font-size:13px;padding:50px 0 20px}.
       <button data-mode="desc" onclick="setSort('desc')">↓ Новые</button>
     </div>
   </div>
-  <div class="timeline" id="events"><div class="empty card">Загружаем историю...</div></div>
+  <div class="timeline" id="events"><div class="empty card"><span>❤️</span><span>Загружаем историю...</span></div></div>
 </div></section>
 
 <section id="gallerySection"><div class="container"><div class="head"><div class="label">Воспоминания</div><h2>Наша галерея 📸</h2><p>Фотографии, которые хочется пересматривать.</p></div><div class="gallery" id="gallery"><div class="empty card" style="grid-column:1/-1"><span>📸</span><span>Фотографии появятся здесь</span></div></div></div></section>
 
-<section id="placesSection"><div class="container"><div class="head"><div class="label">Наши места</div><h2>Где мы были ❤️</h2><p>Места, которые стали частью нашей истории.</p></div><div class="places" id="places"><div class="empty card" style="grid-column:1/-1"><span>📍</span><span>Пока здесь пусто</span></div></div></div></section>
+<section id="placesSection"><div class="container"><div class="head"><div class="label">Наши места</div><h2>Где мы были ❤️</h2><p>Места, которые стали частью нашей истории.</p></div><div class="places" id="places"><div class="empty card" style="grid-column:1/-1"><span>📍</span><span>Загрузка...</span></div></div></div></section>
 
-<section id="dreamsSection"><div class="container"><div class="head"><div class="label">Наши мечты</div><h2>То, что ещё впереди ✨</h2><p>От маленьких желаний до больших планов.</p></div><div class="dreams" id="dreams"><div class="empty card" style="grid-column:1/-1"><span>✨</span><span>Пока здесь пусто</span></div></div></div></section>
+<section id="dreamsSection"><div class="container"><div class="head"><div class="label">Наши мечты</div><h2>То, что ещё впереди ✨</h2><p>От маленьких желаний до больших планов.</p></div><div class="dreams" id="dreams"><div class="empty card" style="grid-column:1/-1"><span>✨</span><span>Загрузка...</span></div></div></div></section>
 
 <section id="dishesSection"><div class="container"><div class="head"><div class="label">Наши вкусняшки</div><h2>Что мы готовим 🍰</h2><p>Наши любимые блюда и рецепты.</p></div><div class="dishes" id="dishes"><div class="empty card" style="grid-column:1/-1"><span>🍰</span><span>Блюда появятся здесь</span></div></div></div></section>
 
@@ -1076,7 +1076,8 @@ async function init(){
 }
 
 /* =========================================================
-   ФОН: КОСМОС + ПЛАВАЮЩИЕ СЕРДЕЧКИ
+   ФОН: КОСМОС + ПЛАВАЮЩИЕ СЕРДЕЧКИ + СОЗВЕЗДИЕ КОЗЕРОГА
+   (созвездие появляется в разных местах экрана)
 ========================================================= */
 (function(){
   const cv = document.getElementById("spaceBg");
@@ -1091,6 +1092,7 @@ async function init(){
   resize();
   window.addEventListener("resize", resize);
 
+  /* ----- фоновые звёзды ----- */
   const starCount = Math.min(160, Math.floor(window.innerWidth / 7));
   for(let i = 0; i < starCount; i++){
     stars.push({
@@ -1102,6 +1104,7 @@ async function init(){
     });
   }
 
+  /* ----- сердечки ----- */
   const heartColors = ["#62a8ff","#ff72ad","#aa7cff","#ff9bc2","#8ec4ff","#ffb3d9"];
   function makeHeart(){
     return {
@@ -1139,7 +1142,127 @@ async function init(){
     ctx.restore();
   }
 
-  function draw(){
+  /* =========================================================
+     СОЗВЕЗДИЕ КОЗЕРОГА — форма с картинки, появляется в разных местах
+  ========================================================= */
+  const capStars = [
+    {x: 0.70, y: 0.10, size: 3.4, color: [255, 225, 110]}, // верхняя яркая
+    {x: 0.38, y: 0.42, size: 2.2, color: [255, 230, 145]}, // левая верхняя
+    {x: 0.12, y: 0.68, size: 3.0, color: [255, 225, 120]}, // левая нижняя (яркая)
+    {x: 0.28, y: 0.76, size: 1.9, color: [255, 230, 150]}, // низ 1
+    {x: 0.44, y: 0.79, size: 1.9, color: [255, 230, 150]}, // низ 2
+    {x: 0.60, y: 0.79, size: 1.9, color: [255, 230, 150]}, // низ 3
+    {x: 0.74, y: 0.73, size: 2.3, color: [255, 228, 135]}, // нижняя правая
+    {x: 0.78, y: 0.44, size: 2.2, color: [255, 225, 130]}  // правая средняя
+  ];
+  const capLines = [[0,1],[1,2],[2,3],[3,4],[4,5],[5,6],[6,7],[7,0]];
+
+  const capState = {
+    x: 0, y: 0,
+    w: 0, h: 0,
+    appearAt: 0,
+    lifeMs: 12000
+  };
+
+  function newCapSpot(now){
+    const capSize = Math.min(W * 0.55, H * 0.42, 320);
+    capState.w = capSize;
+    capState.h = capSize;
+    const pad = 20;
+    capState.x = pad + Math.random() * Math.max(10, W - capSize - pad * 2);
+    capState.y = pad + Math.random() * Math.max(10, H - capSize - pad * 2);
+    capState.appearAt = now;
+  }
+
+  function capOpacity(now){
+    const t = now - capState.appearAt;
+    const T = capState.lifeMs;
+    if(t < 0) return 0;
+    if(t < T * 0.2)  return t / (T * 0.2);
+    if(t < T * 0.8)  return 1;
+    if(t < T)        return 1 - (t - T * 0.8) / (T * 0.2);
+    return 0;
+  }
+
+  function drawCapricorn(now){
+    if(capState.appearAt === 0 || now - capState.appearAt > capState.lifeMs){
+      newCapSpot(now);
+    }
+
+    const alpha = capOpacity(now);
+    if(alpha <= 0) return;
+
+    const N = capStars.length;
+    const capLeft = capState.x;
+    const capTop  = capState.y;
+    const capW = capState.w;
+    const capH = capState.h;
+
+    const period = 10;
+    const cycle = (now / 1000 / period) % 1;
+    const head = cycle < 0.5 ? cycle * 2 : 2 - cycle * 2;
+    const headPos = head * (N - 1);
+    const glowRadius = 2.6;
+
+    const intensities = [];
+    for(let i = 0; i < N; i++){
+      const dist = Math.abs(i - headPos);
+      const wave = dist < glowRadius
+        ? 0.5 * (1 + Math.cos((dist / glowRadius) * Math.PI))
+        : 0;
+      const twinkle = 0.85 + 0.15 * Math.sin(now / 1000 * 2 + i * 1.7);
+      intensities[i] = (0.22 + 0.78 * wave) * twinkle;
+    }
+
+    ctx.save();
+    ctx.globalAlpha = alpha;
+
+    // жёлтые линии
+    ctx.lineCap = "round";
+    for(let k = 0; k < capLines.length; k++){
+      const a = capLines[k][0];
+      const b = capLines[k][1];
+      const x1 = capLeft + capStars[a].x * capW;
+      const y1 = capTop + capStars[a].y * capH;
+      const x2 = capLeft + capStars[b].x * capW;
+      const y2 = capTop + capStars[b].y * capH;
+      const li = (intensities[a] + intensities[b]) / 2;
+      ctx.strokeStyle = "rgba(255, 220, 120, " + (0.4 * li).toFixed(3) + ")";
+      ctx.lineWidth = 1.1;
+      ctx.beginPath();
+      ctx.moveTo(x1, y1);
+      ctx.lineTo(x2, y2);
+      ctx.stroke();
+    }
+
+    // золотистые звёзды
+    for(let i = 0; i < N; i++){
+      const s = capStars[i];
+      const x = capLeft + s.x * capW;
+      const y = capTop + s.y * capH;
+      const intensity = intensities[i];
+      const r = s.color[0];
+      const g = s.color[1];
+      const b = s.color[2];
+
+      ctx.fillStyle = "rgba(" + r + "," + g + "," + b + "," + (0.18 * intensity).toFixed(3) + ")";
+      ctx.beginPath(); ctx.arc(x, y, s.size * 6, 0, Math.PI * 2); ctx.fill();
+
+      ctx.fillStyle = "rgba(" + r + "," + g + "," + b + "," + (0.45 * intensity).toFixed(3) + ")";
+      ctx.beginPath(); ctx.arc(x, y, s.size * 2.6, 0, Math.PI * 2); ctx.fill();
+
+      ctx.fillStyle = "rgba(255, 245, 200," + (0.55 + 0.45 * intensity).toFixed(3) + ")";
+      ctx.beginPath(); ctx.arc(x, y, s.size * 0.9, 0, Math.PI * 2); ctx.fill();
+    }
+
+    ctx.restore();
+  }
+
+  /* =========================================================
+     ОБЩИЙ ЦИКЛ ОТРИСОВКИ
+  ========================================================= */
+  function draw(now){
+    now = now || performance.now();
     ctx.clearRect(0, 0, W, H);
 
     for(const st of stars){
@@ -1150,6 +1273,8 @@ async function init(){
       ctx.fillStyle = "rgba(255,255,255," + st.a.toFixed(2) + ")";
       ctx.fill();
     }
+
+    drawCapricorn(now);
 
     for(let i = 0; i < hearts.length; i++){
       const h = hearts[i];
@@ -1162,7 +1287,7 @@ async function init(){
 
     requestAnimationFrame(draw);
   }
-  draw();
+  requestAnimationFrame(draw);
 })();
 </script>
 </body>
