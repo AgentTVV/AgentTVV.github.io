@@ -403,7 +403,7 @@ function renderEvents(){
   const el = document.getElementById("events");
   const list = sortedEvents(DATA.events || []);
   if(!list.length){
-    el.innerHTML = `<div class="empty card">Пока здесь пусто ❤️</div>`;
+    el.innerHTML = `<div class="empty card">❤️<br>Пока здесь пусто</div>`;
     return;
   }
   el.innerHTML = list.map(x => `
@@ -449,7 +449,7 @@ function renderDreams(){
   const el = document.getElementById("dreams");
   const list = DATA.dreams || [];
   if(!list.length){
-    el.innerHTML = `<div class="empty card">Пока здесь пусто ✨</div>`;
+    el.innerHTML = `<div class="empty card" style="grid-column:1/-1">✨<br>Пока здесь пусто</div>`;
     return;
   }
   const saved = getDreamsState();
