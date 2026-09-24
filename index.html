@@ -401,7 +401,7 @@ function renderPhotos(){
   el.innerHTML = list.map(x => `
     <div class="photo" onclick="openLightbox('${escAttr(x.image_url)}')">
       <img src="${escAttr(x.image_url)}" alt="${escAttr(x.title || "Фото")}" loading="lazy"
-           onerror="this.style.opacity=.35;this.alt='Нет файла: '+(this.alt||'')">
+           onerror="this.style.opacity=.35">
       ${x.title ? `<div class="photoCaption">${esc(x.title)}</div>` : ""}
     </div>
   `).join("");
@@ -545,8 +545,6 @@ function formButtons(key){
   }
   return `<button type="submit">+ Добавить</button>`;
 }
-
-/* === Хелперы для фото === */
 function parsePhoto(item){
   const url = item?.image_url || "";
   const title = item?.title || "";
@@ -721,7 +719,7 @@ function renderEditor(){
         <b>Как это работает:</b><br>
         1. Введите название фотографии.<br>
         2. Нажмите «Сохранить — получить JSON» и вставьте новый data.json на GitHub.<br>
-        3. Загрузите файл с <b>таким же именем</b> (например <b>Наша прогулка.jpg</b>) в папку <b>images</b>.<br>
+        3. Загрузите файл с <b>таким же именем</b> в папку <b>images</b>.<br>
         4. Фото появится на сайте автоматически.
       </div>
       <form class="${formClass("photos")}" onsubmit="submitPhoto(event,this)" id="photoForm">
@@ -783,7 +781,6 @@ function renderEditor(){
   }
 }
 
-/* ===== Submit-обработчики ===== */
 function submitEvent(e, form){
   e.preventDefault();
   const fd = new FormData(form);
@@ -868,7 +865,6 @@ function delItem(key, i){
   renderEditor();
 }
 
-/* ===== JSON ===== */
 function showJSON(){
   DRAFT.events.sort((a,b) => {
     const da = new Date(a.date || 0).getTime() || 0;
@@ -920,7 +916,6 @@ async function reloadData(){
   toast("Изменения отменены");
 }
 
-/* ===== СТАРТ ===== */
 async function init(){
   await loadData();
   renderAll();
