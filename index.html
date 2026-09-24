@@ -6,7 +6,6 @@
 <meta name="theme-color" content="#0b1020">
 <meta name="description" content="Наш уголок 💙💗 — Никита & Валерия">
 <title>Наш уголок 💙💗</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{--bg:#080b16;--card:rgba(255,255,255,.07);--line:rgba(255,255,255,.13);--text:#fff;--muted:#aeb5cc;--blue:#62a8ff;--pink:#ff72ad;--purple:#aa7cff;--green:#63e6be}
@@ -14,7 +13,7 @@ html{scroll-behavior:smooth}
 body{min-height:100vh;color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;background:radial-gradient(circle at 15% 5%,rgba(98,168,255,.22),transparent 28%),radial-gradient(circle at 85% 15%,rgba(255,114,173,.18),transparent 30%),radial-gradient(circle at 50% 90%,rgba(170,124,255,.12),transparent 35%),var(--bg);overflow-x:hidden}
 body:before{content:"";position:fixed;inset:0;pointer-events:none;background:linear-gradient(115deg,transparent,rgba(255,255,255,.025),transparent);animation:bg 12s linear infinite}
 @keyframes bg{from{transform:translateX(-30%)}to{transform:translateX(30%)}}
-button{font:inherit;border:0;cursor:pointer} .container{width:min(1050px,calc(100% - 24px));margin:auto}.card{background:var(--card);border:1px solid var(--line);border-radius:24px;backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);box-shadow:0 18px 50px rgba(0,0,0,.2)}
+button{font:inherit;border:0;cursor:pointer}.container{width:min(1050px,calc(100% - 24px));margin:auto}.card{background:var(--card);border:1px solid var(--line);border-radius:24px;backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);box-shadow:0 18px 50px rgba(0,0,0,.2)}
 .hidden{display:none!important}
 
 /* lock */
@@ -27,13 +26,11 @@ button{font:inherit;border:0;cursor:pointer} .container{width:min(1050px,calc(10
 
 /* app */
 #app{display:none;padding-bottom:105px}.top{padding-top:22px}.topbar{display:flex;align-items:center;justify-content:space-between}.logo{font-weight:800;font-size:18px}.logo span{background:linear-gradient(90deg,var(--blue),var(--pink));-webkit-background-clip:text;color:transparent}.status{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:7px}.status i{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 12px var(--green)}
-.gear{width:38px;height:38px;border-radius:12px;background:rgba(255,255,255,.06);border:1px solid var(--line);color:var(--muted);font-size:17px;display:grid;place-items:center;margin-left:10px}
-.gear:active{transform:scale(.94)}
 .hero{text-align:center;padding:78px 0 55px}.small{color:var(--muted);font-size:14px;margin-bottom:10px}.hero h1{font-size:clamp(42px,11vw,82px);line-height:.98;letter-spacing:-3px;background:linear-gradient(100deg,#fff,#9cc8ff,#ff91c1,#fff);background-size:220% auto;-webkit-background-clip:text;color:transparent;animation:grad 6s linear infinite;margin-bottom:18px}@keyframes grad{to{background-position:220% center}}.sub{max-width:620px;margin:auto;color:var(--muted);line-height:1.6}
 .counter{width:min(680px,100%);margin:28px auto 0;padding:20px;border:1px solid var(--line);border-radius:25px;background:rgba(255,255,255,.055);backdrop-filter:blur(15px)}.ct{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:10px}.time{font-size:clamp(20px,5vw,32px);font-weight:800}.date{font-size:13px;color:var(--muted);margin-top:7px}
 section{padding:42px 0}.label{font-size:12px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--blue);margin-bottom:7px}.head{margin-bottom:21px}.head h2{font-size:30px;letter-spacing:-1px}.head p{color:var(--muted);margin-top:7px}
 .timeline{display:grid;gap:13px;position:relative}.timeline:before{content:"";position:absolute;left:19px;top:14px;bottom:14px;width:1px;background:linear-gradient(var(--blue),var(--pink),transparent)}.event{position:relative;padding:20px 20px 20px 52px}.event:before{content:"";position:absolute;left:12px;top:22px;width:15px;height:15px;border-radius:50%;background:linear-gradient(135deg,var(--blue),var(--pink));box-shadow:0 0 20px rgba(98,168,255,.5)}.event .edate{font-size:12px;color:var(--blue);font-weight:700;margin-bottom:7px}.event h3{font-size:19px;margin-bottom:7px}.event p{color:var(--muted);line-height:1.55}
-.gallery{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.photo{aspect-ratio:1;overflow:hidden;border-radius:21px;border:1px solid var(--line);background:rgba(255,255,255,.05)}.photo img{width:100%;height:100%;object-fit:cover;display:block;transition:.5s}.photo:hover img{transform:scale(1.06)}
+.gallery{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.photo{aspect-ratio:1;overflow:hidden;border-radius:21px;border:1px solid var(--line);background:rgba(255,255,255,.05);cursor:pointer}.photo img{width:100%;height:100%;object-fit:cover;display:block;transition:.5s}.photo:hover img{transform:scale(1.06)}
 .places{display:grid;grid-template-columns:repeat(3,1fr);gap:13px}.place{padding:22px;min-height:165px}.pi{font-size:34px;margin-bottom:15px}.place h3{font-size:18px;margin-bottom:7px}.place p{color:var(--muted);font-size:14px;line-height:1.5}.place a{display:inline-block;margin-top:13px;color:var(--blue);text-decoration:none;font-size:13px}
 .dreams{display:grid;gap:10px}.dream{width:100%;display:flex;align-items:center;gap:13px;text-align:left;color:#fff;padding:17px;background:rgba(255,255,255,.055);border:1px solid var(--line);border-radius:19px}.check{width:25px;height:25px;flex:none;display:grid;place-items:center;border-radius:8px;border:1px solid rgba(255,255,255,.3)}.dream.done .check{background:linear-gradient(135deg,var(--blue),var(--pink));border:0}.dream.done .dt{text-decoration:line-through;color:#7d839a}
 .bdays{display:grid;grid-template-columns:1fr 1fr;gap:13px}.birthday{padding:23px;text-align:center}.bi{font-size:34px}.birthday h3{margin:9px 0 5px}.birthday p{color:var(--muted)}
@@ -41,44 +38,20 @@ section{padding:42px 0}.label{font-size:12px;font-weight:800;letter-spacing:2px;
 .empty{padding:32px 20px;text-align:center;color:var(--muted)}footer{text-align:center;color:var(--muted);font-size:13px;padding:50px 0 20px}.fh{font-size:28px;margin-bottom:8px}
 .nav{position:fixed;z-index:100;left:50%;bottom:10px;transform:translateX(-50%);width:min(700px,calc(100% - 12px));display:flex;gap:4px;padding:8px;border:1px solid var(--line);border-radius:23px;background:rgba(13,17,31,.82);backdrop-filter:blur(25px);box-shadow:0 20px 50px rgba(0,0,0,.4)}.nav button{flex:1;min-height:48px;border-radius:17px;background:transparent;color:var(--muted);font-size:11px}.nav span{display:block;font-size:20px;margin-bottom:2px}.nav button.active{color:#fff;background:rgba(255,255,255,.08)}
 .toast{position:fixed;z-index:10000;left:50%;bottom:90px;transform:translate(-50%,20px);opacity:0;padding:12px 17px;border:1px solid var(--line);border-radius:15px;background:#181d31;color:#fff;font-size:13px;transition:.25s;pointer-events:none;max-width:calc(100% - 24px);text-align:center}.toast.show{opacity:1;transform:translate(-50%,0)}
+
+/* lightbox */
+#lightbox{position:fixed;inset:0;z-index:9998;background:rgba(8,11,22,.95);display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(10px)}
+#lightbox.open{display:flex}
+#lightbox img{max-width:100%;max-height:90vh;border-radius:16px;box-shadow:0 30px 80px rgba(0,0,0,.6)}
+#lightbox .close{position:absolute;top:20px;right:20px;width:44px;height:44px;border-radius:14px;background:rgba(255,255,255,.1);color:#fff;font-size:20px}
+
 @media(max-width:700px){.gallery{grid-template-columns:repeat(2,1fr)}.places{grid-template-columns:1fr}.hero{padding:62px 0 44px}.hero h1{letter-spacing:-2px}.photo{border-radius:16px}}
 @media(max-width:390px){.bdays{grid-template-columns:1fr}}
-
-/* ADMIN */
-#adminModal{position:fixed;inset:0;z-index:9998;background:rgba(8,11,22,.88);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);display:none;overflow-y:auto;padding:20px 14px}
-#adminModal.open{display:block}
-.adminBox{width:min(760px,100%);margin:0 auto;padding:22px;background:rgba(16,20,38,.97);border:1px solid var(--line);border-radius:24px;box-shadow:0 30px 90px rgba(0,0,0,.5)}
-.adminHead{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;gap:10px}
-.adminHead h2{font-size:20px}
-.adminHead .sub{font-size:12px;color:var(--muted);margin-top:4px}
-.adminClose{width:36px;height:36px;border-radius:12px;background:rgba(255,255,255,.06);border:1px solid var(--line);color:#fff;font-size:16px}
-.adminTabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:18px}
-.adminTabs button{padding:9px 13px;background:rgba(255,255,255,.06);border:1px solid var(--line);border-radius:12px;color:var(--muted);font-size:13px;transition:.15s}
-.adminTabs button.active{color:#fff;background:linear-gradient(135deg,var(--blue),var(--pink));border-color:transparent}
-.adminForm{display:grid;gap:9px;margin-bottom:18px;padding:14px;background:rgba(255,255,255,.03);border:1px dashed var(--line);border-radius:16px}
-.adminForm input,.adminForm textarea,.adminForm select{width:100%;padding:11px 13px;background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:12px;color:#fff;font:inherit;font-size:14px;font-family:inherit}
-.adminForm input:focus,.adminForm textarea:focus{outline:none;border-color:var(--blue)}
-.adminForm textarea{resize:vertical;min-height:70px}
-.adminForm label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;font-weight:700}
-.adminForm .row{display:grid;grid-template-columns:1fr 1fr;gap:9px}
-.adminForm button[type=submit]{padding:12px;background:linear-gradient(135deg,var(--blue),var(--pink));color:#fff;border-radius:12px;font-weight:700;font-size:14px}
-.adminList{display:grid;gap:8px}
-.adminItem{display:flex;align-items:center;gap:12px;padding:11px 13px;background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:14px;font-size:14px}
-.adminItem .info{flex:1;min-width:0}
-.adminItem .info b{display:block;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.adminItem .info small{color:var(--muted);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block}
-.adminItem img{width:46px;height:46px;object-fit:cover;border-radius:10px;flex:none}
-.adminItem .del{padding:7px 11px;background:rgba(255,80,80,.12);color:#ff8f8f;border:1px solid rgba(255,80,80,.28);border-radius:10px;font-size:12px;flex:none}
-.loginForm{display:grid;gap:11px;max-width:340px;margin:14px auto}
-.loginForm input{padding:13px 14px;background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:13px;color:#fff;font:inherit;font-size:15px}
-.loginForm input:focus{outline:none;border-color:var(--blue)}
-.loginForm button{padding:13px;background:linear-gradient(135deg,var(--blue),var(--pink));color:#fff;border-radius:13px;font-weight:700}
-.adminInfo{text-align:center;color:var(--muted);font-size:13px;padding:20px 10px;line-height:1.6}
-@media(max-width:600px){.adminForm .row{grid-template-columns:1fr}.adminBox{padding:16px;border-radius:20px}}
 </style>
 </head>
 <body>
 
+<!-- LOCK SCREEN -->
 <div id="lock">
   <div class="lockbox">
     <div class="heart">💙💗</div>
@@ -95,13 +68,11 @@ section{padding:42px 0}.label{font-size:12px;font-weight:800;letter-spacing:2px;
   </div>
 </div>
 
+<!-- APP -->
 <div id="app">
 <header class="top"><div class="container"><div class="topbar">
   <div class="logo"><span>Никита</span> & Валерия</div>
-  <div style="display:flex;align-items:center">
-    <div class="status"><i></i> наш уголок</div>
-    <button class="gear" onclick="openAdmin()" title="Админ-панель">⚙</button>
-  </div>
+  <div class="status"><i></i> наш уголок</div>
 </div></div></header>
 
 <main>
@@ -109,7 +80,7 @@ section{padding:42px 0}.label{font-size:12px;font-weight:800;letter-spacing:2px;
   <div class="small">Наша маленькая вселенная</div>
   <h1>Никита & Валерия</h1>
   <p class="sub">Здесь живут наши воспоминания, мечты, места и маленькие моменты, которые хочется сохранить навсегда.</p>
-  <div class="counter"><div class="ct">Мы вместе</div><div class="time" id="time">Загрузка...</div><div class="date">с 14 июня 2026 года 💙💗</div></div>
+  <div class="counter"><div class="ct">Мы вместе</div><div class="time" id="time">Загрузка...</div><div class="date" id="startDate">с 14 июня 2026 года 💙💗</div></div>
 </div></section>
 
 <section id="history"><div class="container"><div class="head"><div class="label">Наша история</div><h2>С самых важных моментов</h2><p>То, что хочется помнить.</p></div><div class="timeline" id="events"><div class="empty card">Загружаем историю...</div></div></div></section>
@@ -141,428 +112,254 @@ section{padding:42px 0}.label{font-size:12px;font-weight:800;letter-spacing:2px;
 
 <div class="toast" id="toast"></div>
 
-<!-- ADMIN MODAL -->
-<div id="adminModal">
-  <div class="adminBox">
-    <div class="adminHead">
-      <div>
-        <h2>⚙ Админ-панель</h2>
-        <div class="sub">Управление содержимым сайта</div>
-      </div>
-      <button class="adminClose" onclick="closeAdmin()">✕</button>
-    </div>
-    <div id="adminContent"></div>
-  </div>
+<div id="lightbox" onclick="closeLightbox(event)">
+  <button class="close" onclick="closeLightbox(event)">✕</button>
+  <img id="lightboxImg" src="" alt="">
 </div>
 
 <script>
-/* ===== SUPABASE ===== */
-const SUPABASE_URL="https://lrectzwqynkkkesouwup.supabase.co";
-const SUPABASE_KEY="sb_publishable_1B0kCVluMuz4U2f6LbSxug_H5KxjIyj";
-const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+/* =========================================================
+   НАСТРОЙКИ САЙТА
+========================================================= */
+const PIN = "2568";
+const START = new Date("2026-06-14T00:00:00");
+let entered = "";
+let DATA = null;
+let secrets = [];
+let secretIndex = -1;
 
-/* ===== SITE ===== */
-const PIN="2568";
-const START=new Date("2026-06-14T00:00:00");
-let entered="";
-let secrets=[];
-let secretIndex=-1;
-
-const fallbackEvents=[{event_date:"2026-06-14",title:"Наша история началась 💙💗",description:"День, который стал началом нашей истории.",sort_order:1}];
-const fallbackPlaces=[{title:"Наше место ❤️",description:"Место, которое связано с нашей историей.",icon:"❤️",map_url:"",sort_order:1}];
-const fallbackDreams=[
-{id:"local-1",title:"Путешествие вместе ✈️",done:false,sort_order:1},
-{id:"local-2",title:"Увидеть море 🌊",done:false,sort_order:2},
-{id:"local-3",title:"Наше первое большое путешествие ❤️",done:false,sort_order:3}
-];
-const fallbackSecrets=[
-{title:"Секрет №1",text:"Ты самое важное событие в моей жизни ❤️"},
-{title:"Секрет №2",text:"Я всегда буду выбирать тебя 💙💗"},
-{title:"Секрет №3",text:"У нашей истории ещё очень много глав..."}
-];
-
-function esc(v){return String(v??"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;")}
-function date(v){const d=new Date(v);return Number.isNaN(d.getTime())?v:d.toLocaleDateString("ru-RU",{day:"2-digit",month:"2-digit",year:"numeric"})}
-function toast(t){const x=document.getElementById("toast");x.textContent=t;x.classList.add("show");clearTimeout(window.__tt);window.__tt=setTimeout(()=>x.classList.remove("show"),2400)}
-
-function pin(n){
- if(entered.length>=4)return;
- entered+=n;
- document.querySelectorAll(".dot").forEach((x,i)=>x.classList.toggle("on",i<entered.length));
- if(entered.length===4)setTimeout(checkPin,160);
+/* =========================================================
+   УТИЛИТЫ
+========================================================= */
+function esc(v){
+  return String(v ?? "")
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
 }
-function checkPin(){
- if(entered===PIN){localStorage.setItem("nv_site_unlocked","1");unlock()}
- else{document.getElementById("err").textContent="Неверный код 💔";entered="";document.querySelectorAll(".dot").forEach(x=>x.classList.remove("on"));setTimeout(()=>document.getElementById("err").textContent="",1500)}
+function fmtDate(v){
+  if(!v) return "";
+  const d = new Date(v);
+  return Number.isNaN(d.getTime()) ? v :
+    d.toLocaleDateString("ru-RU",{day:"2-digit",month:"2-digit",year:"numeric"});
 }
-function unlock(){document.getElementById("lock").style.display="none";document.getElementById("app").style.display="block";init()}
-if(localStorage.getItem("nv_site_unlocked")==="1")unlock();
-
-function counter(){
- const d=Math.max(0,Date.now()-START.getTime()),s=Math.floor(d/1000);
- const days=Math.floor(s/86400),h=Math.floor(s%86400/3600),m=Math.floor(s%3600/60),sec=s%60;
- document.getElementById("time").textContent=`${days} дн. ${h} ч. ${m} мин. ${sec} сек.`;
-}
-setInterval(counter,1000);counter();
-
-async function loadEvents(){
- try{const {data,error}=await db.from("events").select("*").order("sort_order",{ascending:true});if(error)throw error;renderEvents(data?.length?data:fallbackEvents)}
- catch(e){console.warn(e);renderEvents(fallbackEvents)}
-}
-function renderEvents(a){
- document.getElementById("events").innerHTML=a.length?a.map(x=>`<article class="event card"><div class="edate">${esc(date(x.event_date))}</div><h3>${esc(x.title)}</h3><p>${esc(x.description)}</p></article>`).join(""):`<div class="empty card">Пока здесь пусто ❤️</div>`;
-}
-
-async function loadPhotos(){
- try{const {data,error}=await db.from("photos").select("*").order("sort_order",{ascending:true});if(error)throw error;renderPhotos(data||[])}
- catch(e){console.warn(e);renderPhotos([])}
-}
-function renderPhotos(a){
- document.getElementById("gallery").innerHTML=a.length?a.map(x=>`<div class="photo"><img src="${esc(x.image_url)}" alt="${esc(x.title||"Фото")}" loading="lazy"></div>`).join(""):`<div class="empty card" style="grid-column:1/-1">📸<br>Фотографии появятся здесь</div>`;
-}
-
-async function loadPlaces(){
- try{const {data,error}=await db.from("places").select("*").order("sort_order",{ascending:true});if(error)throw error;renderPlaces(data?.length?data:fallbackPlaces)}
- catch(e){console.warn(e);renderPlaces(fallbackPlaces)}
-}
-function renderPlaces(a){
- document.getElementById("places").innerHTML=a.map(x=>`<article class="place card"><div class="pi">${esc(x.icon||"📍")}</div><h3>${esc(x.title)}</h3><p>${esc(x.description)}</p>${x.map_url?`<a href="${esc(x.map_url)}" target="_blank" rel="noopener">Открыть карту →</a>`:""}</article>`).join("");
-}
-
-async function loadDreams(){
- try{const {data,error}=await db.from("dreams").select("*").order("sort_order",{ascending:true});if(error)throw error;renderDreams(data?.length?data:fallbackDreams)}
- catch(e){console.warn(e);let a;try{a=JSON.parse(localStorage.getItem("nv_dreams_state"))||fallbackDreams}catch{a=fallbackDreams}renderDreams(a)}
-}
-function renderDreams(a){
- document.getElementById("dreams").innerHTML=a.map(x=>`<button class="dream ${x.done?"done":""}" onclick="toggleDream('${esc(x.id)}',${!!x.done})"><span class="check">${x.done?"✓":""}</span><span class="dt">${esc(x.title)}</span></button>`).join("");
-}
-async function toggleDream(id,state){
- const value=!state;
- try{
-  if(String(id).startsWith("local-")){
-   let a=JSON.parse(localStorage.getItem("nv_dreams_state")||"null")||fallbackDreams;
-   const x=a.find(y=>String(y.id)===String(id));if(x)x.done=value;
-   localStorage.setItem("nv_dreams_state",JSON.stringify(a));renderDreams(a);return;
-  }
-  const {error}=await db.from("dreams").update({done:value}).eq("id",id);if(error)throw error;loadDreams();
- }catch(e){console.warn(e);toast("Не удалось сохранить 😔")}
-}
-
-async function loadSecrets(){
- try{const {data,error}=await db.from("secrets").select("*").order("sort_order",{ascending:true});if(error)throw error;secrets=data?.length?data:fallbackSecrets}
- catch(e){secrets=fallbackSecrets}
-}
-function nextSecret(){
- if(!secrets.length)secrets=fallbackSecrets;
- secretIndex=(secretIndex+1)%secrets.length;
- document.getElementById("secretText").textContent=secrets[secretIndex].text;
-}
-
-function go(id,b){
- document.getElementById(id)?.scrollIntoView({behavior:"smooth",block:"start"});
- document.querySelectorAll(".nav button").forEach(x=>x.classList.remove("active"));b.classList.add("active");
-}
-window.addEventListener("scroll",()=>{
- const ids=["home","history","gallerySection","dreamsSection","secret"], y=scrollY+180;
- let n=0;ids.forEach((id,i)=>{const e=document.getElementById(id);if(e&&e.offsetTop<=y)n=i});
- document.querySelectorAll(".nav button").forEach((b,i)=>b.classList.toggle("active",i===n));
-});
-
-async function init(){
- counter();
- await Promise.all([loadEvents(),loadPhotos(),loadPlaces(),loadDreams(),loadSecrets()]);
- try{
-  const {error}=await db.from("events").select("id").limit(1);
-  console.log(error?"Supabase error: "+error.message:"💙 Supabase подключён");
- }catch(e){console.warn("Supabase connection:",e)}
+function toast(t){
+  const x = document.getElementById("toast");
+  x.textContent = t;
+  x.classList.add("show");
+  clearTimeout(window.__tt);
+  window.__tt = setTimeout(()=>x.classList.remove("show"),2400);
 }
 
 /* =========================================================
-   ADMIN PANEL
+   ЗАМОК (PIN)
 ========================================================= */
-
-let session=null;
-let isAdmin=false;
-let currentTab="events";
-
-async function openAdmin(){
- document.getElementById("adminModal").classList.add("open");
- document.body.style.overflow="hidden";
- const {data}=await db.auth.getSession();
- session=data.session||null;
- if(session) await checkAdmin();
- renderAdmin();
+function pin(n){
+  if(entered.length >= 4) return;
+  entered += n;
+  document.querySelectorAll(".dot").forEach((x,i)=>x.classList.toggle("on", i < entered.length));
+  if(entered.length === 4) setTimeout(checkPin, 160);
 }
-function closeAdmin(){
- document.getElementById("adminModal").classList.remove("open");
- document.body.style.overflow="";
+function checkPin(){
+  if(entered === PIN){
+    localStorage.setItem("nv_site_unlocked","1");
+    unlock();
+  } else {
+    document.getElementById("err").textContent = "Неверный код 💔";
+    entered = "";
+    document.querySelectorAll(".dot").forEach(x=>x.classList.remove("on"));
+    setTimeout(()=>document.getElementById("err").textContent="", 1500);
+  }
 }
-
-async function checkAdmin(){
- isAdmin=false;
- if(!session)return;
- const {data,error}=await db.from("admins").select("user_id").eq("user_id",session.user.id).maybeSingle();
- isAdmin=!!data&&!error;
+function unlock(){
+  document.getElementById("lock").style.display = "none";
+  document.getElementById("app").style.display = "block";
+  init();
 }
+if(localStorage.getItem("nv_site_unlocked") === "1") unlock();
 
-function renderAdmin(){
- const c=document.getElementById("adminContent");
- if(!session){
-  c.innerHTML=`
-   <div class="adminInfo">Войдите как администратор, чтобы управлять сайтом.</div>
-   <form class="loginForm" onsubmit="signIn(event,this)">
-     <input type="email" name="email" placeholder="Email" required autocomplete="email">
-     <input type="password" name="password" placeholder="Пароль" required autocomplete="current-password">
-     <button type="submit">Войти</button>
-   </form>
-  `;
-  return;
- }
- if(!isAdmin){
-  c.innerHTML=`
-   <div class="adminInfo">
-     Вы вошли как <b>${esc(session.user.email)}</b>,<br>
-     но у вас нет прав администратора 🙅<br><br>
-     Попросите добавить ваш UID в таблицу <code>admins</code>:<br>
-     <small style="opacity:.7;word-break:break-all">${esc(session.user.id)}</small>
-   </div>
-   <button style="width:100%;padding:12px;background:rgba(255,255,255,.08);color:#fff;border-radius:12px;border:1px solid var(--line)" onclick="signOut()">Выйти</button>
-  `;
-  return;
- }
- c.innerHTML=`
-   <div class="adminTabs">
-     <button data-tab="events" onclick="switchTab('events')">📖 История</button>
-     <button data-tab="photos" onclick="switchTab('photos')">📸 Фото</button>
-     <button data-tab="places" onclick="switchTab('places')">📍 Места</button>
-     <button data-tab="dreams" onclick="switchTab('dreams')">✨ Мечты</button>
-     <button data-tab="secrets" onclick="switchTab('secrets')">💗 Секреты</button>
-   </div>
-   <div id="tabContent"></div>
-   <div style="margin-top:16px;text-align:right">
-     <button style="padding:8px 14px;background:rgba(255,255,255,.06);color:var(--muted);border:1px solid var(--line);border-radius:10px;font-size:12px" onclick="signOut()">Выйти (${esc(session.user.email)})</button>
-   </div>
- `;
- switchTab(currentTab);
+/* =========================================================
+   СЧЁТЧИК ВРЕМЕНИ
+========================================================= */
+function counter(){
+  const diff = Math.max(0, Date.now() - START.getTime());
+  const s = Math.floor(diff/1000);
+  const days = Math.floor(s/86400);
+  const h = Math.floor(s%86400/3600);
+  const m = Math.floor(s%3600/60);
+  const sec = s%60;
+  const el = document.getElementById("time");
+  if(el) el.textContent = `${days} дн. ${h} ч. ${m} мин. ${sec} сек.`;
+}
+setInterval(counter, 1000);
+
+/* =========================================================
+   ЗАГРУЗКА ДАННЫХ
+========================================================= */
+async function loadData(){
+  try{
+    const r = await fetch("data.json?v=" + Date.now());
+    if(!r.ok) throw new Error("HTTP " + r.status);
+    DATA = await r.json();
+  }catch(e){
+    console.warn("Не удалось загрузить data.json:", e);
+    DATA = {
+      startDate: "2026-06-14",
+      events: [],
+      places: [],
+      dreams: [],
+      secrets: [],
+      photos: []
+    };
+    toast("Не удалось загрузить данные 😔");
+  }
 }
 
-function switchTab(tab){
- currentTab=tab;
- document.querySelectorAll(".adminTabs button").forEach(b=>b.classList.toggle("active",b.dataset.tab===tab));
- loadTab(tab);
+/* =========================================================
+   ОТРИСОВКА
+========================================================= */
+function renderEvents(){
+  const el = document.getElementById("events");
+  const list = DATA.events || [];
+  if(!list.length){
+    el.innerHTML = `<div class="empty card">Пока здесь пусто ❤️</div>`;
+    return;
+  }
+  el.innerHTML = list.map(x => `
+    <article class="event card">
+      <div class="edate">${esc(fmtDate(x.date))}</div>
+      <h3>${esc(x.title)}</h3>
+      <p>${esc(x.description || "")}</p>
+    </article>
+  `).join("");
 }
 
-async function loadTab(tab){
- const c=document.getElementById("tabContent");
- if(!c)return;
- if(tab==="events"){
-  c.innerHTML=`
-   <form class="adminForm" onsubmit="saveEvent(event,this)">
-     <label>Дата</label>
-     <input type="date" name="event_date" required>
-     <label>Заголовок</label>
-     <input type="text" name="title" required placeholder="Например: Первое свидание">
-     <label>Описание</label>
-     <textarea name="description" placeholder="Что произошло"></textarea>
-     <button type="submit">+ Добавить событие</button>
-   </form>
-   <div class="adminList" id="adminList"><div class="empty">Загрузка...</div></div>`;
-  await renderAdminList("events");
- }
- else if(tab==="photos"){
-  c.innerHTML=`
-   <form class="adminForm" onsubmit="savePhoto(event,this)">
-     <label>Заголовок (необязательно)</label>
-     <input type="text" name="title" placeholder="Например: Наша прогулка">
-     <label>Файл с телефона / компьютера</label>
-     <input type="file" name="file" accept="image/*">
-     <label>ИЛИ ссылка на изображение</label>
-     <input type="url" name="image_url" placeholder="https://...">
-     <button type="submit">+ Добавить фото</button>
-   </form>
-   <div class="adminList" id="adminList"><div class="empty">Загрузка...</div></div>`;
-  await renderAdminList("photos");
- }
- else if(tab==="places"){
-  c.innerHTML=`
-   <form class="adminForm" onsubmit="savePlace(event,this)">
-     <div class="row">
-       <div><label>Иконка (эмодзи)</label><input type="text" name="icon" placeholder="📍" maxlength="4"></div>
-       <div><label>Название</label><input type="text" name="title" required placeholder="Например: Наш парк"></div>
-     </div>
-     <label>Описание</label>
-     <textarea name="description" placeholder="Что это за место"></textarea>
-     <label>Ссылка на карту (необязательно)</label>
-     <input type="url" name="map_url" placeholder="https://yandex.ru/maps/...">
-     <button type="submit">+ Добавить место</button>
-   </form>
-   <div class="adminList" id="adminList"><div class="empty">Загрузка...</div></div>`;
-  await renderAdminList("places");
- }
- else if(tab==="dreams"){
-  c.innerHTML=`
-   <form class="adminForm" onsubmit="saveDream(event,this)">
-     <label>Мечта</label>
-     <input type="text" name="title" required placeholder="Например: Съездить в Париж 🗼">
-     <button type="submit">+ Добавить мечту</button>
-   </form>
-   <div class="adminList" id="adminList"><div class="empty">Загрузка...</div></div>`;
-  await renderAdminList("dreams");
- }
- else if(tab==="secrets"){
-  c.innerHTML=`
-   <form class="adminForm" onsubmit="saveSecret(event,this)">
-     <label>Заголовок</label>
-     <input type="text" name="title" required placeholder="Секрет №4">
-     <label>Текст секрета</label>
-     <textarea name="text" required placeholder="Что-то важное..."></textarea>
-     <button type="submit">+ Добавить секрет</button>
-   </form>
-   <div class="adminList" id="adminList"><div class="empty">Загрузка...</div></div>`;
-  await renderAdminList("secrets");
- }
+function renderPhotos(){
+  const el = document.getElementById("gallery");
+  const list = DATA.photos || [];
+  if(!list.length){
+    el.innerHTML = `<div class="empty card" style="grid-column:1/-1">📸<br>Фотографии появятся здесь</div>`;
+    return;
+  }
+  el.innerHTML = list.map(x => `
+    <div class="photo" onclick="openLightbox('${esc(x.image_url)}')">
+      <img src="${esc(x.image_url)}" alt="${esc(x.title || "Фото")}" loading="lazy">
+    </div>
+  `).join("");
 }
 
-async function renderAdminList(tab){
- const {data,error}=await db.from(tab).select("*").order("sort_order",{ascending:true});
- const list=document.getElementById("adminList");
- if(!list)return;
- if(error){list.innerHTML=`<div class="empty">Ошибка: ${esc(error.message)}</div>`;return}
- if(!data||!data.length){list.innerHTML=`<div class="empty">Пока ничего нет</div>`;return}
- list.innerHTML=data.map(x=>{
-  let preview="";
-  if(tab==="photos"&&x.image_url)preview=`<img src="${esc(x.image_url)}" alt="">`;
-  let main=esc(x.title||x.event_date||"Без названия");
-  let sub="";
-  if(tab==="events")sub=esc(x.description||"");
-  else if(tab==="places")sub=esc((x.icon||"")+" "+(x.description||""));
-  else if(tab==="secrets")sub=esc(x.text||"");
-  else if(tab==="dreams")sub=x.done?"✓ Выполнено":"В планах";
-  else if(tab==="photos")sub="";
-  return `<div class="adminItem">
-    ${preview}
-    <div class="info"><b>${main}</b><small>${sub}</small></div>
-    <button class="del" onclick="delItem('${tab}','${esc(x.id)}')">Удалить</button>
-  </div>`;
- }).join("");
+function renderPlaces(){
+  const el = document.getElementById("places");
+  const list = DATA.places || [];
+  if(!list.length){
+    el.innerHTML = `<div class="empty card">Пока здесь пусто 📍</div>`;
+    return;
+  }
+  el.innerHTML = list.map(x => `
+    <article class="place card">
+      <div class="pi">${esc(x.icon || "📍")}</div>
+      <h3>${esc(x.title)}</h3>
+      <p>${esc(x.description || "")}</p>
+      ${x.map_url ? `<a href="${esc(x.map_url)}" target="_blank" rel="noopener">Открыть карту →</a>` : ""}
+    </article>
+  `).join("");
 }
 
-async function nextSort(tab){
- const {data}=await db.from(tab).select("sort_order").order("sort_order",{ascending:false}).limit(1);
- return (data&&data[0]?.sort_order?data[0].sort_order:0)+1;
+function renderDreams(){
+  const el = document.getElementById("dreams");
+  const list = DATA.dreams || [];
+  if(!list.length){
+    el.innerHTML = `<div class="empty card">Пока здесь пусто ✨</div>`;
+    return;
+  }
+  const saved = getDreamsState();
+  el.innerHTML = list.map((x,i) => {
+    const done = saved[i] !== undefined ? saved[i] : !!x.done;
+    return `
+      <button class="dream ${done?"done":""}" onclick="toggleDream(${i})">
+        <span class="check">${done?"✓":""}</span>
+        <span class="dt">${esc(x.title)}</span>
+      </button>
+    `;
+  }).join("");
+}
+function getDreamsState(){
+  try{ return JSON.parse(localStorage.getItem("nv_dreams") || "{}"); }
+  catch{ return {}; }
+}
+function toggleDream(i){
+  const s = getDreamsState();
+  const current = s[i] !== undefined ? s[i] : !!(DATA.dreams[i]?.done);
+  s[i] = !current;
+  localStorage.setItem("nv_dreams", JSON.stringify(s));
+  renderDreams();
 }
 
-async function saveEvent(e,form){
- e.preventDefault();
- const fd=new FormData(form);
- const order=await nextSort("events");
- const {error}=await db.from("events").insert({
-  event_date:fd.get("event_date"),
-  title:fd.get("title").trim(),
-  description:(fd.get("description")||"").trim(),
-  sort_order:order
- });
- if(error){toast("Ошибка: "+error.message);return}
- form.reset();toast("Событие добавлено 💙");await renderAdminList("events");loadEvents();
+function renderSecrets(){
+  secrets = DATA.secrets || [];
+}
+function nextSecret(){
+  if(!secrets.length){
+    document.getElementById("secretText").textContent = "Секретов пока нет 💗";
+    return;
+  }
+  secretIndex = (secretIndex + 1) % secrets.length;
+  document.getElementById("secretText").textContent = secrets[secretIndex].text;
 }
 
-async function savePhoto(e,form){
- e.preventDefault();
- const fd=new FormData(form);
- let url=(fd.get("image_url")||"").trim();
- const file=form.querySelector('input[type=file]').files[0];
- if(file){
-  toast("Загружаем фото...");
-  const path=`${Date.now()}_${file.name.replace(/[^\w.\-]/g,"_")}`;
-  const up=await db.storage.from("photos").upload(path,file);
-  if(up.error){toast("Ошибка загрузки: "+up.error.message);return}
-  const {data:pub}=db.storage.from("photos").getPublicUrl(path);
-  url=pub.publicUrl;
- }
- if(!url){toast("Выберите файл или вставьте ссылку");return}
- const order=await nextSort("photos");
- const {error}=await db.from("photos").insert({
-  title:(fd.get("title")||"").trim(),
-  image_url:url,
-  sort_order:order
- });
- if(error){toast("Ошибка: "+error.message);return}
- form.reset();toast("Фото добавлено 📸");await renderAdminList("photos");loadPhotos();
+/* =========================================================
+   ЛАЙТБОКС
+========================================================= */
+function openLightbox(url){
+  document.getElementById("lightboxImg").src = url;
+  document.getElementById("lightbox").classList.add("open");
+  document.body.style.overflow = "hidden";
+}
+function closeLightbox(e){
+  if(e) e.stopPropagation();
+  document.getElementById("lightbox").classList.remove("open");
+  document.body.style.overflow = "";
 }
 
-async function savePlace(e,form){
- e.preventDefault();
- const fd=new FormData(form);
- const order=await nextSort("places");
- const {error}=await db.from("places").insert({
-  icon:(fd.get("icon")||"📍").trim()||"📍",
-  title:fd.get("title").trim(),
-  description:(fd.get("description")||"").trim(),
-  map_url:(fd.get("map_url")||"").trim(),
-  sort_order:order
- });
- if(error){toast("Ошибка: "+error.message);return}
- form.reset();toast("Место добавлено ❤️");await renderAdminList("places");loadPlaces();
+/* =========================================================
+   НАВИГАЦИЯ
+========================================================= */
+function go(id, b){
+  document.getElementById(id)?.scrollIntoView({behavior:"smooth",block:"start"});
+  document.querySelectorAll(".nav button").forEach(x=>x.classList.remove("active"));
+  b.classList.add("active");
 }
+window.addEventListener("scroll", () => {
+  const ids = ["home","history","gallerySection","dreamsSection","secret"];
+  const y = scrollY + 180;
+  let n = 0;
+  ids.forEach((id,i)=>{
+    const e = document.getElementById(id);
+    if(e && e.offsetTop <= y) n = i;
+  });
+  document.querySelectorAll(".nav button").forEach((b,i)=>b.classList.toggle("active", i === n));
+});
 
-async function saveDream(e,form){
- e.preventDefault();
- const fd=new FormData(form);
- const order=await nextSort("dreams");
- const {error}=await db.from("dreams").insert({
-  title:fd.get("title").trim(),
-  done:false,
-  sort_order:order
- });
- if(error){toast("Ошибка: "+error.message);return}
- form.reset();toast("Мечта добавлена ✨");await renderAdminList("dreams");loadDreams();
-}
-
-async function saveSecret(e,form){
- e.preventDefault();
- const fd=new FormData(form);
- const order=await nextSort("secrets");
- const {error}=await db.from("secrets").insert({
-  title:fd.get("title").trim(),
-  text:fd.get("text").trim(),
-  sort_order:order
- });
- if(error){toast("Ошибка: "+error.message);return}
- form.reset();toast("Секрет добавлен 💗");await renderAdminList("secrets");loadSecrets();
-}
-
-async function delItem(tab,id){
- if(!confirm("Удалить безвозвратно?"))return;
- const {error}=await db.from(tab).delete().eq("id",id);
- if(error){toast("Ошибка: "+error.message);return}
- toast("Удалено");
- await renderAdminList(tab);
- if(tab==="events")loadEvents();
- if(tab==="photos")loadPhotos();
- if(tab==="places")loadPlaces();
- if(tab==="dreams")loadDreams();
- if(tab==="secrets")loadSecrets();
-}
-
-async function signIn(e,form){
- e.preventDefault();
- const fd=new FormData(form);
- const email=fd.get("email").trim();
- const password=fd.get("password");
- const {error}=await db.auth.signInWithPassword({email,password});
- if(error){toast("Ошибка входа: "+error.message);return}
- const {data}=await db.auth.getSession();
- session=data.session;
- await checkAdmin();
- toast("Добро пожаловать 💙");
- renderAdmin();
-}
-
-async function signOut(){
- await db.auth.signOut();
- session=null;isAdmin=false;
- toast("Вы вышли");
- renderAdmin();
+/* =========================================================
+   СТАРТ
+========================================================= */
+async function init(){
+  counter();
+  await loadData();
+  if(DATA.startDate){
+    const d = new Date(DATA.startDate);
+    if(!Number.isNaN(d.getTime())){
+      document.getElementById("startDate").textContent =
+        "с " + d.toLocaleDateString("ru-RU",{day:"numeric",month:"long",year:"numeric"}) + " года 💙💗";
+    }
+  }
+  renderEvents();
+  renderPhotos();
+  renderPlaces();
+  renderDreams();
+  renderSecrets();
 }
 </script>
 </body>
