@@ -14,6 +14,12 @@
   ],
   "places": [],
   "dreams": [],
+  "dishes": [],
   "secrets": [],
-  "photos": []
+  "photos": [
+    {
+      "image_url": "images/тест.jpg",
+      "title": "тест"
+    }
+  ]
 }
