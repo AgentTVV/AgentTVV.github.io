@@ -433,7 +433,7 @@ function renderPlaces(){
   const el = document.getElementById("places");
   const list = DATA.places || [];
   if(!list.length){
-    el.innerHTML = `<div class="empty card">Пока здесь пусто 📍</div>`;
+    el.innerHTML = `<div class="empty card" style="grid-column:1/-1">Пока здесь пусто 📍</div>`;
     return;
   }
   el.innerHTML = list.map(x => `
