@@ -33,7 +33,6 @@ button{font:inherit;border:0;cursor:pointer}.container{width:min(1050px,calc(100
 .counter{width:min(680px,100%);margin:28px auto 0;padding:20px;border:1px solid var(--line);border-radius:25px;background:rgba(255,255,255,.055);backdrop-filter:blur(15px)}.ct{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:10px}.time{font-size:clamp(20px,5vw,32px);font-weight:800}.date{font-size:13px;color:var(--muted);margin-top:7px}
 section{padding:42px 0}.label{font-size:12px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--blue);margin-bottom:7px}.head{margin-bottom:21px}.head h2{font-size:30px;letter-spacing:-1px}.head p{color:var(--muted);margin-top:7px}
 
-/* переключатель сортировки */
 .sortRow{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:16px}
 .sortRow .head{margin-bottom:0;flex:1;min-width:200px}
 .sortToggle{display:flex;gap:4px;padding:4px;background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:14px;flex:none}
@@ -70,7 +69,8 @@ section{padding:42px 0}.label{font-size:12px;font-weight:800;letter-spacing:2px;
 .btnPrimary{flex:1;min-width:160px;padding:13px;background:linear-gradient(135deg,var(--blue),var(--pink));color:#fff;border-radius:13px;font-weight:800;font-size:14px}
 .btnGhost{padding:13px 16px;background:rgba(255,255,255,.06);color:var(--muted);border:1px solid var(--line);border-radius:13px;font-size:14px}
 
-.eForm{display:grid;gap:8px;margin-bottom:18px;padding:14px;background:rgba(255,255,255,.03);border:1px dashed var(--line);border-radius:16px}
+.eForm{display:grid;gap:8px;margin-bottom:18px;padding:14px;background:rgba(255,255,255,.03);border:1px dashed var(--line);border-radius:16px;transition:.2s}
+.eForm.editing{border-color:var(--blue);background:rgba(98,168,255,.07);box-shadow:0 0 0 1px rgba(98,168,255,.15)}
 .eForm label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;font-weight:800}
 .eForm input,.eForm textarea{width:100%;padding:10px 12px;background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:11px;color:#fff;font:inherit;font-size:14px}
 .eForm input:focus,.eForm textarea:focus{outline:none;border-color:var(--blue)}
@@ -78,13 +78,22 @@ section{padding:42px 0}.label{font-size:12px;font-weight:800;letter-spacing:2px;
 .eForm button[type=submit]{padding:11px;background:linear-gradient(135deg,var(--blue),var(--pink));color:#fff;border-radius:11px;font-weight:800;font-size:13px}
 .eForm .row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .eForm .hint{font-size:11px;color:var(--muted);line-height:1.45;margin-top:-2px}
+.eForm .formBtns{display:flex;gap:8px}
+.eForm .formBtns button[type=submit]{flex:1}
+.eForm .formBtns .cancelEdit{padding:11px 14px;background:rgba(255,255,255,.06);border:1px solid var(--line);color:var(--muted);border-radius:11px;font-weight:700;font-size:13px}
+.formTitle{font-size:11px;font-weight:800;color:var(--blue);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:4px}
+.formTitle.edit{color:var(--pink)}
+
 .eList{display:grid;gap:7px}
 .eItem{display:flex;align-items:center;gap:10px;padding:11px 12px;background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:13px}
+.eItem.editing{border-color:var(--blue);background:rgba(98,168,255,.1)}
 .eItem img{width:42px;height:42px;border-radius:9px;object-fit:cover;flex:none}
 .eItemInfo{flex:1;min-width:0}
 .eItemInfo b{display:block;font-weight:700;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .eItemInfo small{display:block;color:var(--muted);font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px}
-.eDel{padding:7px 10px;background:rgba(255,80,80,.12);color:#ff9090;border:1px solid rgba(255,80,80,.28);border-radius:9px;font-size:12px;flex:none}
+.eItemBtns{display:flex;gap:5px;flex:none}
+.eEdit{padding:7px 10px;background:rgba(98,168,255,.12);color:#8ec4ff;border:1px solid rgba(98,168,255,.3);border-radius:9px;font-size:12px}
+.eDel{padding:7px 10px;background:rgba(255,80,80,.12);color:#ff9090;border:1px solid rgba(255,80,80,.28);border-radius:9px;font-size:12px}
 .eEmpty{padding:20px;text-align:center;color:var(--muted);font-size:13px}
 
 .jsonText{width:100%;min-height:320px;padding:12px;background:rgba(0,0,0,.35);border:1px solid var(--line);border-radius:12px;color:#c8d1ee;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:11.5px;line-height:1.5;resize:vertical;white-space:pre}
@@ -177,7 +186,6 @@ section{padding:42px 0}.label{font-size:12px;font-weight:800;letter-spacing:2px;
   <img id="lightboxImg" src="" alt="">
 </div>
 
-<!-- РЕДАКТОР -->
 <div class="modal" id="editor">
   <div class="modalBox">
     <div class="modalHead">
@@ -200,7 +208,6 @@ section{padding:42px 0}.label{font-size:12px;font-weight:800;letter-spacing:2px;
   </div>
 </div>
 
-<!-- JSON OUTPUT -->
 <div class="modal" id="jsonModal">
   <div class="modalBox">
     <div class="modalHead">
@@ -233,9 +240,10 @@ let entered = "";
 let DATA = {startDate:"2026-06-13", events:[], places:[], dreams:[], secrets:[], photos:[]};
 let DRAFT = null;
 let editorTab = "events";
+let editing = null; // { key: "events"|"places"|..., index: number }
 let secrets = [];
 let secretIndex = -1;
-let sortMode = localStorage.getItem("nv_sort_events") || "asc"; // asc | desc
+let sortMode = localStorage.getItem("nv_sort_events") || "asc";
 
 /* ===== УТИЛИТЫ ===== */
 function esc(v){
@@ -245,6 +253,13 @@ function esc(v){
     .replaceAll(">","&gt;")
     .replaceAll('"',"&quot;")
     .replaceAll("'","&#039;");
+}
+function escAttr(v){
+  return String(v ?? "")
+    .replaceAll("&","&amp;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;");
 }
 function fmtDate(v){
   if(!v) return "";
@@ -302,7 +317,7 @@ function counter(){
 }
 setInterval(counter, 1000);
 
-/* ===== ЗАГРУЗКА ДАННЫХ ===== */
+/* ===== ЗАГРУЗКА ===== */
 async function loadData(){
   try{
     const r = await fetch("data.json?v=" + Date.now());
@@ -321,7 +336,7 @@ async function loadData(){
   }
 }
 
-/* ===== ОТРИСОВКА ===== */
+/* ===== ОТРИСОВКА САЙТА ===== */
 function renderAll(){
   renderEvents();
   renderPhotos();
@@ -331,14 +346,11 @@ function renderAll(){
   renderStartDate();
   updateSortToggle();
 }
-
 function renderStartDate(){
   const d = getStart();
   const el = document.getElementById("startDate");
   if(el) el.textContent = "с " + d.toLocaleDateString("ru-RU",{day:"numeric",month:"long",year:"numeric"}) + " 💙💗";
 }
-
-/* ==== сортировка ==== */
 function setSort(mode){
   sortMode = mode;
   localStorage.setItem("nv_sort_events", mode);
@@ -358,7 +370,6 @@ function sortedEvents(list){
     return sortMode === "asc" ? da - db : db - da;
   });
 }
-
 function renderEvents(){
   const el = document.getElementById("events");
   const list = sortedEvents(DATA.events || []);
@@ -374,7 +385,6 @@ function renderEvents(){
     </article>
   `).join("");
 }
-
 function renderPhotos(){
   const el = document.getElementById("gallery");
   const list = DATA.photos || [];
@@ -383,12 +393,11 @@ function renderPhotos(){
     return;
   }
   el.innerHTML = list.map(x => `
-    <div class="photo" onclick="openLightbox('${esc(x.image_url)}')">
-      <img src="${esc(x.image_url)}" alt="${esc(x.title || "Фото")}" loading="lazy">
+    <div class="photo" onclick="openLightbox('${escAttr(x.image_url)}')">
+      <img src="${escAttr(x.image_url)}" alt="${escAttr(x.title || "Фото")}" loading="lazy">
     </div>
   `).join("");
 }
-
 function renderPlaces(){
   const el = document.getElementById("places");
   const list = DATA.places || [];
@@ -401,11 +410,10 @@ function renderPlaces(){
       <div class="pi">${esc(x.icon || "📍")}</div>
       <h3>${esc(x.title)}</h3>
       <p>${esc(x.description || "")}</p>
-      ${x.map_url ? `<a href="${esc(x.map_url)}" target="_blank" rel="noopener">Открыть карту →</a>` : ""}
+      ${x.map_url ? `<a href="${escAttr(x.map_url)}" target="_blank" rel="noopener">Открыть карту →</a>` : ""}
     </article>
   `).join("");
 }
-
 function renderDreams(){
   const el = document.getElementById("dreams");
   const list = DATA.dreams || [];
@@ -435,7 +443,6 @@ function toggleDream(i){
   localStorage.setItem("nv_dreams", JSON.stringify(s));
   renderDreams();
 }
-
 function renderSecrets(){
   secrets = DATA.secrets || [];
 }
@@ -485,6 +492,7 @@ function cloneData(o){ return JSON.parse(JSON.stringify(o)); }
 function openEditor(){
   DRAFT = cloneData(DATA);
   editorTab = "events";
+  editing = null;
   document.getElementById("editor").classList.add("open");
   document.body.style.overflow = "hidden";
   renderEditor();
@@ -492,10 +500,45 @@ function openEditor(){
 function closeEditor(){
   document.getElementById("editor").classList.remove("open");
   document.body.style.overflow = "";
+  editing = null;
 }
 function setTab(t){
   editorTab = t;
+  editing = null;
   renderEditor();
+}
+function startEdit(key, index){
+  editing = { key, index };
+  renderEditor();
+  // пролистаем к форме
+  setTimeout(()=>{
+    const f = document.querySelector(".eForm");
+    if(f) f.scrollIntoView({behavior:"smooth",block:"start"});
+  }, 50);
+}
+function cancelEdit(){
+  editing = null;
+  renderEditor();
+}
+function isEditing(key, index){
+  return editing && editing.key === key && editing.index === index;
+}
+function formClass(key){
+  return "eForm" + (editing && editing.key === key ? " editing" : "");
+}
+function formTitle(key, addText, editText){
+  return `<div class="formTitle ${editing && editing.key === key ? "edit" : ""}">${
+    editing && editing.key === key ? "✏️ " + editText : addText
+  }</div>`;
+}
+function formButtons(key){
+  if(editing && editing.key === key){
+    return `<div class="formBtns">
+      <button type="submit">💾 Сохранить изменения</button>
+      <button type="button" class="cancelEdit" onclick="cancelEdit()">Отмена</button>
+    </div>`;
+  }
+  return `<button type="submit">+ Добавить</button>`;
 }
 
 function renderEditor(){
@@ -506,104 +549,138 @@ function renderEditor(){
 
   if(editorTab === "events"){
     const sorted = sortedEvents(DRAFT.events || []);
-    // находим оригинальные индексы, чтобы удаление работало корректно
     const idxMap = sorted.map(x => DRAFT.events.indexOf(x));
+    const ed = editing && editing.key === "events" ? DRAFT.events[editing.index] : null;
+    const dval = ed && ed.date ? String(ed.date).slice(0,10) : "";
     body.innerHTML = `
-      <form class="eForm" onsubmit="addEvent(event,this)">
+      <form class="${formClass("events")}" onsubmit="submitEvent(event,this)">
+        ${formTitle("events", "Добавить событие", "Редактировать событие")}
         <label>Дата</label>
-        <input type="date" name="date" required>
+        <input type="date" name="date" required value="${escAttr(dval)}">
         <label>Заголовок</label>
-        <input type="text" name="title" required placeholder="Например: Первое свидание">
+        <input type="text" name="title" required placeholder="Например: Первое свидание" value="${escAttr(ed?.title || "")}">
         <label>Описание</label>
-        <textarea name="description" placeholder="Что произошло, что запомнилось"></textarea>
-        <button type="submit">+ Добавить в историю</button>
+        <textarea name="description" placeholder="Что произошло, что запомнилось">${esc(ed?.description || "")}</textarea>
+        ${formButtons("events")}
       </form>
       <div class="eList">
-        ${sorted.map((x,k)=>`
-          <div class="eItem">
-            <div class="eItemInfo">
-              <b>${esc(x.title)}</b>
-              <small>${esc(fmtDate(x.date))}${x.description ? " · "+esc(x.description.slice(0,40)) : ""}</small>
+        ${sorted.map((x,k)=>{
+          const orig = idxMap[k];
+          const active = isEditing("events", orig);
+          return `
+            <div class="eItem ${active?"editing":""}">
+              <div class="eItemInfo">
+                <b>${esc(x.title)}</b>
+                <small>${esc(fmtDate(x.date))}${x.description ? " · "+esc(x.description.slice(0,40)) : ""}</small>
+              </div>
+              <div class="eItemBtns">
+                <button class="eEdit" onclick="startEdit('events',${orig})">✏️</button>
+                <button class="eDel" onclick="delItem('events',${orig})">🗑</button>
+              </div>
             </div>
-            <button class="eDel" onclick="delItem('events',${idxMap[k]})">Удалить</button>
-          </div>
-        `).join("") || `<div class="eEmpty">Пока ничего нет — добавьте первое событие ✨</div>`}
+          `;
+        }).join("") || `<div class="eEmpty">Пока ничего нет — добавьте первое событие ✨</div>`}
       </div>
     `;
   }
   else if(editorTab === "places"){
+    const ed = editing && editing.key === "places" ? DRAFT.places[editing.index] : null;
     body.innerHTML = `
-      <form class="eForm" onsubmit="addPlace(event,this)">
+      <form class="${formClass("places")}" onsubmit="submitPlace(event,this)">
+        ${formTitle("places", "Добавить место", "Редактировать место")}
         <div class="row">
-          <div><label>Иконка</label><input type="text" name="icon" placeholder="📍" maxlength="4"></div>
-          <div><label>Название</label><input type="text" name="title" required placeholder="Наш парк"></div>
+          <div><label>Иконка</label><input type="text" name="icon" placeholder="📍" maxlength="4" value="${escAttr(ed?.icon || "")}"></div>
+          <div><label>Название</label><input type="text" name="title" required placeholder="Наш парк" value="${escAttr(ed?.title || "")}"></div>
         </div>
         <label>Описание</label>
-        <textarea name="description" placeholder="Что это за место"></textarea>
+        <textarea name="description" placeholder="Что это за место">${esc(ed?.description || "")}</textarea>
         <label>Ссылка на карту (необязательно)</label>
-        <input type="url" name="map_url" placeholder="https://yandex.ru/maps/...">
-        <button type="submit">+ Добавить место</button>
+        <input type="url" name="map_url" placeholder="https://yandex.ru/maps/..." value="${escAttr(ed?.map_url || "")}">
+        ${formButtons("places")}
       </form>
       <div class="eList">
-        ${(DRAFT.places||[]).map((x,i)=>`
-          <div class="eItem">
-            <div class="eItemInfo">
-              <b>${esc(x.icon||"📍")} ${esc(x.title)}</b>
-              <small>${esc((x.description||"").slice(0,50))}</small>
+        ${(DRAFT.places||[]).map((x,i)=>{
+          const active = isEditing("places", i);
+          return `
+            <div class="eItem ${active?"editing":""}">
+              <div class="eItemInfo">
+                <b>${esc(x.icon||"📍")} ${esc(x.title)}</b>
+                <small>${esc((x.description||"").slice(0,50))}</small>
+              </div>
+              <div class="eItemBtns">
+                <button class="eEdit" onclick="startEdit('places',${i})">✏️</button>
+                <button class="eDel" onclick="delItem('places',${i})">🗑</button>
+              </div>
             </div>
-            <button class="eDel" onclick="delItem('places',${i})">Удалить</button>
-          </div>
-        `).join("") || `<div class="eEmpty">Пока ничего нет 📍</div>`}
+          `;
+        }).join("") || `<div class="eEmpty">Пока ничего нет 📍</div>`}
       </div>
     `;
   }
   else if(editorTab === "dreams"){
+    const ed = editing && editing.key === "dreams" ? DRAFT.dreams[editing.index] : null;
     body.innerHTML = `
-      <form class="eForm" onsubmit="addDream(event,this)">
+      <form class="${formClass("dreams")}" onsubmit="submitDream(event,this)">
+        ${formTitle("dreams", "Добавить мечту", "Редактировать мечту")}
         <label>Мечта</label>
-        <input type="text" name="title" required placeholder="Например: Съездить в Париж 🗼">
+        <input type="text" name="title" required placeholder="Например: Съездить в Париж 🗼" value="${escAttr(ed?.title || "")}">
         <label>Уже сбылось?</label>
         <label style="display:flex;align-items:center;gap:8px;font-size:13px;color:#fff;text-transform:none;letter-spacing:0;font-weight:500;padding:10px;background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:11px">
-          <input type="checkbox" name="done" style="width:auto"> Да, сбылась
+          <input type="checkbox" name="done" style="width:auto" ${ed?.done ? "checked" : ""}> Да, сбылась
         </label>
-        <button type="submit">+ Добавить мечту</button>
+        ${formButtons("dreams")}
       </form>
       <div class="eList">
-        ${(DRAFT.dreams||[]).map((x,i)=>`
-          <div class="eItem">
-            <div class="eItemInfo">
-              <b>${esc(x.title)}</b>
-              <small>${x.done ? "✓ сбылась" : "в планах"}</small>
+        ${(DRAFT.dreams||[]).map((x,i)=>{
+          const active = isEditing("dreams", i);
+          return `
+            <div class="eItem ${active?"editing":""}">
+              <div class="eItemInfo">
+                <b>${esc(x.title)}</b>
+                <small>${x.done ? "✓ сбылась" : "в планах"}</small>
+              </div>
+              <div class="eItemBtns">
+                <button class="eEdit" onclick="startEdit('dreams',${i})">✏️</button>
+                <button class="eDel" onclick="delItem('dreams',${i})">🗑</button>
+              </div>
             </div>
-            <button class="eDel" onclick="delItem('dreams',${i})">Удалить</button>
-          </div>
-        `).join("") || `<div class="eEmpty">Пока ничего нет ✨</div>`}
+          `;
+        }).join("") || `<div class="eEmpty">Пока ничего нет ✨</div>`}
       </div>
     `;
   }
   else if(editorTab === "secrets"){
+    const ed = editing && editing.key === "secrets" ? DRAFT.secrets[editing.index] : null;
     body.innerHTML = `
-      <form class="eForm" onsubmit="addSecret(event,this)">
+      <form class="${formClass("secrets")}" onsubmit="submitSecret(event,this)">
+        ${formTitle("secrets", "Добавить секрет", "Редактировать секрет")}
         <label>Заголовок</label>
-        <input type="text" name="title" required placeholder="Секрет №4">
+        <input type="text" name="title" required placeholder="Секрет №4" value="${escAttr(ed?.title || "")}">
         <label>Текст</label>
-        <textarea name="text" required placeholder="Что-то важное..."></textarea>
-        <button type="submit">+ Добавить секрет</button>
+        <textarea name="text" required placeholder="Что-то важное...">${esc(ed?.text || "")}</textarea>
+        ${formButtons("secrets")}
       </form>
       <div class="eList">
-        ${(DRAFT.secrets||[]).map((x,i)=>`
-          <div class="eItem">
-            <div class="eItemInfo">
-              <b>${esc(x.title)}</b>
-              <small>${esc((x.text||"").slice(0,50))}</small>
+        ${(DRAFT.secrets||[]).map((x,i)=>{
+          const active = isEditing("secrets", i);
+          return `
+            <div class="eItem ${active?"editing":""}">
+              <div class="eItemInfo">
+                <b>${esc(x.title)}</b>
+                <small>${esc((x.text||"").slice(0,50))}</small>
+              </div>
+              <div class="eItemBtns">
+                <button class="eEdit" onclick="startEdit('secrets',${i})">✏️</button>
+                <button class="eDel" onclick="delItem('secrets',${i})">🗑</button>
+              </div>
             </div>
-            <button class="eDel" onclick="delItem('secrets',${i})">Удалить</button>
-          </div>
-        `).join("") || `<div class="eEmpty">Пока ничего нет 💗</div>`}
+          `;
+        }).join("") || `<div class="eEmpty">Пока ничего нет 💗</div>`}
       </div>
     `;
   }
   else if(editorTab === "photos"){
+    const ed = editing && editing.key === "photos" ? DRAFT.photos[editing.index] : null;
     body.innerHTML = `
       <div class="hintBox">
         <b>Как добавить фото:</b><br>
@@ -612,103 +689,147 @@ function renderEditor(){
         3. Впишите путь ниже: <b>images/01.jpg</b><br>
         <i>Или вставьте ссылку на фото из интернета (https://...)</i>
       </div>
-      <form class="eForm" onsubmit="addPhoto(event,this)">
+      <form class="${formClass("photos")}" onsubmit="submitPhoto(event,this)">
+        ${formTitle("photos", "Добавить фото", "Редактировать фото")}
         <label>Путь к фото или ссылка</label>
-        <input type="text" name="image_url" required placeholder="images/01.jpg или https://...">
+        <input type="text" name="image_url" required placeholder="images/01.jpg или https://..." value="${escAttr(ed?.image_url || "")}">
         <label>Подпись (необязательно)</label>
-        <input type="text" name="title" placeholder="Наша прогулка">
-        <button type="submit">+ Добавить фото</button>
+        <input type="text" name="title" placeholder="Наша прогулка" value="${escAttr(ed?.title || "")}">
+        ${formButtons("photos")}
       </form>
       <div class="eList">
-        ${(DRAFT.photos||[]).map((x,i)=>`
-          <div class="eItem">
-            <img src="${esc(x.image_url)}" alt="" onerror="this.style.opacity=.3">
-            <div class="eItemInfo">
-              <b>${esc(x.title || "Без подписи")}</b>
-              <small>${esc(x.image_url)}</small>
+        ${(DRAFT.photos||[]).map((x,i)=>{
+          const active = isEditing("photos", i);
+          return `
+            <div class="eItem ${active?"editing":""}">
+              <img src="${escAttr(x.image_url)}" alt="" onerror="this.style.opacity=.3">
+              <div class="eItemInfo">
+                <b>${esc(x.title || "Без подписи")}</b>
+                <small>${esc(x.image_url)}</small>
+              </div>
+              <div class="eItemBtns">
+                <button class="eEdit" onclick="startEdit('photos',${i})">✏️</button>
+                <button class="eDel" onclick="delItem('photos',${i})">🗑</button>
+              </div>
             </div>
-            <button class="eDel" onclick="delItem('photos',${i})">Удалить</button>
-          </div>
-        `).join("") || `<div class="eEmpty">Пока ничего нет 📸</div>`}
+          `;
+        }).join("") || `<div class="eEmpty">Пока ничего нет 📸</div>`}
       </div>
     `;
   }
   else if(editorTab === "settings"){
     body.innerHTML = `
       <form class="eForm" onsubmit="saveSettings(event,this)">
+        <div class="formTitle">⚙ Общие настройки</div>
         <label>Дата начала отношений</label>
-        <input type="date" name="startDate" value="${esc((DRAFT.startDate||"").slice(0,10))}" required>
+        <input type="date" name="startDate" value="${escAttr((DRAFT.startDate||"").slice(0,10))}" required>
         <div class="hint">От этой даты считается счётчик «Мы вместе» 💙💗</div>
-        <button type="submit">Сохранить дату</button>
+        <button type="submit">💾 Сохранить дату</button>
       </form>
       <div class="hintBox">
         <b>Как пользоваться редактором:</b><br>
         1. Внесите изменения во вкладках.<br>
-        2. Нажмите <b>Сохранить — получить JSON</b>.<br>
-        3. Скопируйте код и вставьте его в <b>data.json</b> на GitHub.<br>
-        4. Обновите страницу сайта — всё появится.
+        2. У любого элемента нажмите <b>✏️</b>, чтобы изменить, или <b>🗑</b>, чтобы удалить.<br>
+        3. Нажмите <b>Сохранить — получить JSON</b>.<br>
+        4. Скопируйте код и вставьте его в <b>data.json</b> на GitHub.<br>
+        5. Обновите страницу сайта — всё появится.
       </div>
     `;
   }
 }
 
-/* ===== Добавление/удаление ===== */
-function addEvent(e, form){
+/* ===== Submit-обработчики ===== */
+function submitEvent(e, form){
   e.preventDefault();
   const fd = new FormData(form);
-  DRAFT.events.push({
+  const obj = {
     date: fd.get("date"),
     title: fd.get("title").trim(),
     description: (fd.get("description")||"").trim()
-  });
+  };
+  if(editing && editing.key === "events"){
+    DRAFT.events[editing.index] = obj;
+    editing = null;
+    toast("Событие обновлено ✅");
+  } else {
+    DRAFT.events.push(obj);
+    toast("Событие добавлено ✅");
+  }
   form.reset();
-  toast("Событие добавлено ✅");
   renderEditor();
 }
-function addPlace(e, form){
+function submitPlace(e, form){
   e.preventDefault();
   const fd = new FormData(form);
-  DRAFT.places.push({
+  const obj = {
     icon: (fd.get("icon")||"📍").trim() || "📍",
     title: fd.get("title").trim(),
     description: (fd.get("description")||"").trim(),
     map_url: (fd.get("map_url")||"").trim()
-  });
+  };
+  if(editing && editing.key === "places"){
+    DRAFT.places[editing.index] = obj;
+    editing = null;
+    toast("Место обновлено ✅");
+  } else {
+    DRAFT.places.push(obj);
+    toast("Место добавлено ✅");
+  }
   form.reset();
-  toast("Место добавлено ✅");
   renderEditor();
 }
-function addDream(e, form){
+function submitDream(e, form){
   e.preventDefault();
   const fd = new FormData(form);
-  DRAFT.dreams.push({
+  const obj = {
     title: fd.get("title").trim(),
     done: !!fd.get("done")
-  });
+  };
+  if(editing && editing.key === "dreams"){
+    DRAFT.dreams[editing.index] = obj;
+    editing = null;
+    toast("Мечта обновлена ✅");
+  } else {
+    DRAFT.dreams.push(obj);
+    toast("Мечта добавлена ✅");
+  }
   form.reset();
-  toast("Мечта добавлена ✅");
   renderEditor();
 }
-function addSecret(e, form){
+function submitSecret(e, form){
   e.preventDefault();
   const fd = new FormData(form);
-  DRAFT.secrets.push({
+  const obj = {
     title: fd.get("title").trim(),
     text: fd.get("text").trim()
-  });
+  };
+  if(editing && editing.key === "secrets"){
+    DRAFT.secrets[editing.index] = obj;
+    editing = null;
+    toast("Секрет обновлён ✅");
+  } else {
+    DRAFT.secrets.push(obj);
+    toast("Секрет добавлен ✅");
+  }
   form.reset();
-  toast("Секрет добавлен ✅");
   renderEditor();
 }
-function addPhoto(e, form){
+function submitPhoto(e, form){
   e.preventDefault();
   const fd = new FormData(form);
-  DRAFT.photos.push({
+  const obj = {
     image_url: fd.get("image_url").trim(),
     title: (fd.get("title")||"").trim()
-  });
+  };
+  if(editing && editing.key === "photos"){
+    DRAFT.photos[editing.index] = obj;
+    editing = null;
+    toast("Фото обновлено ✅");
+  } else {
+    DRAFT.photos.push(obj);
+    toast("Фото добавлено ✅");
+  }
   form.reset();
-  toast("Фото добавлено ✅");
   renderEditor();
 }
 function saveSettings(e, form){
@@ -717,16 +838,18 @@ function saveSettings(e, form){
   DRAFT.startDate = fd.get("startDate");
   toast("Дата сохранена ✅");
 }
-
 function delItem(key, i){
   if(!confirm("Удалить этот элемент?")) return;
   DRAFT[key].splice(i,1);
+  if(editing && editing.key === key){
+    if(editing.index === i) editing = null;
+    else if(editing.index > i) editing.index--;
+  }
   renderEditor();
 }
 
-/* ===== JSON ВЫВОД ===== */
+/* ===== JSON ===== */
 function showJSON(){
-  // сортируем события по дате перед сохранением (по возрастанию — так аккуратнее в файле)
   DRAFT.events.sort((a,b) => {
     const da = new Date(a.date || 0).getTime() || 0;
     const db = new Date(b.date || 0).getTime() || 0;
@@ -772,6 +895,8 @@ async function reloadData(){
   if(!confirm("Отменить все несохранённые изменения?")) return;
   await loadData();
   renderAll();
+  editing = null;
+  renderEditor();
   toast("Изменения отменены");
 }
 
