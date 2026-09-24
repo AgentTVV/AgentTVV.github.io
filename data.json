@@ -15,7 +15,12 @@
   "places": [],
   "dreams": [],
   "dishes": [],
-  "secrets": [],
+  "secrets": [
+    {
+      "title": "Лерин секретик",
+      "text": "А Лера в по уши влюблена в Никиточку))))"
+    }
+  ],
   "photos": [
     {
       "image_url": "images/тест.jpg",
