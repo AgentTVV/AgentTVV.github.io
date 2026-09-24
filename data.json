@@ -21,5 +21,30 @@
       "text": "А Лера в по уши влюблена в Никиточку))))"
     }
   ],
-  "photos": []
+  "photos": [
+    {
+      "image_url": "images/1.jpg",
+      "title": "1"
+    },
+    {
+      "image_url": "images/2.jpg",
+      "title": "2"
+    },
+    {
+      "image_url": "images/3.jpg",
+      "title": "3"
+    },
+    {
+      "image_url": "images/4.jpg",
+      "title": "4"
+    },
+    {
+      "image_url": "images/5.jpg",
+      "title": "5"
+    },
+    {
+      "image_url": "images/6.jpg",
+      "title": "6"
+    }
+  ]
 }
