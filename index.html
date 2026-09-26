@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#0b1020">
+<link rel="manifest" href="./manifest.json">
 <meta name="description" content="Наш уголок 💙💗 — Никита & Валерия">
 <title>Наш уголок 💙💗</title>
 <style>
@@ -1289,6 +1290,19 @@ async function init(){
   }
   requestAnimationFrame(draw);
 })();
+</script>
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./sw.js')
+        .then(registration => {
+          console.log('ServiceWorker зарегистрирован! Область:', registration.scope);
+        })
+        .catch(err => {
+          console.log('Ошибка регистрации ServiceWorker:', err);
+        });
+    });
+  }
 </script>
 </body>
 </html>
