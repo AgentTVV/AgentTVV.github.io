@@ -1,27 +1,28 @@
-const CACHE_NAME = 'our-corner-v2';
-const urlsToCache = [
-  './',
-  './index.html',
-  './data.json',
-  './manifest.json'
-];
+const CACHE_NAME = 'our-corner-v4';
 
 self.addEventListener('install', (event) => {
+  self.skipWaiting();
+});
+
+self.addEventListener('activate', (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then((cache) => {
-        console.log('Открыт кэш');
-        return cache.addAll(urlsToCache);
-      })
+    caches.keys().then(keys => Promise.all(
+      keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k))
+    )).then(() => self.clients.claim())
   );
 });
 
 self.addEventListener('fetch', (event) => {
+  const req = event.request;
+  if(req.method !== 'GET') return;
+
   event.respondWith(
-    caches.match(event.request)
-      .then((response) => {
-        // Если файл есть в кэше — отдаём его, иначе загружаем из сети
-        return response || fetch(event.request);
+    fetch(req)
+      .then(res => {
+        const copy = res.clone();
+        caches.open(CACHE_NAME).then(c => c.put(req, copy)).catch(()=>{});
+        return res;
       })
+      .catch(() => caches.match(req))
   );
 });

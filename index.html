@@ -717,7 +717,6 @@ function renderCalendar(){
   const monthNames = ["Январь","Февраль","Март","Апрель","Май","Июнь","Июль","Август","Сентябрь","Октябрь","Ноябрь","Декабрь"];
   title.textContent = monthNames[calMonth] + " " + calYear;
 
-  // синхронизация панели выбора
   const pyi = document.getElementById("pickerYearInput");
   if(pyi) pyi.value = calYear;
   const pm = document.getElementById("pickerMonths");
@@ -1675,11 +1674,35 @@ async function init(){
   requestAnimationFrame(draw);
 })();
 
+/* ===== SERVICE WORKER + АВТООБНОВЛЕНИЕ ===== */
 if('serviceWorker' in navigator){
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('./sw.js')
-      .then(r => console.log('ServiceWorker зарегистрирован! Область:', r.scope))
+      .then(reg => {
+        console.log('ServiceWorker зарегистрирован:', reg.scope);
+
+        setInterval(() => reg.update().catch(()=>{}), 30000);
+
+        reg.addEventListener('updatefound', () => {
+          const nw = reg.installing;
+          if(!nw) return;
+          nw.addEventListener('statechange', () => {
+            if(nw.state === 'installed' && navigator.serviceWorker.controller){
+              console.log('Найдена новая версия — перезагрузка...');
+              nw.postMessage({ type: 'SKIP_WAITING' });
+              setTimeout(() => window.location.reload(true), 300);
+            }
+          });
+        });
+      })
       .catch(e => console.log('Ошибка ServiceWorker:', e));
+
+    let refreshing = false;
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      if(refreshing) return;
+      refreshing = true;
+      window.location.reload();
+    });
   });
 }
 </script>
