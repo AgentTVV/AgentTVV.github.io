@@ -50,5 +50,16 @@
       "image_url": "images/6.jpg",
       "title": "6"
     }
-  ]
+  ],
+  "calendar": {
+    "marks": [],
+    "cycles": [
+      {
+        "title": "Работа",
+        "every": 2,
+        "start": "2026-09-27",
+        "color": "#62a8ff"
+      }
+    ]
+  }
 }
