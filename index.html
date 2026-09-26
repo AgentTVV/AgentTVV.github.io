@@ -42,14 +42,14 @@ button{font:inherit;border:0;cursor:pointer}.container{width:min(1050px,calc(100
 .calWeekdays{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:3px;margin-bottom:5px;font-size:10px;color:var(--muted);text-align:center;text-transform:uppercase;letter-spacing:.5px;font-weight:800}
 .calWeekdays span:nth-child(6),.calWeekdays span:nth-child(7){color:#ff9bc2}
 .calGrid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));grid-auto-rows:1fr;gap:3px;overflow:hidden}
-.calDay{min-width:0;min-height:0;overflow:hidden;position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:10px;border:1px solid transparent;background:rgba(255,255,255,.03);font-size:13px;font-weight:700;color:#dfe3f0;transition:.15s;user-select:none;aspect-ratio:1}
+.calDay{min-width:0;min-height:0;overflow:hidden;position:relative;display:flex;align-items:center;justify-content:center;border-radius:10px;border:1px solid transparent;background:rgba(255,255,255,.03);font-size:13px;font-weight:700;color:#dfe3f0;transition:.15s;user-select:none;aspect-ratio:1}
 .calDay.empty{background:transparent;border:0}
 .calDay.today{border-color:var(--blue);background:rgba(98,168,255,.12);box-shadow:0 0 0 1px rgba(98,168,255,.25) inset}
 .calDay.selected{border-color:var(--pink);background:rgba(255,114,173,.15);box-shadow:0 0 0 1px rgba(255,114,173,.3) inset}
 .calDay[onclick]{cursor:pointer}
 .calDay[onclick]:hover{background:rgba(255,255,255,.08)}
 .calDay .calNum{line-height:1;font-size:13px}
-.calDay .calDot{width:5px;height:5px;border-radius:50%;margin-top:3px}
+.calDay .calDot{position:absolute;left:50%;bottom:6px;transform:translateX(-50%);width:5px;height:5px;border-radius:50%}
 
 .calPicker{margin-top:12px;padding:14px;border-radius:16px;background:rgba(98,168,255,.07);border:1px solid rgba(98,168,255,.25);display:none}
 .calPicker.open{display:block}
@@ -197,7 +197,8 @@ footer{text-align:center;color:var(--muted);font-size:13px;padding:50px 0 20px}.
   .hero{padding:62px 0 44px}
   .hero h1{letter-spacing:-2px}
   .photo{border-radius:16px}
-  .calDay{font-size:11px;border-radius:8px;aspect-ratio:auto;min-height:38px}
+  .calDay{font-size:11px;border-radius:8px;aspect-ratio:auto;min-height:38px;padding-bottom:8px}
+  .calDay .calDot{bottom:4px;width:4px;height:4px}
   .calDay .calNum{font-size:11px}
   .calGrid{gap:2px;grid-auto-rows:auto}
   .calWeekdays{gap:2px}
