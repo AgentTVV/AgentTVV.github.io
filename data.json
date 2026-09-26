@@ -53,13 +53,6 @@
   ],
   "calendar": {
     "marks": [],
-    "cycles": [
-      {
-        "title": "Работа",
-        "every": 4,
-        "start": "2026-09-27",
-        "color": "#62a8ff"
-      }
-    ]
+    "cycles": []
   }
 }

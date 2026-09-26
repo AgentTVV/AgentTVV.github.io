@@ -32,7 +32,6 @@ button{font:inherit;border:0;cursor:pointer}.container{width:min(1050px,calc(100
 .hero{text-align:center;padding:78px 0 30px}.small{color:var(--muted);font-size:14px;margin-bottom:10px}.hero h1{font-size:clamp(42px,11vw,82px);line-height:.98;letter-spacing:-3px;background:linear-gradient(100deg,#fff,#9cc8ff,#ff91c1,#fff);background-size:220% auto;-webkit-background-clip:text;color:transparent;animation:grad 6s linear infinite;margin-bottom:18px}@keyframes grad{to{background-position:220% center}}.sub{max-width:620px;margin:auto;color:var(--muted);line-height:1.6}
 .counter{width:min(680px,100%);margin:28px auto 0;padding:20px;border:1px solid var(--line);border-radius:25px;background:rgba(255,255,255,.055);backdrop-filter:blur(15px)}.ct{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:10px}.time{font-size:clamp(20px,5vw,32px);font-weight:800}.date{font-size:13px;color:var(--muted);margin-top:7px}
 
-/* КАЛЕНДАРЬ */
 .calendar{margin:16px auto 0;width:min(680px,100%);max-width:100%;padding:16px 14px 12px;touch-action:pan-y;overflow:hidden}
 .calHead{display:flex;justify-content:space-between;align-items:center;gap:6px;margin-bottom:12px}
 .calHead .calTitle{font-weight:800;font-size:16px;flex:1;text-align:center;text-transform:capitalize;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;padding:4px 8px;border-radius:10px;transition:.15s}
@@ -176,6 +175,11 @@ footer{text-align:center;color:var(--muted);font-size:13px;padding:50px 0 20px}.
 .calPalette label{width:32px;height:32px;border-radius:10px;border:2px solid transparent;cursor:pointer;display:block;transition:.15s}
 .calPalette input[type=radio]:checked + span{transform:scale(1.15);box-shadow:0 0 0 2px #fff,0 0 12px currentColor}
 .calPalette span{display:block;width:32px;height:32px;border-radius:10px;transition:.15s}
+.paletteRow{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.paletteBlock{display:grid;gap:6px}
+
+.sectionHead{margin:24px 0 12px;font-size:12px;font-weight:800;color:var(--blue);text-transform:uppercase;letter-spacing:1.5px;padding-top:18px;border-top:1px dashed var(--line)}
+.sectionHead:first-child{margin-top:0;padding-top:0;border-top:0}
 
 .jsonText{width:100%;min-height:320px;padding:12px;background:rgba(0,0,0,.35);border:1px solid var(--line);border-radius:12px;color:#c8d1ee;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:11.5px;line-height:1.5;resize:vertical;white-space:pre}
 .hintBox{padding:11px 13px;background:rgba(98,168,255,.08);border:1px solid rgba(98,168,255,.25);border-radius:12px;color:#c8d4f2;font-size:12.5px;line-height:1.5;margin-bottom:12px;margin-top:4px}
@@ -207,6 +211,7 @@ footer{text-align:center;color:var(--muted);font-size:13px;padding:50px 0 20px}.
   .modalBox{border-radius:18px}
   .sortToggle{width:100%}
   .sortToggle button{flex:1}
+  .paletteRow{grid-template-columns:1fr}
 }
 </style>
 </head>
@@ -379,7 +384,7 @@ const CAL_COLORS = ["#62a8ff","#ff72ad","#aa7cff","#63e6be","#ffb84d","#ff6b6b",
 const MONTH_SHORT = ["Янв","Фев","Мар","Апр","Май","Июн","Июл","Авг","Сен","Окт","Ноя","Дек"];
 
 let entered = "";
-let DATA = {startDate:"2026-06-13", events:[], places:[], dreams:[], dishes:[], secrets:[], photos:[], calendar:{marks:[],cycles:[]}};
+let DATA = {startDate:"2026-06-13", events:[], places:[], dreams:[], dishes:[], secrets:[], photos:[], calendar:{marks:[],cycles:[],schedules:[]}};
 let DRAFT = null;
 let editorTab = "events";
 let editing = null;
@@ -481,7 +486,8 @@ async function loadData(){
       photos: Array.isArray(j.photos) ? j.photos : [],
       calendar: {
         marks: Array.isArray(j.calendar?.marks) ? j.calendar.marks : [],
-        cycles: Array.isArray(j.calendar?.cycles) ? j.calendar.cycles : []
+        cycles: Array.isArray(j.calendar?.cycles) ? j.calendar.cycles : [],
+        schedules: Array.isArray(j.calendar?.schedules) ? j.calendar.schedules : []
       }
     };
   }catch(e){
@@ -687,9 +693,13 @@ function pickerGoToday(){
 function getMarksForDate(date){
   const marks = [];
   const dStr = toIso(date);
+
+  // отдельные дни
   (DATA.calendar?.marks || []).forEach(m => {
     if(m.date === dStr) marks.push({title: m.title || "Событие", color: m.color || "#62a8ff"});
   });
+
+  // старые циклы (раз в N дней)
   (DATA.calendar?.cycles || []).forEach(c => {
     const start = new Date((c.start || "") + "T00:00:00");
     if(Number.isNaN(start.getTime())) return;
@@ -701,6 +711,25 @@ function getMarksForDate(date){
       marks.push({title: c.title || "Цикл", color: c.color || "#63e6be"});
     }
   });
+
+  // графики N рабочих / M выходных
+  (DATA.calendar?.schedules || []).forEach(s => {
+    const start = new Date((s.start || "") + "T00:00:00");
+    if(Number.isNaN(start.getTime())) return;
+    start.setHours(0,0,0,0);
+    const diff = Math.floor((date - start) / 86400000);
+    if(diff < 0) return;
+    const work = Math.max(1, Number(s.workDays) || 1);
+    const off = Math.max(1, Number(s.offDays) || 1);
+    const cycle = work + off;
+    const pos = diff % cycle;
+    if(pos < work){
+      marks.push({title: s.workTitle || "Работа", color: s.workColor || "#62a8ff"});
+    } else {
+      marks.push({title: s.offTitle || "Выходной", color: s.offColor || "#63e6be"});
+    }
+  });
+
   return marks;
 }
 function renderCalendar(){
@@ -773,6 +802,10 @@ function renderCalendar(){
     seen.add(k);
     items.push({title:t, color:c});
   };
+  (DATA.calendar?.schedules || []).forEach(s => {
+    push(s.workTitle || "Работа", s.workColor || "#62a8ff");
+    push(s.offTitle || "Выходной", s.offColor || "#63e6be");
+  });
   (DATA.calendar?.cycles || []).forEach(c => push(c.title || "Цикл", c.color || "#63e6be"));
   (DATA.calendar?.marks || []).forEach(m => push(m.title || "Событие", m.color || "#62a8ff"));
   legend.innerHTML = items.slice(0, 8).map(x =>
@@ -1019,14 +1052,57 @@ function renderEditor(){
   else if(editorTab === "calendar"){
     const marks = DRAFT.calendar?.marks || [];
     const cycles = DRAFT.calendar?.cycles || [];
+    const schedules = DRAFT.calendar?.schedules || [];
     const edM = editing && editing.key === "calMark" ? marks[editing.index] : null;
+    const edS = editing && editing.key === "calSchedule" ? schedules[editing.index] : null;
     const edC = editing && editing.key === "calCycle" ? cycles[editing.index] : null;
+
     body.innerHTML = `
       <div class="hintBox">
-        <b>Отдельные дни</b> — конкретная дата, например «Годовщина».<br>
-        <b>Циклы</b> — повторяются, например «Выходной каждые 2 дня».<br>
-        Отсчёт цикла идёт от указанной даты старта.
+        <b>График работы</b> — введите сколько рабочих и выходных дней подряд, и дату первого рабочего дня. Код сам расставит метки по всему календарю.<br>
+        <b>Отдельные дни</b> — конкретные даты (годовщины, праздники).<br>
+        <b>Циклы</b> — если нужна другая периодичность.
       </div>
+
+      <div class="sectionHead">🔁 График работы N/M</div>
+      <form class="${formClass("calSchedule")}" onsubmit="submitCalSchedule(event,this)">
+        ${formTitle("calSchedule", "Добавить график", "Редактировать график")}
+        <div class="row">
+          <div><label>Рабочих подряд</label><input type="number" name="workDays" min="1" max="30" required value="${escAttr(edS?.workDays ?? 2)}"></div>
+          <div><label>Выходных подряд</label><input type="number" name="offDays" min="1" max="30" required value="${escAttr(edS?.offDays ?? 2)}"></div>
+        </div>
+        <label>Первый рабочий день (начало отсчёта)</label>
+        <input type="date" name="start" required value="${escAttr(edS?.start || toIso(new Date()))}">
+        <div class="row">
+          <div><label>Название работы</label><input type="text" name="workTitle" placeholder="Работа" value="${escAttr(edS?.workTitle || "Работа")}"></div>
+          <div><label>Название выходного</label><input type="text" name="offTitle" placeholder="Выходной" value="${escAttr(edS?.offTitle || "Выходной")}"></div>
+        </div>
+        <div class="paletteRow">
+          <div class="paletteBlock"><label>Цвет работы</label>${paletteHTML("workColor", edS?.workColor || CAL_COLORS[0])}</div>
+          <div class="paletteBlock"><label>Цвет выходного</label>${paletteHTML("offColor", edS?.offColor || CAL_COLORS[3])}</div>
+        </div>
+        ${formButtons("calSchedule")}
+      </form>
+      <div class="eList">
+        ${schedules.map((s,i)=>{
+          const active = isEditing("calSchedule", i);
+          return `
+            <div class="eItem ${active?"editing":""}">
+              <span class="eColorDot" style="background:${escAttr(s.workColor||CAL_COLORS[0])}"></span>
+              <div class="eItemInfo">
+                <b>${esc(s.workDays||1)}/${esc(s.offDays||1)} — ${esc(s.workTitle||"Работа")} / ${esc(s.offTitle||"Выходной")}</b>
+                <small>старт: ${esc(fmtDate(s.start))}</small>
+              </div>
+              <div class="eItemBtns">
+                <button class="eEdit" onclick="startEdit('calSchedule',${i})">✏️</button>
+                <button class="eDel" onclick="delCal('schedules',${i})">🗑</button>
+              </div>
+            </div>
+          `;
+        }).join("") || `<div class="eEmpty">Графиков пока нет</div>`}
+      </div>
+
+      <div class="sectionHead">📌 Отдельные дни</div>
       <form class="${formClass("calMark")}" onsubmit="submitCalMark(event,this)">
         ${formTitle("calMark", "Добавить день", "Редактировать день")}
         <label>Дата</label>
@@ -1055,16 +1131,16 @@ function renderEditor(){
           `;
         }).join("") || `<div class="eEmpty">Отдельных дней пока нет</div>`}
       </div>
-      <hr style="margin:22px 0 16px;border:0;border-top:1px dashed var(--line)">
+
+      <div class="sectionHead">🔁 Циклы (раз в N дней)</div>
       <form class="${formClass("calCycle")}" onsubmit="submitCalCycle(event,this)">
         ${formTitle("calCycle", "Добавить цикл", "Редактировать цикл")}
-        <label>Название (что происходит в этот день)</label>
-        <input type="text" name="title" required placeholder="Например: Выходной" value="${escAttr(edC?.title || "")}">
+        <label>Название</label>
+        <input type="text" name="title" required placeholder="Например: Зарядка" value="${escAttr(edC?.title || "")}">
         <div class="row">
           <div><label>Повтор каждые N дней</label><input type="number" name="every" min="1" max="365" required value="${escAttr(edC?.every ?? 2)}"></div>
           <div><label>Начало отсчёта</label><input type="date" name="start" required value="${escAttr(edC?.start || toIso(new Date()))}"></div>
         </div>
-        <div class="hint">Если поставить «2» и дату старта — цикл будет повторяться через каждый 2-й день: старт, старт+2, старт+4…</div>
         <label>Цвет</label>
         ${paletteHTML("calCycleColor", edC?.color || CAL_COLORS[3])}
         ${formButtons("calCycle")}
@@ -1403,7 +1479,7 @@ function submitCalMark(e, form){
     title: fd.get("title").trim(),
     color: fd.get("calMarkColor") || CAL_COLORS[0]
   };
-  if(!DRAFT.calendar) DRAFT.calendar = {marks:[],cycles:[]};
+  if(!DRAFT.calendar) DRAFT.calendar = {marks:[],cycles:[],schedules:[]};
   if(editing && editing.key === "calMark"){
     DRAFT.calendar.marks[editing.index] = obj; editing = null; toast("День обновлён ✅");
   } else {
@@ -1420,7 +1496,7 @@ function submitCalCycle(e, form){
     start: fd.get("start"),
     color: fd.get("calCycleColor") || CAL_COLORS[3]
   };
-  if(!DRAFT.calendar) DRAFT.calendar = {marks:[],cycles:[]};
+  if(!DRAFT.calendar) DRAFT.calendar = {marks:[],cycles:[],schedules:[]};
   if(editing && editing.key === "calCycle"){
     DRAFT.calendar.cycles[editing.index] = obj; editing = null; toast("Цикл обновлён ✅");
   } else {
@@ -1428,13 +1504,36 @@ function submitCalCycle(e, form){
   }
   form.reset(); renderEditor();
 }
+function submitCalSchedule(e, form){
+  e.preventDefault();
+  const fd = new FormData(form);
+  const obj = {
+    workDays: Math.max(1, parseInt(fd.get("workDays"), 10) || 1),
+    offDays: Math.max(1, parseInt(fd.get("offDays"), 10) || 1),
+    start: fd.get("start"),
+    workTitle: (fd.get("workTitle")||"Работа").trim() || "Работа",
+    offTitle: (fd.get("offTitle")||"Выходной").trim() || "Выходной",
+    workColor: fd.get("workColor") || CAL_COLORS[0],
+    offColor: fd.get("offColor") || CAL_COLORS[3]
+  };
+  if(!DRAFT.calendar) DRAFT.calendar = {marks:[],cycles:[],schedules:[]};
+  if(editing && editing.key === "calSchedule"){
+    DRAFT.calendar.schedules[editing.index] = obj; editing = null; toast("График обновлён ✅");
+  } else {
+    DRAFT.calendar.schedules.push(obj); toast("График добавлен ✅");
+  }
+  form.reset(); renderEditor();
+}
 function delCal(kind, i){
   if(!confirm("Удалить этот элемент?")) return;
   if(!DRAFT.calendar) return;
   DRAFT.calendar[kind].splice(i,1);
-  if(editing && editing.key === (kind==="marks"?"calMark":"calCycle")){
-    if(editing.index === i) editing = null;
-    else if(editing.index > i) editing.index--;
+  if(editing){
+    const editMap = {marks:"calMark", cycles:"calCycle", schedules:"calSchedule"};
+    if(editing.key === editMap[kind]){
+      if(editing.index === i) editing = null;
+      else if(editing.index > i) editing.index--;
+    }
   }
   renderEditor();
 }
@@ -1460,7 +1559,8 @@ function showJSON(){
     const db = new Date(b.date || 0).getTime() || 0;
     return da - db;
   });
-  if(!DRAFT.calendar) DRAFT.calendar = {marks:[],cycles:[]};
+  if(!DRAFT.calendar) DRAFT.calendar = {marks:[],cycles:[],schedules:[]};
+  if(!DRAFT.calendar.schedules) DRAFT.calendar.schedules = [];
   const json = JSON.stringify(DRAFT, null, 2);
   document.getElementById("jsonText").value = json;
   document.getElementById("jsonModal").classList.add("open");
@@ -1674,21 +1774,18 @@ async function init(){
   requestAnimationFrame(draw);
 })();
 
-/* ===== SERVICE WORKER + АВТООБНОВЛЕНИЕ ===== */
+/* ===== SERVICE WORKER ===== */
 if('serviceWorker' in navigator){
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('./sw.js')
       .then(reg => {
         console.log('ServiceWorker зарегистрирован:', reg.scope);
-
         setInterval(() => reg.update().catch(()=>{}), 30000);
-
         reg.addEventListener('updatefound', () => {
           const nw = reg.installing;
           if(!nw) return;
           nw.addEventListener('statechange', () => {
             if(nw.state === 'installed' && navigator.serviceWorker.controller){
-              console.log('Найдена новая версия — перезагрузка...');
               nw.postMessage({ type: 'SKIP_WAITING' });
               setTimeout(() => window.location.reload(true), 300);
             }
