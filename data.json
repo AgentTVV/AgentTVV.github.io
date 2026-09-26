@@ -53,6 +53,17 @@
   ],
   "calendar": {
     "marks": [],
-    "cycles": []
+    "cycles": [],
+    "schedules": [
+      {
+        "workDays": 2,
+        "offDays": 2,
+        "start": "2026-09-27",
+        "workTitle": "Работа",
+        "offTitle": "Выходной",
+        "workColor": "#62a8ff",
+        "offColor": "#63e6be"
+      }
+    ]
   }
 }
