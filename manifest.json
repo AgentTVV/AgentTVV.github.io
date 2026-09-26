@@ -7,15 +7,22 @@
   "theme_color": "#62a8ff",
   "description": "Наш маленький уголок — Никита & Валерия",
   "icons": [
+    { "src": "./images/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "./images/icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ],
+  "screenshots": [
     {
-      "src": "images/icon-192.png",
+      "src": "./images/icon-192.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Наш уголок на компьютере"
     },
     {
-      "src": "images/icon-512.png",
+      "src": "./images/icon-512.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "label": "Наш уголок на телефоне"
     }
   ]
 }
