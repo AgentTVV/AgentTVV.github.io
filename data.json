@@ -52,7 +52,13 @@
     }
   ],
   "calendar": {
-    "marks": [],
+    "marks": [
+      {
+        "date": "2026-10-03",
+        "title": "Каток",
+        "color": "#ffb84d"
+      }
+    ],
     "cycles": [],
     "schedules": [
       {
