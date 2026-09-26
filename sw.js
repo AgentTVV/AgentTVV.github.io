@@ -1,4 +1,4 @@
-const CACHE_NAME = 'our-corner-v1';
+const CACHE_NAME = 'our-corner-v2';
 const urlsToCache = [
   './',
   './index.html',
