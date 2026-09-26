@@ -56,7 +56,7 @@
     "cycles": [
       {
         "title": "Работа",
-        "every": 2,
+        "every": 4,
         "start": "2026-09-27",
         "color": "#62a8ff"
       }
