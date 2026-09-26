@@ -4,9 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#0b1020">
-<link rel="manifest" href="./manifest.json">
 <meta name="description" content="Наш уголок 💙💗 — Никита & Валерия">
 <title>Наш уголок 💙💗</title>
+<link rel="manifest" href="./manifest.json">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{--bg:#080b16;--card:rgba(255,255,255,.07);--line:rgba(255,255,255,.13);--text:#fff;--muted:#aeb5cc;--blue:#62a8ff;--pink:#ff72ad;--purple:#aa7cff;--green:#63e6be}
@@ -29,8 +29,58 @@ button{font:inherit;border:0;cursor:pointer}.container{width:min(1050px,calc(100
 .topRight{display:flex;align-items:center;gap:8px}
 .editBtn{width:38px;height:38px;border-radius:12px;color:#fff;font-size:17px;background:linear-gradient(135deg,var(--blue),var(--pink));display:grid;place-items:center;box-shadow:0 6px 18px rgba(98,168,255,.28)}
 .editBtn:active{transform:scale(.94)}
-.hero{text-align:center;padding:78px 0 55px}.small{color:var(--muted);font-size:14px;margin-bottom:10px}.hero h1{font-size:clamp(42px,11vw,82px);line-height:.98;letter-spacing:-3px;background:linear-gradient(100deg,#fff,#9cc8ff,#ff91c1,#fff);background-size:220% auto;-webkit-background-clip:text;color:transparent;animation:grad 6s linear infinite;margin-bottom:18px}@keyframes grad{to{background-position:220% center}}.sub{max-width:620px;margin:auto;color:var(--muted);line-height:1.6}
+.hero{text-align:center;padding:78px 0 30px}.small{color:var(--muted);font-size:14px;margin-bottom:10px}.hero h1{font-size:clamp(42px,11vw,82px);line-height:.98;letter-spacing:-3px;background:linear-gradient(100deg,#fff,#9cc8ff,#ff91c1,#fff);background-size:220% auto;-webkit-background-clip:text;color:transparent;animation:grad 6s linear infinite;margin-bottom:18px}@keyframes grad{to{background-position:220% center}}.sub{max-width:620px;margin:auto;color:var(--muted);line-height:1.6}
 .counter{width:min(680px,100%);margin:28px auto 0;padding:20px;border:1px solid var(--line);border-radius:25px;background:rgba(255,255,255,.055);backdrop-filter:blur(15px)}.ct{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:10px}.time{font-size:clamp(20px,5vw,32px);font-weight:800}.date{font-size:13px;color:var(--muted);margin-top:7px}
+
+/* КАЛЕНДАРЬ */
+.calendar{margin:16px auto 0;width:min(680px,100%);max-width:100%;padding:16px 14px 12px;touch-action:pan-y;overflow:hidden}
+.calHead{display:flex;justify-content:space-between;align-items:center;gap:6px;margin-bottom:12px}
+.calHead .calTitle{font-weight:800;font-size:16px;flex:1;text-align:center;text-transform:capitalize;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;padding:4px 8px;border-radius:10px;transition:.15s}
+.calHead .calTitle:hover{background:rgba(255,255,255,.06)}
+.calHead button{min-width:38px;height:38px;padding:0 10px;border-radius:12px;background:rgba(255,255,255,.06);border:1px solid var(--line);color:#fff;font-size:15px;display:grid;place-items:center;flex:none}
+.calHead button:active{transform:scale(.94);background:rgba(255,255,255,.14)}
+.calHead .calToday{font-size:12px;font-weight:700;color:var(--blue);padding:0 8px;white-space:nowrap;flex:none}
+.calWeekdays{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:3px;margin-bottom:5px;font-size:10px;color:var(--muted);text-align:center;text-transform:uppercase;letter-spacing:.5px;font-weight:800}
+.calWeekdays span:nth-child(6),.calWeekdays span:nth-child(7){color:#ff9bc2}
+.calGrid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));grid-auto-rows:1fr;gap:3px;overflow:hidden}
+.calDay{min-width:0;min-height:0;overflow:hidden;position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:10px;border:1px solid transparent;background:rgba(255,255,255,.03);font-size:13px;font-weight:700;color:#dfe3f0;transition:.15s;user-select:none;aspect-ratio:1}
+.calDay.empty{background:transparent;border:0}
+.calDay.today{border-color:var(--blue);background:rgba(98,168,255,.12);box-shadow:0 0 0 1px rgba(98,168,255,.25) inset}
+.calDay.selected{border-color:var(--pink);background:rgba(255,114,173,.15);box-shadow:0 0 0 1px rgba(255,114,173,.3) inset}
+.calDay[onclick]{cursor:pointer}
+.calDay[onclick]:hover{background:rgba(255,255,255,.08)}
+.calDay .calNum{line-height:1;font-size:13px}
+.calDay .calDot{width:5px;height:5px;border-radius:50%;margin-top:3px}
+
+.calPicker{margin-top:12px;padding:14px;border-radius:16px;background:rgba(98,168,255,.07);border:1px solid rgba(98,168,255,.25);display:none}
+.calPicker.open{display:block}
+.calPicker h4{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1.5px;font-weight:800;margin-bottom:8px}
+.calPicker .pickerYears{display:flex;gap:6px;align-items:center;margin-bottom:14px}
+.calPicker .pickerYears button{width:36px;height:36px;border-radius:11px;background:rgba(255,255,255,.06);border:1px solid var(--line);color:#fff;font-size:16px;flex:none}
+.calPicker .pickerYears button:active{transform:scale(.94)}
+.calPicker .pickerYears input{flex:1;padding:9px 12px;background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:11px;color:#fff;font:inherit;font-size:15px;text-align:center;font-weight:800;min-width:0}
+.calPicker .pickerMonths{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.calPicker .pickerMonths button{padding:10px 4px;border-radius:11px;background:rgba(255,255,255,.05);border:1px solid var(--line);color:#dfe3f0;font-size:12px;font-weight:700}
+.calPicker .pickerMonths button:active{transform:scale(.96);background:rgba(255,255,255,.12)}
+.calPicker .pickerMonths button.active{color:#fff;background:linear-gradient(135deg,var(--blue),var(--pink));border-color:transparent;box-shadow:0 4px 10px rgba(98,168,255,.25)}
+.calPicker .pickerFoot{margin-top:12px;display:flex;gap:6px}
+.calPicker .pickerFoot button{flex:1;padding:10px;border-radius:11px;background:rgba(255,255,255,.06);border:1px solid var(--line);color:var(--muted);font-size:13px;font-weight:700}
+
+.calDayInfo{margin-top:14px;padding:14px;border-radius:16px;background:rgba(98,168,255,.07);border:1px solid rgba(98,168,255,.25);display:none}
+.calDayInfo.open{display:block;animation:slideUp .25s ease}
+@keyframes slideUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.calDayInfo .ciHead{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px}
+.calDayInfo .ciTitle{font-weight:800;font-size:15px;color:#fff}
+.calDayInfo .ciClose{width:28px;height:28px;border-radius:9px;background:rgba(255,255,255,.08);border:1px solid var(--line);color:#fff;font-size:14px;flex:none}
+.calDayInfo .ciRow{display:flex;align-items:flex-start;gap:8px;padding:8px 0;font-size:13px;color:#d7dcec;border-top:1px dashed rgba(255,255,255,.08)}
+.calDayInfo .ciRow:first-of-type{border-top:0}
+.calDayInfo .ciRow b{color:#fff;font-weight:700}
+.calDayInfo .ciEmpty{color:var(--muted);font-size:13px;padding:6px 0}
+.calLegend{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px;font-size:11px;color:var(--muted);padding-top:10px;border-top:1px solid var(--line)}
+.calLegend:empty{display:none;padding:0;border:0}
+.legendItem{display:inline-flex;align-items:center;gap:5px}
+.legendDot{width:8px;height:8px;border-radius:50%;flex:none}
+
 section{padding:42px 0}.label{font-size:12px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--blue);margin-bottom:7px}.head{margin-bottom:21px}.head h2{font-size:30px;letter-spacing:-1px}.head p{color:var(--muted);margin-top:7px}
 
 .sortRow{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:16px}
@@ -119,6 +169,13 @@ footer{text-align:center;color:var(--muted);font-size:13px;padding:50px 0 20px}.
 .eEdit{padding:7px 10px;background:rgba(98,168,255,.12);color:#8ec4ff;border:1px solid rgba(98,168,255,.3);border-radius:9px;font-size:12px}
 .eDel{padding:7px 10px;background:rgba(255,80,80,.12);color:#ff9090;border:1px solid rgba(255,80,80,.28);border-radius:9px;font-size:12px}
 .eEmpty{padding:20px;text-align:center;color:var(--muted);font-size:13px}
+.eColorDot{width:20px;height:20px;border-radius:50%;flex:none;box-shadow:0 0 0 2px rgba(255,255,255,.08)}
+
+.calPalette{display:flex;flex-wrap:wrap;gap:8px}
+.calPalette input[type=radio]{display:none}
+.calPalette label{width:32px;height:32px;border-radius:10px;border:2px solid transparent;cursor:pointer;display:block;transition:.15s}
+.calPalette input[type=radio]:checked + span{transform:scale(1.15);box-shadow:0 0 0 2px #fff,0 0 12px currentColor}
+.calPalette span{display:block;width:32px;height:32px;border-radius:10px;transition:.15s}
 
 .jsonText{width:100%;min-height:320px;padding:12px;background:rgba(0,0,0,.35);border:1px solid var(--line);border-radius:12px;color:#c8d1ee;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:11.5px;line-height:1.5;resize:vertical;white-space:pre}
 .hintBox{padding:11px 13px;background:rgba(98,168,255,.08);border:1px solid rgba(98,168,255,.25);border-radius:12px;color:#c8d4f2;font-size:12.5px;line-height:1.5;margin-bottom:12px;margin-top:4px}
@@ -129,8 +186,28 @@ footer{text-align:center;color:var(--muted);font-size:13px;padding:50px 0 20px}.
 #app{position:relative;z-index:1}
 #lock{position:fixed;z-index:9999}
 
-@media(max-width:700px){.gallery{grid-template-columns:repeat(2,1fr)}.places{grid-template-columns:1fr}.dishes{grid-template-columns:1fr}.hero{padding:62px 0 44px}.hero h1{letter-spacing:-2px}.photo{border-radius:16px}}
-@media(max-width:390px){.bdays{grid-template-columns:1fr}.eForm .row{grid-template-columns:1fr}.modalBox{border-radius:18px}.sortToggle{width:100%}.sortToggle button{flex:1}}
+@media(max-width:700px){
+  .gallery{grid-template-columns:repeat(2,1fr)}
+  .places{grid-template-columns:1fr}
+  .dishes{grid-template-columns:1fr}
+  .hero{padding:62px 0 44px}
+  .hero h1{letter-spacing:-2px}
+  .photo{border-radius:16px}
+  .calDay{font-size:11px;border-radius:8px;aspect-ratio:auto;min-height:38px}
+  .calDay .calNum{font-size:11px}
+  .calGrid{gap:2px;grid-auto-rows:auto}
+  .calWeekdays{gap:2px}
+  .calendar{padding:12px 10px 8px}
+  .calHead .calTitle{font-size:14px}
+  .calPicker .pickerMonths{grid-template-columns:repeat(3,1fr)}
+}
+@media(max-width:390px){
+  .bdays{grid-template-columns:1fr}
+  .eForm .row{grid-template-columns:1fr}
+  .modalBox{border-radius:18px}
+  .sortToggle{width:100%}
+  .sortToggle button{flex:1}
+}
 </style>
 </head>
 <body>
@@ -168,6 +245,35 @@ footer{text-align:center;color:var(--muted);font-size:13px;padding:50px 0 20px}.
   <h1>Никита & Валерия</h1>
   <p class="sub">Здесь живут наши воспоминания, мечты, места и маленькие моменты, которые хочется сохранить навсегда.</p>
   <div class="counter"><div class="ct">Мы вместе</div><div class="time" id="time">Загрузка...</div><div class="date" id="startDate">💙💗</div></div>
+
+  <div class="calendar card" id="calendar">
+    <div class="calHead">
+      <button onclick="calPrev()" title="Назад">‹</button>
+      <div class="calTitle" id="calTitle" onclick="togglePicker()" title="Нажмите, чтобы выбрать год и месяц">Месяц</div>
+      <button class="calToday" onclick="calToday()" title="Сегодня">Сегодня</button>
+      <button onclick="calNext()" title="Вперёд">›</button>
+    </div>
+    <div class="calWeekdays">
+      <span>Пн</span><span>Вт</span><span>Ср</span><span>Чт</span><span>Пт</span><span>Сб</span><span>Вс</span>
+    </div>
+    <div class="calGrid" id="calGrid"></div>
+    <div class="calLegend" id="calLegend"></div>
+    <div class="calPicker" id="calPicker">
+      <h4>Год</h4>
+      <div class="pickerYears">
+        <button onclick="pickerYear(-1)">‹</button>
+        <input type="number" id="pickerYearInput" min="1900" max="2200" onchange="pickerYearSet(this.value)">
+        <button onclick="pickerYear(1)">›</button>
+      </div>
+      <h4>Месяц</h4>
+      <div class="pickerMonths" id="pickerMonths"></div>
+      <div class="pickerFoot">
+        <button onclick="pickerGoToday()">Сегодня</button>
+        <button onclick="togglePicker()">Закрыть</button>
+      </div>
+    </div>
+    <div class="calDayInfo" id="calDayInfo"></div>
+  </div>
 </div></section>
 
 <section id="history"><div class="container">
@@ -227,6 +333,7 @@ footer{text-align:center;color:var(--muted);font-size:13px;padding:50px 0 20px}.
     </div>
     <div class="modalTabs" id="editorTabs">
       <button data-tab="events" onclick="setTab('events')">📖 История</button>
+      <button data-tab="calendar" onclick="setTab('calendar')">📅 Календарь</button>
       <button data-tab="places" onclick="setTab('places')">📍 Места</button>
       <button data-tab="dreams" onclick="setTab('dreams')">✨ Мечты</button>
       <button data-tab="dishes" onclick="setTab('dishes')">🍰 Вкусняшки</button>
@@ -266,12 +373,13 @@ footer{text-align:center;color:var(--muted);font-size:13px;padding:50px 0 20px}.
 </div>
 
 <script>
-/* ===== НАСТРОЙКИ ===== */
 const PIN = "2568";
 const START_DEFAULT = "2026-06-13T00:00:00";
+const CAL_COLORS = ["#62a8ff","#ff72ad","#aa7cff","#63e6be","#ffb84d","#ff6b6b","#4dd0e1","#ba68c8"];
+const MONTH_SHORT = ["Янв","Фев","Мар","Апр","Май","Июн","Июл","Авг","Сен","Окт","Ноя","Дек"];
 
 let entered = "";
-let DATA = {startDate:"2026-06-13", events:[], places:[], dreams:[], dishes:[], secrets:[], photos:[]};
+let DATA = {startDate:"2026-06-13", events:[], places:[], dreams:[], dishes:[], secrets:[], photos:[], calendar:{marks:[],cycles:[]}};
 let DRAFT = null;
 let editorTab = "events";
 let editing = null;
@@ -279,7 +387,10 @@ let secrets = [];
 let secretIndex = -1;
 let sortMode = localStorage.getItem("nv_sort_events") || "asc";
 
-/* ===== УТИЛИТЫ ===== */
+let calYear, calMonth;
+let calSwipeX = 0, calSwipeY = 0;
+let selectedDate = null;
+
 function esc(v){
   return String(v ?? "")
     .replaceAll("&","&amp;")
@@ -301,6 +412,12 @@ function fmtDate(v){
   return Number.isNaN(d.getTime()) ? v :
     d.toLocaleDateString("ru-RU",{day:"2-digit",month:"2-digit",year:"numeric"});
 }
+function toIso(d){
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
+}
 function toast(t){
   const x = document.getElementById("toast");
   x.textContent = t;
@@ -309,7 +426,6 @@ function toast(t){
   window.__tt = setTimeout(()=>x.classList.remove("show"),2400);
 }
 
-/* ===== ЗАМОК ===== */
 function pin(n){
   if(entered.length >= 4) return;
   entered += n;
@@ -334,7 +450,6 @@ function unlock(){
 }
 if(localStorage.getItem("nv_site_unlocked") === "1") unlock();
 
-/* ===== СЧЁТЧИК ===== */
 function getStart(){
   const d = new Date(DATA.startDate || START_DEFAULT);
   return Number.isNaN(d.getTime()) ? new Date(START_DEFAULT) : d;
@@ -351,7 +466,6 @@ function counter(){
 }
 setInterval(counter, 1000);
 
-/* ===== ЗАГРУЗКА ===== */
 async function loadData(){
   try{
     const r = await fetch("data.json?v=" + Date.now());
@@ -364,14 +478,17 @@ async function loadData(){
       dreams: Array.isArray(j.dreams) ? j.dreams : [],
       dishes: Array.isArray(j.dishes) ? j.dishes : [],
       secrets: Array.isArray(j.secrets) ? j.secrets : [],
-      photos: Array.isArray(j.photos) ? j.photos : []
+      photos: Array.isArray(j.photos) ? j.photos : [],
+      calendar: {
+        marks: Array.isArray(j.calendar?.marks) ? j.calendar.marks : [],
+        cycles: Array.isArray(j.calendar?.cycles) ? j.calendar.cycles : []
+      }
     };
   }catch(e){
     console.warn("Не удалось загрузить data.json:", e);
   }
 }
 
-/* ===== ОТРИСОВКА САЙТА ===== */
 function renderAll(){
   renderEvents();
   renderPhotos();
@@ -380,6 +497,7 @@ function renderAll(){
   renderDishes();
   renderSecrets();
   renderStartDate();
+  renderCalendar();
   updateSortToggle();
 }
 function renderStartDate(){
@@ -517,6 +635,210 @@ function nextSecret(){
   document.getElementById("secretText").textContent = secrets[secretIndex].text;
 }
 
+/* ===== КАЛЕНДАРЬ ===== */
+function calToday(){
+  const t = new Date();
+  calYear = t.getFullYear();
+  calMonth = t.getMonth();
+  renderCalendar();
+}
+function calPrev(){
+  calMonth--;
+  if(calMonth < 0){ calMonth = 11; calYear--; }
+  renderCalendar();
+}
+function calNext(){
+  calMonth++;
+  if(calMonth > 11){ calMonth = 0; calYear++; }
+  renderCalendar();
+}
+function togglePicker(){
+  const p = document.getElementById("calPicker");
+  if(p) p.classList.toggle("open");
+}
+function closePicker(){
+  const p = document.getElementById("calPicker");
+  if(p) p.classList.remove("open");
+}
+function pickerYear(delta){
+  calYear += delta;
+  renderCalendar();
+}
+function pickerYearSet(v){
+  const y = parseInt(v, 10);
+  if(!Number.isNaN(y) && y > 1900 && y < 2200){
+    calYear = y;
+    renderCalendar();
+  }
+}
+function pickerMonth(m){
+  calMonth = m;
+  closePicker();
+  renderCalendar();
+}
+function pickerGoToday(){
+  const t = new Date();
+  calYear = t.getFullYear();
+  calMonth = t.getMonth();
+  closePicker();
+  renderCalendar();
+}
+
+function getMarksForDate(date){
+  const marks = [];
+  const dStr = toIso(date);
+  (DATA.calendar?.marks || []).forEach(m => {
+    if(m.date === dStr) marks.push({title: m.title || "Событие", color: m.color || "#62a8ff"});
+  });
+  (DATA.calendar?.cycles || []).forEach(c => {
+    const start = new Date((c.start || "") + "T00:00:00");
+    if(Number.isNaN(start.getTime())) return;
+    start.setHours(0,0,0,0);
+    const diff = Math.floor((date - start) / 86400000);
+    if(diff < 0) return;
+    const every = Math.max(1, Number(c.every) || 1);
+    if(diff % every === 0){
+      marks.push({title: c.title || "Цикл", color: c.color || "#63e6be"});
+    }
+  });
+  return marks;
+}
+function renderCalendar(){
+  if(calYear === undefined){
+    const t = new Date();
+    calYear = t.getFullYear();
+    calMonth = t.getMonth();
+  }
+  const title = document.getElementById("calTitle");
+  const grid = document.getElementById("calGrid");
+  const legend = document.getElementById("calLegend");
+  if(!title || !grid) return;
+
+  const monthNames = ["Январь","Февраль","Март","Апрель","Май","Июнь","Июль","Август","Сентябрь","Октябрь","Ноябрь","Декабрь"];
+  title.textContent = monthNames[calMonth] + " " + calYear;
+
+  // синхронизация панели выбора
+  const pyi = document.getElementById("pickerYearInput");
+  if(pyi) pyi.value = calYear;
+  const pm = document.getElementById("pickerMonths");
+  if(pm){
+    pm.innerHTML = MONTH_SHORT.map((m, i) =>
+      `<button class="${i===calMonth?"active":""}" onclick="pickerMonth(${i})">${m}</button>`
+    ).join("");
+  }
+
+  const today = new Date();
+  today.setHours(0,0,0,0);
+
+  const firstDay = new Date(calYear, calMonth, 1);
+  const daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
+  let startDow = firstDay.getDay() - 1;
+  if(startDow < 0) startDow = 6;
+
+  const totalCells = 42;
+  let html = "";
+  for(let i = 0; i < totalCells; i++){
+    const dayNum = i - startDow + 1;
+    if(dayNum < 1 || dayNum > daysInMonth){
+      html += `<div class="calDay empty"></div>`;
+      continue;
+    }
+    const date = new Date(calYear, calMonth, dayNum);
+    date.setHours(0,0,0,0);
+    const marks = getMarksForDate(date);
+    const isToday = date.getTime() === today.getTime();
+    const isSelected = selectedDate && selectedDate.getTime() === date.getTime();
+    let cls = "calDay";
+    if(isToday) cls += " today";
+    if(isSelected) cls += " selected";
+    let style = "";
+    let dot = "";
+    if(marks.length){
+      const m = marks[0];
+      style = `background:${m.color}22;border-color:${m.color}66;`;
+      dot = `<span class="calDot" style="background:${m.color};box-shadow:0 0 6px ${m.color}"></span>`;
+    }
+    const tip = marks.map(x=>x.title).join(", ");
+    const isoD = toIso(date);
+    html += `<div class="${cls}" style="${style}" title="${escAttr(tip)}" onclick="selectDay('${isoD}')">
+      <span class="calNum">${dayNum}</span>${dot}
+    </div>`;
+  }
+  grid.innerHTML = html;
+
+  const items = [];
+  const seen = new Set();
+  const push = (t,c) => {
+    const k = t + "|" + c;
+    if(seen.has(k)) return;
+    seen.add(k);
+    items.push({title:t, color:c});
+  };
+  (DATA.calendar?.cycles || []).forEach(c => push(c.title || "Цикл", c.color || "#63e6be"));
+  (DATA.calendar?.marks || []).forEach(m => push(m.title || "Событие", m.color || "#62a8ff"));
+  legend.innerHTML = items.slice(0, 8).map(x =>
+    `<span class="legendItem"><span class="legendDot" style="background:${x.color}"></span>${esc(x.title)}</span>`
+  ).join("");
+}
+
+function selectDay(isoDate){
+  const parts = isoDate.split("-");
+  const d = new Date(parseInt(parts[0],10), parseInt(parts[1],10) - 1, parseInt(parts[2],10));
+  d.setHours(0,0,0,0);
+  selectedDate = d;
+  renderCalendar();
+
+  const marks = getMarksForDate(d);
+  const events = (DATA.events || []).filter(ev => (ev.date || "").slice(0,10) === isoDate);
+
+  const weekDays = ["воскресенье","понедельник","вторник","среда","четверг","пятница","суббота"];
+  const monthGen = ["января","февраля","марта","апреля","мая","июня","июля","августа","сентября","октября","ноября","декабря"];
+  const title = `${d.getDate()} ${monthGen[d.getMonth()]} ${d.getFullYear()}, ${weekDays[d.getDay()]}`;
+
+  let rows = "";
+  marks.forEach(m => {
+    rows += `<div class="ciRow"><span class="legendDot" style="background:${m.color}"></span><b>${esc(m.title)}</b></div>`;
+  });
+  events.forEach(ev => {
+    rows += `<div class="ciRow">📖 <div><b>${esc(ev.title)}</b>${ev.description ? `<br><small style="color:var(--muted)">${esc(ev.description)}</small>` : ""}</div></div>`;
+  });
+  if(!rows) rows = `<div class="ciEmpty">На этот день пока ничего нет 🌙</div>`;
+
+  const info = document.getElementById("calDayInfo");
+  info.innerHTML = `
+    <div class="ciHead">
+      <div class="ciTitle">${esc(title)}</div>
+      <button class="ciClose" onclick="closeDayInfo()">✕</button>
+    </div>
+    ${rows}
+  `;
+  info.classList.add("open");
+}
+function closeDayInfo(){
+  selectedDate = null;
+  document.getElementById("calDayInfo").classList.remove("open");
+  renderCalendar();
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  const cv = document.getElementById("calendar");
+  if(!cv) return;
+  cv.addEventListener("touchstart", e => {
+    if(!e.touches[0]) return;
+    calSwipeX = e.touches[0].clientX;
+    calSwipeY = e.touches[0].clientY;
+  }, {passive: true});
+  cv.addEventListener("touchend", e => {
+    const t = e.changedTouches[0];
+    if(!t) return;
+    const dx = t.clientX - calSwipeX;
+    const dy = t.clientY - calSwipeY;
+    if(Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.5){
+      if(dx > 0) calPrev(); else calNext();
+    }
+  }, {passive: true});
+});
+
 function openLightbox(url){
   document.getElementById("lightboxImg").src = url;
   document.getElementById("lightbox").classList.add("open");
@@ -544,11 +866,8 @@ window.addEventListener("scroll", () => {
   document.querySelectorAll(".nav button").forEach((b,i)=>b.classList.toggle("active", i === n));
 });
 
-/* =========================================================
-   РЕДАКТОР
-========================================================= */
+/* ===== РЕДАКТОР ===== */
 function cloneData(o){ return JSON.parse(JSON.stringify(o)); }
-
 function openEditor(){
   DRAFT = cloneData(DATA);
   editorTab = "events";
@@ -575,16 +894,9 @@ function startEdit(key, index){
     if(f) f.scrollIntoView({behavior:"smooth",block:"start"});
   }, 50);
 }
-function cancelEdit(){
-  editing = null;
-  renderEditor();
-}
-function isEditing(key, index){
-  return editing && editing.key === key && editing.index === index;
-}
-function formClass(key){
-  return "eForm" + (editing && editing.key === key ? " editing" : "");
-}
+function cancelEdit(){ editing = null; renderEditor(); }
+function isEditing(key, index){ return editing && editing.key === key && editing.index === index; }
+function formClass(key){ return "eForm" + (editing && editing.key === key ? " editing" : ""); }
 function formTitle(key, addText, editText){
   return `<div class="formTitle ${editing && editing.key === key ? "edit" : ""}">${
     editing && editing.key === key ? "✏️ " + editText : addText
@@ -599,6 +911,7 @@ function formButtons(key){
   }
   return `<button type="submit">+ Добавить</button>`;
 }
+
 function parsePhoto(item){
   const url = item?.image_url || "";
   const title = item?.title || "";
@@ -626,7 +939,6 @@ function updatePhotoPreview(form){
   const preview = form.querySelector('#photoPreview');
   if(preview) preview.innerHTML = photoPreviewHTML(title, ext, external);
 }
-
 function parseDishPhoto(item){
   const url = item?.image_url || "";
   if(!url) return {photo_title:"", ext:"jpg", external:""};
@@ -653,6 +965,14 @@ function updateDishPreview(form){
   const external = form.querySelector('[name=external_url]').value.trim();
   const preview = form.querySelector('#dishPreview');
   if(preview) preview.innerHTML = dishPreviewHTML(ptRaw || title, ext, external);
+}
+function paletteHTML(name, selected){
+  return `<div class="calPalette">${
+    CAL_COLORS.map(c =>
+      `<label><input type="radio" name="${name}" value="${c}" ${c===selected?"checked":""}>
+        <span style="background:${c};box-shadow:0 0 0 2px ${c}33"></span></label>`
+    ).join("")
+  }</div>`;
 }
 
 function renderEditor(){
@@ -694,6 +1014,79 @@ function renderEditor(){
             </div>
           `;
         }).join("") || `<div class="eEmpty">Пока ничего нет — добавьте первое событие ✨</div>`}
+      </div>
+    `;
+  }
+  else if(editorTab === "calendar"){
+    const marks = DRAFT.calendar?.marks || [];
+    const cycles = DRAFT.calendar?.cycles || [];
+    const edM = editing && editing.key === "calMark" ? marks[editing.index] : null;
+    const edC = editing && editing.key === "calCycle" ? cycles[editing.index] : null;
+    body.innerHTML = `
+      <div class="hintBox">
+        <b>Отдельные дни</b> — конкретная дата, например «Годовщина».<br>
+        <b>Циклы</b> — повторяются, например «Выходной каждые 2 дня».<br>
+        Отсчёт цикла идёт от указанной даты старта.
+      </div>
+      <form class="${formClass("calMark")}" onsubmit="submitCalMark(event,this)">
+        ${formTitle("calMark", "Добавить день", "Редактировать день")}
+        <label>Дата</label>
+        <input type="date" name="date" required value="${escAttr(edM?.date || "")}">
+        <label>Название</label>
+        <input type="text" name="title" required placeholder="Например: Годовщина" value="${escAttr(edM?.title || "")}">
+        <label>Цвет</label>
+        ${paletteHTML("calMarkColor", edM?.color || CAL_COLORS[0])}
+        ${formButtons("calMark")}
+      </form>
+      <div class="eList">
+        ${marks.map((m,i)=>{
+          const active = isEditing("calMark", i);
+          return `
+            <div class="eItem ${active?"editing":""}">
+              <span class="eColorDot" style="background:${escAttr(m.color||CAL_COLORS[0])}"></span>
+              <div class="eItemInfo">
+                <b>${esc(m.title || "Без названия")}</b>
+                <small>${esc(fmtDate(m.date))}</small>
+              </div>
+              <div class="eItemBtns">
+                <button class="eEdit" onclick="startEdit('calMark',${i})">✏️</button>
+                <button class="eDel" onclick="delCal('marks',${i})">🗑</button>
+              </div>
+            </div>
+          `;
+        }).join("") || `<div class="eEmpty">Отдельных дней пока нет</div>`}
+      </div>
+      <hr style="margin:22px 0 16px;border:0;border-top:1px dashed var(--line)">
+      <form class="${formClass("calCycle")}" onsubmit="submitCalCycle(event,this)">
+        ${formTitle("calCycle", "Добавить цикл", "Редактировать цикл")}
+        <label>Название (что происходит в этот день)</label>
+        <input type="text" name="title" required placeholder="Например: Выходной" value="${escAttr(edC?.title || "")}">
+        <div class="row">
+          <div><label>Повтор каждые N дней</label><input type="number" name="every" min="1" max="365" required value="${escAttr(edC?.every ?? 2)}"></div>
+          <div><label>Начало отсчёта</label><input type="date" name="start" required value="${escAttr(edC?.start || toIso(new Date()))}"></div>
+        </div>
+        <div class="hint">Если поставить «2» и дату старта — цикл будет повторяться через каждый 2-й день: старт, старт+2, старт+4…</div>
+        <label>Цвет</label>
+        ${paletteHTML("calCycleColor", edC?.color || CAL_COLORS[3])}
+        ${formButtons("calCycle")}
+      </form>
+      <div class="eList">
+        ${cycles.map((c,i)=>{
+          const active = isEditing("calCycle", i);
+          return `
+            <div class="eItem ${active?"editing":""}">
+              <span class="eColorDot" style="background:${escAttr(c.color||CAL_COLORS[3])}"></span>
+              <div class="eItemInfo">
+                <b>${esc(c.title || "Цикл")}</b>
+                <small>каждые ${esc(c.every||1)} дн. · с ${esc(fmtDate(c.start))}</small>
+              </div>
+              <div class="eItemBtns">
+                <button class="eEdit" onclick="startEdit('calCycle',${i})">✏️</button>
+                <button class="eDel" onclick="delCal('cycles',${i})">🗑</button>
+              </div>
+            </div>
+          `;
+        }).join("") || `<div class="eEmpty">Циклов пока нет</div>`}
       </div>
     `;
   }
@@ -1003,6 +1396,49 @@ function submitPhoto(e, form){
   }
   form.reset(); renderEditor();
 }
+function submitCalMark(e, form){
+  e.preventDefault();
+  const fd = new FormData(form);
+  const obj = {
+    date: fd.get("date"),
+    title: fd.get("title").trim(),
+    color: fd.get("calMarkColor") || CAL_COLORS[0]
+  };
+  if(!DRAFT.calendar) DRAFT.calendar = {marks:[],cycles:[]};
+  if(editing && editing.key === "calMark"){
+    DRAFT.calendar.marks[editing.index] = obj; editing = null; toast("День обновлён ✅");
+  } else {
+    DRAFT.calendar.marks.push(obj); toast("День добавлен ✅");
+  }
+  form.reset(); renderEditor();
+}
+function submitCalCycle(e, form){
+  e.preventDefault();
+  const fd = new FormData(form);
+  const obj = {
+    title: fd.get("title").trim(),
+    every: Math.max(1, parseInt(fd.get("every"), 10) || 1),
+    start: fd.get("start"),
+    color: fd.get("calCycleColor") || CAL_COLORS[3]
+  };
+  if(!DRAFT.calendar) DRAFT.calendar = {marks:[],cycles:[]};
+  if(editing && editing.key === "calCycle"){
+    DRAFT.calendar.cycles[editing.index] = obj; editing = null; toast("Цикл обновлён ✅");
+  } else {
+    DRAFT.calendar.cycles.push(obj); toast("Цикл добавлен ✅");
+  }
+  form.reset(); renderEditor();
+}
+function delCal(kind, i){
+  if(!confirm("Удалить этот элемент?")) return;
+  if(!DRAFT.calendar) return;
+  DRAFT.calendar[kind].splice(i,1);
+  if(editing && editing.key === (kind==="marks"?"calMark":"calCycle")){
+    if(editing.index === i) editing = null;
+    else if(editing.index > i) editing.index--;
+  }
+  renderEditor();
+}
 function saveSettings(e, form){
   e.preventDefault();
   const fd = new FormData(form);
@@ -1025,13 +1461,12 @@ function showJSON(){
     const db = new Date(b.date || 0).getTime() || 0;
     return da - db;
   });
+  if(!DRAFT.calendar) DRAFT.calendar = {marks:[],cycles:[]};
   const json = JSON.stringify(DRAFT, null, 2);
   document.getElementById("jsonText").value = json;
   document.getElementById("jsonModal").classList.add("open");
 }
-function closeJSON(){
-  document.getElementById("jsonModal").classList.remove("open");
-}
+function closeJSON(){ document.getElementById("jsonModal").classList.remove("open"); }
 function copyJSON(){
   const t = document.getElementById("jsonText");
   t.removeAttribute("readonly");
@@ -1044,9 +1479,7 @@ function copyJSON(){
       ok = true;
     }
   }catch(e){}
-  if(!ok){
-    try{ ok = document.execCommand("copy"); }catch(e){}
-  }
+  if(!ok){ try{ ok = document.execCommand("copy"); }catch(e){} }
   t.setAttribute("readonly","");
   toast(ok ? "Скопировано ✅ Вставьте в data.json" : "Выделите текст и скопируйте вручную");
 }
@@ -1076,10 +1509,7 @@ async function init(){
   counter();
 }
 
-/* =========================================================
-   ФОН: КОСМОС + ПЛАВАЮЩИЕ СЕРДЕЧКИ + СОЗВЕЗДИЕ КОЗЕРОГА
-   (созвездие появляется в разных местах экрана)
-========================================================= */
+/* ===== ФОН ===== */
 (function(){
   const cv = document.getElementById("spaceBg");
   if(!cv) return;
@@ -1093,7 +1523,6 @@ async function init(){
   resize();
   window.addEventListener("resize", resize);
 
-  /* ----- фоновые звёзды ----- */
   const starCount = Math.min(160, Math.floor(window.innerWidth / 7));
   for(let i = 0; i < starCount; i++){
     stars.push({
@@ -1105,7 +1534,6 @@ async function init(){
     });
   }
 
-  /* ----- сердечки ----- */
   const heartColors = ["#62a8ff","#ff72ad","#aa7cff","#ff9bc2","#8ec4ff","#ffb3d9"];
   function makeHeart(){
     return {
@@ -1143,27 +1571,18 @@ async function init(){
     ctx.restore();
   }
 
-  /* =========================================================
-     СОЗВЕЗДИЕ КОЗЕРОГА — форма с картинки, появляется в разных местах
-  ========================================================= */
   const capStars = [
-    {x: 0.70, y: 0.10, size: 3.4, color: [255, 225, 110]}, // верхняя яркая
-    {x: 0.38, y: 0.42, size: 2.2, color: [255, 230, 145]}, // левая верхняя
-    {x: 0.12, y: 0.68, size: 3.0, color: [255, 225, 120]}, // левая нижняя (яркая)
-    {x: 0.28, y: 0.76, size: 1.9, color: [255, 230, 150]}, // низ 1
-    {x: 0.44, y: 0.79, size: 1.9, color: [255, 230, 150]}, // низ 2
-    {x: 0.60, y: 0.79, size: 1.9, color: [255, 230, 150]}, // низ 3
-    {x: 0.74, y: 0.73, size: 2.3, color: [255, 228, 135]}, // нижняя правая
-    {x: 0.78, y: 0.44, size: 2.2, color: [255, 225, 130]}  // правая средняя
+    {x: 0.70, y: 0.10, size: 3.4, color: [255, 225, 110]},
+    {x: 0.38, y: 0.42, size: 2.2, color: [255, 230, 145]},
+    {x: 0.12, y: 0.68, size: 3.0, color: [255, 225, 120]},
+    {x: 0.28, y: 0.76, size: 1.9, color: [255, 230, 150]},
+    {x: 0.44, y: 0.79, size: 1.9, color: [255, 230, 150]},
+    {x: 0.60, y: 0.79, size: 1.9, color: [255, 230, 150]},
+    {x: 0.74, y: 0.73, size: 2.3, color: [255, 228, 135]},
+    {x: 0.78, y: 0.44, size: 2.2, color: [255, 225, 130]}
   ];
   const capLines = [[0,1],[1,2],[2,3],[3,4],[4,5],[5,6],[6,7],[7,0]];
-
-  const capState = {
-    x: 0, y: 0,
-    w: 0, h: 0,
-    appearAt: 0,
-    lifeMs: 12000
-  };
+  const capState = { x: 0, y: 0, w: 0, h: 0, appearAt: 0, lifeMs: 12000 };
 
   function newCapSpot(now){
     const capSize = Math.min(W * 0.55, H * 0.42, 320);
@@ -1174,7 +1593,6 @@ async function init(){
     capState.y = pad + Math.random() * Math.max(10, H - capSize - pad * 2);
     capState.appearAt = now;
   }
-
   function capOpacity(now){
     const t = now - capState.appearAt;
     const T = capState.lifeMs;
@@ -1184,45 +1602,29 @@ async function init(){
     if(t < T)        return 1 - (t - T * 0.8) / (T * 0.2);
     return 0;
   }
-
   function drawCapricorn(now){
-    if(capState.appearAt === 0 || now - capState.appearAt > capState.lifeMs){
-      newCapSpot(now);
-    }
-
+    if(capState.appearAt === 0 || now - capState.appearAt > capState.lifeMs) newCapSpot(now);
     const alpha = capOpacity(now);
     if(alpha <= 0) return;
-
     const N = capStars.length;
-    const capLeft = capState.x;
-    const capTop  = capState.y;
-    const capW = capState.w;
-    const capH = capState.h;
-
+    const capLeft = capState.x, capTop = capState.y, capW = capState.w, capH = capState.h;
     const period = 10;
     const cycle = (now / 1000 / period) % 1;
     const head = cycle < 0.5 ? cycle * 2 : 2 - cycle * 2;
     const headPos = head * (N - 1);
     const glowRadius = 2.6;
-
     const intensities = [];
     for(let i = 0; i < N; i++){
       const dist = Math.abs(i - headPos);
-      const wave = dist < glowRadius
-        ? 0.5 * (1 + Math.cos((dist / glowRadius) * Math.PI))
-        : 0;
+      const wave = dist < glowRadius ? 0.5 * (1 + Math.cos((dist / glowRadius) * Math.PI)) : 0;
       const twinkle = 0.85 + 0.15 * Math.sin(now / 1000 * 2 + i * 1.7);
       intensities[i] = (0.22 + 0.78 * wave) * twinkle;
     }
-
     ctx.save();
     ctx.globalAlpha = alpha;
-
-    // жёлтые линии
     ctx.lineCap = "round";
     for(let k = 0; k < capLines.length; k++){
-      const a = capLines[k][0];
-      const b = capLines[k][1];
+      const a = capLines[k][0], b = capLines[k][1];
       const x1 = capLeft + capStars[a].x * capW;
       const y1 = capTop + capStars[a].y * capH;
       const x2 = capLeft + capStars[b].x * capW;
@@ -1231,41 +1633,26 @@ async function init(){
       ctx.strokeStyle = "rgba(255, 220, 120, " + (0.4 * li).toFixed(3) + ")";
       ctx.lineWidth = 1.1;
       ctx.beginPath();
-      ctx.moveTo(x1, y1);
-      ctx.lineTo(x2, y2);
-      ctx.stroke();
+      ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
     }
-
-    // золотистые звёзды
     for(let i = 0; i < N; i++){
       const s = capStars[i];
       const x = capLeft + s.x * capW;
       const y = capTop + s.y * capH;
       const intensity = intensities[i];
-      const r = s.color[0];
-      const g = s.color[1];
-      const b = s.color[2];
-
+      const r = s.color[0], g = s.color[1], b = s.color[2];
       ctx.fillStyle = "rgba(" + r + "," + g + "," + b + "," + (0.18 * intensity).toFixed(3) + ")";
       ctx.beginPath(); ctx.arc(x, y, s.size * 6, 0, Math.PI * 2); ctx.fill();
-
       ctx.fillStyle = "rgba(" + r + "," + g + "," + b + "," + (0.45 * intensity).toFixed(3) + ")";
       ctx.beginPath(); ctx.arc(x, y, s.size * 2.6, 0, Math.PI * 2); ctx.fill();
-
       ctx.fillStyle = "rgba(255, 245, 200," + (0.55 + 0.45 * intensity).toFixed(3) + ")";
       ctx.beginPath(); ctx.arc(x, y, s.size * 0.9, 0, Math.PI * 2); ctx.fill();
     }
-
     ctx.restore();
   }
-
-  /* =========================================================
-     ОБЩИЙ ЦИКЛ ОТРИСОВКИ
-  ========================================================= */
   function draw(now){
     now = now || performance.now();
     ctx.clearRect(0, 0, W, H);
-
     for(const st of stars){
       st.a += st.da;
       if(st.a > 0.9 || st.a < 0.1) st.da *= -1;
@@ -1274,9 +1661,7 @@ async function init(){
       ctx.fillStyle = "rgba(255,255,255," + st.a.toFixed(2) + ")";
       ctx.fill();
     }
-
     drawCapricorn(now);
-
     for(let i = 0; i < hearts.length; i++){
       const h = hearts[i];
       h.y += h.vy;
@@ -1285,24 +1670,18 @@ async function init(){
       drawHeart(h.x, h.y, h.s, h.rot, h.color, h.alpha);
       if(h.y < -40) hearts[i] = makeHeart();
     }
-
     requestAnimationFrame(draw);
   }
   requestAnimationFrame(draw);
 })();
-</script>
-<script>
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('./sw.js')
-        .then(registration => {
-          console.log('ServiceWorker зарегистрирован! Область:', registration.scope);
-        })
-        .catch(err => {
-          console.log('Ошибка регистрации ServiceWorker:', err);
-        });
-    });
-  }
+
+if('serviceWorker' in navigator){
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js')
+      .then(r => console.log('ServiceWorker зарегистрирован! Область:', r.scope))
+      .catch(e => console.log('Ошибка ServiceWorker:', e));
+  });
+}
 </script>
 </body>
 </html>
