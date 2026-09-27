@@ -32,6 +32,7 @@ button{font:inherit;border:0;cursor:pointer}.container{width:min(1050px,calc(100
 .hero{text-align:center;padding:78px 0 30px}.small{color:var(--muted);font-size:14px;margin-bottom:10px}.hero h1{font-size:clamp(42px,11vw,82px);line-height:.98;letter-spacing:-3px;background:linear-gradient(100deg,#fff,#9cc8ff,#ff91c1,#fff);background-size:220% auto;-webkit-background-clip:text;color:transparent;animation:grad 6s linear infinite;margin-bottom:18px}@keyframes grad{to{background-position:220% center}}.sub{max-width:620px;margin:auto;color:var(--muted);line-height:1.6}
 .counter{width:min(680px,100%);margin:28px auto 0;padding:20px;border:1px solid var(--line);border-radius:25px;background:rgba(255,255,255,.055);backdrop-filter:blur(15px)}.ct{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:10px}.time{font-size:clamp(20px,5vw,32px);font-weight:800}.date{font-size:13px;color:var(--muted);margin-top:7px}
 
+/* КАЛЕНДАРЬ */
 .calendar{margin:16px auto 0;width:min(680px,100%);max-width:100%;padding:16px 14px 12px;touch-action:pan-y;overflow:hidden}
 .calHead{display:flex;justify-content:space-between;align-items:center;gap:6px;margin-bottom:12px}
 .calHead .calTitle{font-weight:800;font-size:16px;flex:1;text-align:center;text-transform:capitalize;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;padding:4px 8px;border-radius:10px;transition:.15s}
@@ -49,7 +50,8 @@ button{font:inherit;border:0;cursor:pointer}.container{width:min(1050px,calc(100
 .calDay[onclick]{cursor:pointer}
 .calDay[onclick]:hover{background:rgba(255,255,255,.08)}
 .calDay .calNum{line-height:1;font-size:13px}
-.calDay .calDot{position:absolute;left:50%;bottom:6px;transform:translateX(-50%);width:5px;height:5px;border-radius:50%}
+.calDay .calDots{position:absolute;left:50%;bottom:5px;transform:translateX(-50%);display:flex;gap:3px;justify-content:center;flex-wrap:nowrap;max-width:90%}
+.calDay .calDot{width:5px;height:5px;border-radius:50%;flex:none}
 
 .calPicker{margin-top:12px;padding:14px;border-radius:16px;background:rgba(98,168,255,.07);border:1px solid rgba(98,168,255,.25);display:none}
 .calPicker.open{display:block}
@@ -75,10 +77,6 @@ button{font:inherit;border:0;cursor:pointer}.container{width:min(1050px,calc(100
 .calDayInfo .ciRow:first-of-type{border-top:0}
 .calDayInfo .ciRow b{color:#fff;font-weight:700}
 .calDayInfo .ciEmpty{color:var(--muted);font-size:13px;padding:6px 0}
-.calLegend{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px;font-size:11px;color:var(--muted);padding-top:10px;border-top:1px solid var(--line)}
-.calLegend:empty{display:none;padding:0;border:0}
-.legendItem{display:inline-flex;align-items:center;gap:5px}
-.legendDot{width:8px;height:8px;border-radius:50%;flex:none}
 
 section{padding:42px 0}.label{font-size:12px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--blue);margin-bottom:7px}.head{margin-bottom:21px}.head h2{font-size:30px;letter-spacing:-1px}.head p{color:var(--muted);margin-top:7px}
 
@@ -170,11 +168,15 @@ footer{text-align:center;color:var(--muted);font-size:13px;padding:50px 0 20px}.
 .eEmpty{padding:20px;text-align:center;color:var(--muted);font-size:13px}
 .eColorDot{width:20px;height:20px;border-radius:50%;flex:none;box-shadow:0 0 0 2px rgba(255,255,255,.08)}
 
-.calPalette{display:flex;flex-wrap:wrap;gap:8px}
+.calPalette{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
 .calPalette input[type=radio]{display:none}
-.calPalette label{width:32px;height:32px;border-radius:10px;border:2px solid transparent;cursor:pointer;display:block;transition:.15s}
+.calPalette label{width:32px;height:32px;border-radius:10px;border:2px solid transparent;cursor:pointer;display:block;transition:.15s;position:relative}
 .calPalette input[type=radio]:checked + span{transform:scale(1.15);box-shadow:0 0 0 2px #fff,0 0 12px currentColor}
 .calPalette span{display:block;width:32px;height:32px;border-radius:10px;transition:.15s}
+.calPalette .customColor{width:32px;height:32px;border-radius:10px;border:2px solid var(--line);cursor:pointer;padding:0;background:transparent;position:relative;overflow:hidden;flex:none}
+.calPalette .customColor::-webkit-color-swatch-wrapper{padding:0}
+.calPalette .customColor::-webkit-color-swatch{border:0;border-radius:8px}
+.calPalette .customColor::-moz-color-swatch{border:0;border-radius:8px}
 .paletteRow{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .paletteBlock{display:grid;gap:6px}
 
@@ -198,8 +200,9 @@ footer{text-align:center;color:var(--muted);font-size:13px;padding:50px 0 20px}.
   .hero h1{letter-spacing:-2px}
   .photo{border-radius:16px}
   .calDay{font-size:11px;border-radius:8px;aspect-ratio:auto;min-height:38px;padding-bottom:8px}
-  .calDay .calDot{bottom:4px;width:4px;height:4px}
   .calDay .calNum{font-size:11px}
+  .calDay .calDots{bottom:4px;gap:2px}
+  .calDay .calDot{width:4px;height:4px}
   .calGrid{gap:2px;grid-auto-rows:auto}
   .calWeekdays{gap:2px}
   .calendar{padding:12px 10px 8px}
@@ -263,7 +266,6 @@ footer{text-align:center;color:var(--muted);font-size:13px;padding:50px 0 20px}.
       <span>Пн</span><span>Вт</span><span>Ср</span><span>Чт</span><span>Пт</span><span>Сб</span><span>Вс</span>
     </div>
     <div class="calGrid" id="calGrid"></div>
-    <div class="calLegend" id="calLegend"></div>
     <div class="calPicker" id="calPicker">
       <h4>Год</h4>
       <div class="pickerYears">
@@ -695,12 +697,10 @@ function getMarksForDate(date){
   const marks = [];
   const dStr = toIso(date);
 
-  // отдельные дни
   (DATA.calendar?.marks || []).forEach(m => {
     if(m.date === dStr) marks.push({title: m.title || "Событие", color: m.color || "#62a8ff"});
   });
 
-  // старые циклы (раз в N дней)
   (DATA.calendar?.cycles || []).forEach(c => {
     const start = new Date((c.start || "") + "T00:00:00");
     if(Number.isNaN(start.getTime())) return;
@@ -713,7 +713,6 @@ function getMarksForDate(date){
     }
   });
 
-  // графики N рабочих / M выходных
   (DATA.calendar?.schedules || []).forEach(s => {
     const start = new Date((s.start || "") + "T00:00:00");
     if(Number.isNaN(start.getTime())) return;
@@ -741,7 +740,6 @@ function renderCalendar(){
   }
   const title = document.getElementById("calTitle");
   const grid = document.getElementById("calGrid");
-  const legend = document.getElementById("calLegend");
   if(!title || !grid) return;
 
   const monthNames = ["Январь","Февраль","Март","Апрель","Май","Июнь","Июль","Август","Сентябрь","Октябрь","Ноябрь","Декабрь"];
@@ -781,37 +779,25 @@ function renderCalendar(){
     if(isToday) cls += " today";
     if(isSelected) cls += " selected";
     let style = "";
-    let dot = "";
+    let dotsHTML = "";
     if(marks.length){
       const m = marks[0];
       style = `background:${m.color}22;border-color:${m.color}66;`;
-      dot = `<span class="calDot" style="background:${m.color};box-shadow:0 0 6px ${m.color}"></span>`;
+      // несколько точек — по одной на каждое событие (максимум 5)
+      const shown = marks.slice(0, 5);
+      dotsHTML = `<span class="calDots">${
+        shown.map(mm =>
+          `<span class="calDot" style="background:${mm.color};box-shadow:0 0 6px ${mm.color}"></span>`
+        ).join("")
+      }</span>`;
     }
     const tip = marks.map(x=>x.title).join(", ");
     const isoD = toIso(date);
     html += `<div class="${cls}" style="${style}" title="${escAttr(tip)}" onclick="selectDay('${isoD}')">
-      <span class="calNum">${dayNum}</span>${dot}
+      <span class="calNum">${dayNum}</span>${dotsHTML}
     </div>`;
   }
   grid.innerHTML = html;
-
-  const items = [];
-  const seen = new Set();
-  const push = (t,c) => {
-    const k = t + "|" + c;
-    if(seen.has(k)) return;
-    seen.add(k);
-    items.push({title:t, color:c});
-  };
-  (DATA.calendar?.schedules || []).forEach(s => {
-    push(s.workTitle || "Работа", s.workColor || "#62a8ff");
-    push(s.offTitle || "Выходной", s.offColor || "#63e6be");
-  });
-  (DATA.calendar?.cycles || []).forEach(c => push(c.title || "Цикл", c.color || "#63e6be"));
-  (DATA.calendar?.marks || []).forEach(m => push(m.title || "Событие", m.color || "#62a8ff"));
-  legend.innerHTML = items.slice(0, 8).map(x =>
-    `<span class="legendItem"><span class="legendDot" style="background:${x.color}"></span>${esc(x.title)}</span>`
-  ).join("");
 }
 
 function selectDay(isoDate){
@@ -999,13 +985,36 @@ function updateDishPreview(form){
   const preview = form.querySelector('#dishPreview');
   if(preview) preview.innerHTML = dishPreviewHTML(ptRaw || title, ext, external);
 }
+
+// палитра: цветные кнопки + input[type=color] для любого цвета
 function paletteHTML(name, selected){
+  const isCustom = !CAL_COLORS.includes(selected);
+  const customValue = isCustom ? selected : CAL_COLORS[0];
   return `<div class="calPalette">${
     CAL_COLORS.map(c =>
       `<label><input type="radio" name="${name}" value="${c}" ${c===selected?"checked":""}>
         <span style="background:${c};box-shadow:0 0 0 2px ${c}33"></span></label>`
     ).join("")
-  }</div>`;
+  }
+    <input type="color" class="customColor" name="${name}Custom" value="${customValue}"
+           title="Свой цвет"
+           oninput="pickCustomColor(this, '${name}')">
+    ${isCustom ? `<input type="hidden" name="${name}" value="${selected}">` : ""}
+  </div>`;
+}
+function pickCustomColor(input, name){
+  const form = input.closest("form");
+  if(!form) return;
+  // снимаем выбор с радиокнопок
+  form.querySelectorAll(`input[type=radio][name="${name}"]`).forEach(r=>r.checked=false);
+  // удаляем старый hidden
+  form.querySelectorAll(`input[type=hidden][name="${name}"]`).forEach(h=>h.remove());
+  // добавляем новый hidden с выбранным цветом
+  const h = document.createElement("input");
+  h.type = "hidden";
+  h.name = name;
+  h.value = input.value;
+  input.parentNode.appendChild(h);
 }
 
 function renderEditor(){
@@ -1060,8 +1069,8 @@ function renderEditor(){
 
     body.innerHTML = `
       <div class="hintBox">
-        <b>График работы</b> — введите сколько рабочих и выходных дней подряд, и дату первого рабочего дня. Код сам расставит метки по всему календарю.<br>
-        <b>Отдельные дни</b> — конкретные даты (годовщины, праздники).<br>
+        <b>График работы</b> — введите сколько рабочих и выходных дней подряд.<br>
+        <b>Отдельные дни</b> — конкретные даты.<br>
         <b>Циклы</b> — если нужна другая периодичность.
       </div>
 
@@ -1775,7 +1784,6 @@ async function init(){
   requestAnimationFrame(draw);
 })();
 
-/* ===== SERVICE WORKER ===== */
 if('serviceWorker' in navigator){
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('./sw.js')
