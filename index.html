@@ -2,1815 +2,695 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<meta name="theme-color" content="#0b1020">
-<meta name="description" content="Наш уголок 💙💗 — Никита & Валерия">
-<title>Наш уголок 💙💗</title>
-<link rel="manifest" href="./manifest.json">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Тактика ЛТ — помощник</title>
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
-:root{--bg:#080b16;--card:rgba(255,255,255,.07);--line:rgba(255,255,255,.13);--text:#fff;--muted:#aeb5cc;--blue:#62a8ff;--pink:#ff72ad;--purple:#aa7cff;--green:#63e6be}
-html{scroll-behavior:smooth}
-body{min-height:100vh;color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;background:radial-gradient(circle at 15% 5%,rgba(98,168,255,.22),transparent 28%),radial-gradient(circle at 85% 15%,rgba(255,114,173,.18),transparent 30%),radial-gradient(circle at 50% 90%,rgba(170,124,255,.12),transparent 35%),var(--bg);overflow-x:hidden}
-body:before{content:"";position:fixed;inset:0;pointer-events:none;background:linear-gradient(115deg,transparent,rgba(255,255,255,.025),transparent);animation:bg 12s linear infinite}
-@keyframes bg{from{transform:translateX(-30%)}to{transform:translateX(30%)}}
-button{font:inherit;border:0;cursor:pointer}.container{width:min(1050px,calc(100% - 24px));margin:auto}.card{background:var(--card);border:1px solid var(--line);border-radius:24px;backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);box-shadow:0 18px 50px rgba(0,0,0,.2)}
-
-#lock{position:fixed;z-index:9999;inset:0;display:flex;align-items:center;justify-content:center;padding:18px;background:radial-gradient(circle at 30% 20%,rgba(98,168,255,.22),transparent 30%),radial-gradient(circle at 70% 80%,rgba(255,114,173,.2),transparent 30%),#080b16}
-.lockbox{width:min(410px,100%);padding:30px 20px;border:1px solid var(--line);border-radius:32px;text-align:center;background:rgba(16,20,38,.78);backdrop-filter:blur(25px);box-shadow:0 30px 90px rgba(0,0,0,.5)}
-.heart{font-size:58px;animation:beat 1.8s infinite}@keyframes beat{0%,100%{transform:scale(1)}15%{transform:scale(1.12)}30%{transform:scale(1)}}
-.lockbox h1{font-size:28px;margin:8px 0}.lockbox p{color:var(--muted);font-size:14px;margin-bottom:22px}
-.dots{display:flex;justify-content:center;gap:13px;margin-bottom:22px}.dot{width:13px;height:13px;border:1px solid #687087;border-radius:50%}.dot.on{background:linear-gradient(135deg,var(--blue),var(--pink));border:0;box-shadow:0 0 15px rgba(98,168,255,.55)}
-.keys{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.key{min-height:58px;color:#fff;background:rgba(255,255,255,.075);border:1px solid rgba(255,255,255,.08);border-radius:18px}.key:active{transform:scale(.94);background:rgba(255,255,255,.16)}.zero{grid-column:2}.err{height:22px;margin-top:10px;color:#ff7eaa;font-size:13px}
-
-#app{display:none;padding-bottom:calc(115px + env(safe-area-inset-bottom,0px))}
-.top{padding-top:22px}.topbar{display:flex;align-items:center;justify-content:space-between}.logo{font-weight:800;font-size:18px}.logo span{background:linear-gradient(90deg,var(--blue),var(--pink));-webkit-background-clip:text;color:transparent}
-.status{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:7px}.status i{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 12px var(--green)}
-.topRight{display:flex;align-items:center;gap:8px}
-.editBtn{width:38px;height:38px;border-radius:12px;color:#fff;font-size:17px;background:linear-gradient(135deg,var(--blue),var(--pink));display:grid;place-items:center;box-shadow:0 6px 18px rgba(98,168,255,.28)}
-.editBtn:active{transform:scale(.94)}
-.hero{text-align:center;padding:78px 0 30px}.small{color:var(--muted);font-size:14px;margin-bottom:10px}.hero h1{font-size:clamp(42px,11vw,82px);line-height:.98;letter-spacing:-3px;background:linear-gradient(100deg,#fff,#9cc8ff,#ff91c1,#fff);background-size:220% auto;-webkit-background-clip:text;color:transparent;animation:grad 6s linear infinite;margin-bottom:18px}@keyframes grad{to{background-position:220% center}}.sub{max-width:620px;margin:auto;color:var(--muted);line-height:1.6}
-.counter{width:min(680px,100%);margin:28px auto 0;padding:20px;border:1px solid var(--line);border-radius:25px;background:rgba(255,255,255,.055);backdrop-filter:blur(15px)}.ct{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:10px}.time{font-size:clamp(20px,5vw,32px);font-weight:800}.date{font-size:13px;color:var(--muted);margin-top:7px}
-
-/* КАЛЕНДАРЬ */
-.calendar{margin:16px auto 0;width:min(680px,100%);max-width:100%;padding:16px 14px 12px;touch-action:pan-y;overflow:hidden}
-.calHead{display:flex;justify-content:space-between;align-items:center;gap:6px;margin-bottom:12px}
-.calHead .calTitle{font-weight:800;font-size:16px;flex:1;text-align:center;text-transform:capitalize;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;padding:4px 8px;border-radius:10px;transition:.15s}
-.calHead .calTitle:hover{background:rgba(255,255,255,.06)}
-.calHead button{min-width:38px;height:38px;padding:0 10px;border-radius:12px;background:rgba(255,255,255,.06);border:1px solid var(--line);color:#fff;font-size:15px;display:grid;place-items:center;flex:none}
-.calHead button:active{transform:scale(.94);background:rgba(255,255,255,.14)}
-.calHead .calToday{font-size:12px;font-weight:700;color:var(--blue);padding:0 8px;white-space:nowrap;flex:none}
-.calWeekdays{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:3px;margin-bottom:5px;font-size:10px;color:var(--muted);text-align:center;text-transform:uppercase;letter-spacing:.5px;font-weight:800}
-.calWeekdays span:nth-child(6),.calWeekdays span:nth-child(7){color:#ff9bc2}
-.calGrid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));grid-auto-rows:1fr;gap:3px;overflow:hidden}
-.calDay{min-width:0;min-height:0;overflow:hidden;position:relative;display:flex;align-items:center;justify-content:center;border-radius:10px;border:1px solid transparent;background:rgba(255,255,255,.03);font-size:13px;font-weight:700;color:#dfe3f0;transition:.15s;user-select:none;aspect-ratio:1}
-.calDay.empty{background:transparent;border:0}
-.calDay.today{border-color:var(--blue);background:rgba(98,168,255,.12);box-shadow:0 0 0 1px rgba(98,168,255,.25) inset}
-.calDay.selected{border-color:var(--pink);background:rgba(255,114,173,.15);box-shadow:0 0 0 1px rgba(255,114,173,.3) inset}
-.calDay[onclick]{cursor:pointer}
-.calDay[onclick]:hover{background:rgba(255,255,255,.08)}
-.calDay .calNum{line-height:1;font-size:13px}
-.calDay .calDots{position:absolute;left:50%;bottom:5px;transform:translateX(-50%);display:flex;gap:3px;justify-content:center;flex-wrap:nowrap;max-width:90%}
-.calDay .calDot{width:5px;height:5px;border-radius:50%;flex:none}
-
-.calPicker{margin-top:12px;padding:14px;border-radius:16px;background:rgba(98,168,255,.07);border:1px solid rgba(98,168,255,.25);display:none}
-.calPicker.open{display:block}
-.calPicker h4{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1.5px;font-weight:800;margin-bottom:8px}
-.calPicker .pickerYears{display:flex;gap:6px;align-items:center;margin-bottom:14px}
-.calPicker .pickerYears button{width:36px;height:36px;border-radius:11px;background:rgba(255,255,255,.06);border:1px solid var(--line);color:#fff;font-size:16px;flex:none}
-.calPicker .pickerYears button:active{transform:scale(.94)}
-.calPicker .pickerYears input{flex:1;padding:9px 12px;background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:11px;color:#fff;font:inherit;font-size:15px;text-align:center;font-weight:800;min-width:0}
-.calPicker .pickerMonths{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
-.calPicker .pickerMonths button{padding:10px 4px;border-radius:11px;background:rgba(255,255,255,.05);border:1px solid var(--line);color:#dfe3f0;font-size:12px;font-weight:700}
-.calPicker .pickerMonths button:active{transform:scale(.96);background:rgba(255,255,255,.12)}
-.calPicker .pickerMonths button.active{color:#fff;background:linear-gradient(135deg,var(--blue),var(--pink));border-color:transparent;box-shadow:0 4px 10px rgba(98,168,255,.25)}
-.calPicker .pickerFoot{margin-top:12px;display:flex;gap:6px}
-.calPicker .pickerFoot button{flex:1;padding:10px;border-radius:11px;background:rgba(255,255,255,.06);border:1px solid var(--line);color:var(--muted);font-size:13px;font-weight:700}
-
-.calDayInfo{margin-top:14px;padding:14px;border-radius:16px;background:rgba(98,168,255,.07);border:1px solid rgba(98,168,255,.25);display:none}
-.calDayInfo.open{display:block;animation:slideUp .25s ease}
-@keyframes slideUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
-.calDayInfo .ciHead{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px}
-.calDayInfo .ciTitle{font-weight:800;font-size:15px;color:#fff}
-.calDayInfo .ciClose{width:28px;height:28px;border-radius:9px;background:rgba(255,255,255,.08);border:1px solid var(--line);color:#fff;font-size:14px;flex:none}
-.calDayInfo .ciRow{display:flex;align-items:flex-start;gap:8px;padding:8px 0;font-size:13px;color:#d7dcec;border-top:1px dashed rgba(255,255,255,.08)}
-.calDayInfo .ciRow:first-of-type{border-top:0}
-.calDayInfo .ciRow b{color:#fff;font-weight:700}
-.calDayInfo .ciEmpty{color:var(--muted);font-size:13px;padding:6px 0}
-
-section{padding:42px 0}.label{font-size:12px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--blue);margin-bottom:7px}.head{margin-bottom:21px}.head h2{font-size:30px;letter-spacing:-1px}.head p{color:var(--muted);margin-top:7px}
-
-.sortRow{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:16px}
-.sortRow .head{margin-bottom:0;flex:1;min-width:200px}
-.sortToggle{display:flex;gap:4px;padding:4px;background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:14px;flex:none}
-.sortToggle button{padding:8px 12px;border-radius:10px;background:transparent;color:var(--muted);font-size:12px;font-weight:700;transition:.15s;white-space:nowrap}
-.sortToggle button.active{color:#fff;background:linear-gradient(135deg,var(--blue),var(--pink));box-shadow:0 4px 12px rgba(98,168,255,.25)}
-
-.timeline{display:grid;gap:13px;position:relative}.timeline:before{content:"";position:absolute;left:19px;top:14px;bottom:14px;width:1px;background:linear-gradient(var(--blue),var(--pink),transparent)}.event{position:relative;padding:20px 20px 20px 52px}.event:before{content:"";position:absolute;left:12px;top:22px;width:15px;height:15px;border-radius:50%;background:linear-gradient(135deg,var(--blue),var(--pink));box-shadow:0 0 20px rgba(98,168,255,.5)}.event .edate{font-size:12px;color:var(--blue);font-weight:700;margin-bottom:7px}.event h3{font-size:19px;margin-bottom:7px}.event p{color:var(--muted);line-height:1.55}
-
-.gallery{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-.photo{position:relative;aspect-ratio:1;overflow:hidden;border-radius:21px;border:1px solid var(--line);background:rgba(255,255,255,.05);cursor:pointer}
-.photo img{width:100%;height:100%;object-fit:cover;display:block;transition:.5s}
-.photo:hover img{transform:scale(1.06)}
-.photoCaption{position:absolute;left:0;right:0;bottom:0;padding:26px 10px 8px;background:linear-gradient(transparent,rgba(0,0,0,.8));font-size:12px;font-weight:600;color:#fff;text-align:center;pointer-events:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-
-.dishes{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
-.dish{overflow:hidden;padding:0;display:flex;flex-direction:column}
-.dishImg{aspect-ratio:4/3;overflow:hidden;background:rgba(255,255,255,.05);position:relative}
-.dishImg img{width:100%;height:100%;object-fit:cover;display:block;transition:.5s}
-.dish:hover .dishImg img{transform:scale(1.04)}
-.dishImgEmpty{aspect-ratio:4/3;display:flex;align-items:center;justify-content:center;font-size:44px;color:var(--muted);background:rgba(255,255,255,.04)}
-.dishBody{padding:18px 20px 20px}
-.dishBody h3{font-size:19px;margin-bottom:9px}
-.dishBody .recipe{color:var(--muted);font-size:14px;line-height:1.6;white-space:pre-wrap;word-break:break-word}
-
-.places{display:grid;grid-template-columns:repeat(3,1fr);gap:13px}.place{padding:22px;min-height:165px}.pi{font-size:34px;margin-bottom:15px}.place h3{font-size:18px;margin-bottom:7px}.place p{color:var(--muted);font-size:14px;line-height:1.5}.place a{display:inline-block;margin-top:13px;color:var(--blue);text-decoration:none;font-size:13px}
-.dreams{display:grid;gap:10px}.dream{width:100%;display:flex;align-items:center;gap:13px;text-align:left;color:#fff;padding:17px;background:rgba(255,255,255,.055);border:1px solid var(--line);border-radius:19px}.check{width:25px;height:25px;flex:none;display:grid;place-items:center;border-radius:8px;border:1px solid rgba(255,255,255,.3)}.dream.done .check{background:linear-gradient(135deg,var(--blue),var(--pink));border:0}.dream.done .dt{text-decoration:line-through;color:#7d839a}
-.bdays{display:grid;grid-template-columns:1fr 1fr;gap:13px}.birthday{padding:23px;text-align:center}.bi{font-size:34px}.birthday h3{margin:9px 0 5px}.birthday p{color:var(--muted)}
-.secret{padding:30px;text-align:center;position:relative;overflow:hidden}.secret:before{content:"";position:absolute;width:190px;height:190px;border-radius:50%;background:rgba(255,114,173,.13);filter:blur(45px);right:-60px;top:-90px}.si{font-size:44px;margin-bottom:10px}.secrettext{position:relative;font-size:20px;font-weight:700;line-height:1.5;margin-bottom:17px}.secret button{position:relative;color:#fff;padding:13px 20px;border-radius:15px;background:linear-gradient(135deg,var(--blue),var(--pink))}
-.empty{padding:32px 20px;text-align:center;color:var(--muted);min-height:108px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px}
-footer{text-align:center;color:var(--muted);font-size:13px;padding:50px 0 20px}.fh{font-size:28px;margin-bottom:8px}
-
-.nav{position:fixed;z-index:100;left:0;right:0;bottom:calc(10px + env(safe-area-inset-bottom,0px));margin:0 auto;width:min(700px,calc(100% - 12px));display:flex;gap:4px;padding:8px;border:1px solid var(--line);border-radius:23px;background:rgba(13,17,31,.82);backdrop-filter:blur(25px);box-shadow:0 20px 50px rgba(0,0,0,.4)}
-.nav button{flex:1 1 0;min-width:0;min-height:48px;padding:0 3px;border-radius:17px;background:transparent;color:var(--muted);font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.nav span{display:block;font-size:20px;margin-bottom:2px}
-.nav button.active{color:#fff;background:rgba(255,255,255,.08)}
-.toast{position:fixed;z-index:10000;left:50%;bottom:90px;transform:translate(-50%,20px);opacity:0;padding:12px 17px;border:1px solid var(--line);border-radius:15px;background:#181d31;color:#fff;font-size:13px;transition:.25s;pointer-events:none;max-width:calc(100% - 24px);text-align:center}.toast.show{opacity:1;transform:translate(-50%,0)}
-
-#lightbox{position:fixed;inset:0;z-index:9998;background:rgba(8,11,22,.95);display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(10px)}
-#lightbox.open{display:flex}
-#lightbox img{max-width:100%;max-height:90vh;max-height:90dvh;border-radius:16px;box-shadow:0 30px 80px rgba(0,0,0,.6)}
-#lightbox .close{position:absolute;top:20px;right:20px;width:44px;height:44px;border-radius:14px;background:rgba(255,255,255,.1);color:#fff;font-size:20px}
-
-.modal{position:fixed;inset:0;z-index:9997;background:rgba(8,11,22,.9);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);display:none;padding:12px;overflow:hidden;height:100vh;height:100dvh}
-.modal.open{display:flex;align-items:center;justify-content:center}
-.modalBox{width:min(700px,100%);max-height:calc(100vh - 24px);max-height:calc(100dvh - 24px);display:flex;flex-direction:column;background:rgba(16,20,38,.98);border:1px solid var(--line);border-radius:24px;overflow:hidden;box-shadow:0 30px 90px rgba(0,0,0,.6)}
-.modalHead{display:flex;justify-content:space-between;align-items:center;padding:16px 18px;border-bottom:1px solid var(--line);gap:10px;flex:none}
-.modalHead h2{font-size:17px;font-weight:800}
-.modalClose{width:36px;height:36px;border-radius:12px;background:rgba(255,255,255,.07);border:1px solid var(--line);color:#fff;font-size:16px;flex:none}
-.modalTabs{display:flex;gap:6px;padding:12px;overflow-x:auto;border-bottom:1px solid var(--line);scrollbar-width:none;flex:none}
-.modalTabs::-webkit-scrollbar{display:none}
-.modalTabs button{flex:none;padding:8px 12px;background:rgba(255,255,255,.06);border:1px solid var(--line);border-radius:11px;color:var(--muted);font-size:12px;white-space:nowrap}
-.modalTabs button.active{color:#fff;background:linear-gradient(135deg,var(--blue),var(--pink));border-color:transparent}
-.modalBody{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;padding:16px 18px}
-.modalFoot{display:flex;gap:8px;padding:14px 18px;border-top:1px solid var(--line);flex-wrap:wrap;flex:none}
-.btnPrimary{flex:1;min-width:160px;padding:13px;background:linear-gradient(135deg,var(--blue),var(--pink));color:#fff;border-radius:13px;font-weight:800;font-size:14px}
-.btnGhost{padding:13px 16px;background:rgba(255,255,255,.06);color:var(--muted);border:1px solid var(--line);border-radius:13px;font-size:14px}
-
-.eForm{display:grid;gap:8px;margin-bottom:18px;padding:14px;background:rgba(255,255,255,.03);border:1px dashed var(--line);border-radius:16px;transition:.2s}
-.eForm.editing{border-color:var(--blue);background:rgba(98,168,255,.07);box-shadow:0 0 0 1px rgba(98,168,255,.15)}
-.eForm label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;font-weight:800}
-.eForm input,.eForm textarea,.eForm select{width:100%;padding:10px 12px;background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:11px;color:#fff;font:inherit;font-size:14px}
-.eForm select{appearance:none;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'><path fill='%23aeb5cc' d='M6 8L2 4h8z'/></svg>");background-repeat:no-repeat;background-position:right 12px center;padding-right:32px}
-.eForm select option{background:#161a2c;color:#fff}
-.eForm input:focus,.eForm textarea:focus,.eForm select:focus{outline:none;border-color:var(--blue)}
-.eForm textarea{min-height:60px;resize:vertical;font-family:inherit}
-.eForm textarea.recipeInput{min-height:110px}
-.eForm button[type=submit]{padding:11px;background:linear-gradient(135deg,var(--blue),var(--pink));color:#fff;border-radius:11px;font-weight:800;font-size:13px}
-.eForm .row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.eForm .hint{font-size:11px;color:var(--muted);line-height:1.45;margin-top:-2px}
-.eForm .formBtns{display:flex;gap:8px}
-.eForm .formBtns button[type=submit]{flex:1}
-.eForm .formBtns .cancelEdit{padding:11px 14px;background:rgba(255,255,255,.06);border:1px solid var(--line);color:var(--muted);border-radius:11px;font-weight:700;font-size:13px}
-.formTitle{font-size:11px;font-weight:800;color:var(--blue);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:4px}
-.formTitle.edit{color:var(--pink)}
-
-.eList{display:grid;gap:7px}
-.eItem{display:flex;align-items:center;gap:10px;padding:11px 12px;background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:13px}
-.eItem.editing{border-color:var(--blue);background:rgba(98,168,255,.1)}
-.eItem img{width:42px;height:42px;border-radius:9px;object-fit:cover;flex:none}
-.eItemInfo{flex:1;min-width:0}
-.eItemInfo b{display:block;font-weight:700;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.eItemInfo small{display:block;color:var(--muted);font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px}
-.eItemBtns{display:flex;gap:5px;flex:none}
-.eEdit{padding:7px 10px;background:rgba(98,168,255,.12);color:#8ec4ff;border:1px solid rgba(98,168,255,.3);border-radius:9px;font-size:12px}
-.eDel{padding:7px 10px;background:rgba(255,80,80,.12);color:#ff9090;border:1px solid rgba(255,80,80,.28);border-radius:9px;font-size:12px}
-.eEmpty{padding:20px;text-align:center;color:var(--muted);font-size:13px}
-.eColorDot{width:20px;height:20px;border-radius:50%;flex:none;box-shadow:0 0 0 2px rgba(255,255,255,.08)}
-
-.calPalette{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
-.calPalette input[type=radio]{display:none}
-.calPalette label{width:32px;height:32px;border-radius:10px;border:2px solid transparent;cursor:pointer;display:block;transition:.15s;position:relative}
-.calPalette input[type=radio]:checked + span{transform:scale(1.15);box-shadow:0 0 0 2px #fff,0 0 12px currentColor}
-.calPalette span{display:block;width:32px;height:32px;border-radius:10px;transition:.15s}
-.calPalette .customColor{width:32px;height:32px;border-radius:10px;border:2px solid var(--line);cursor:pointer;padding:0;background:transparent;position:relative;overflow:hidden;flex:none}
-.calPalette .customColor::-webkit-color-swatch-wrapper{padding:0}
-.calPalette .customColor::-webkit-color-swatch{border:0;border-radius:8px}
-.calPalette .customColor::-moz-color-swatch{border:0;border-radius:8px}
-.paletteRow{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.paletteBlock{display:grid;gap:6px}
-
-.sectionHead{margin:24px 0 12px;font-size:12px;font-weight:800;color:var(--blue);text-transform:uppercase;letter-spacing:1.5px;padding-top:18px;border-top:1px dashed var(--line)}
-.sectionHead:first-child{margin-top:0;padding-top:0;border-top:0}
-
-.jsonText{width:100%;min-height:320px;padding:12px;background:rgba(0,0,0,.35);border:1px solid var(--line);border-radius:12px;color:#c8d1ee;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:11.5px;line-height:1.5;resize:vertical;white-space:pre}
-.hintBox{padding:11px 13px;background:rgba(98,168,255,.08);border:1px solid rgba(98,168,255,.25);border-radius:12px;color:#c8d4f2;font-size:12.5px;line-height:1.5;margin-bottom:12px;margin-top:4px}
-.hintBox b{color:#fff}
-.hintBox code{word-break:break-all;font-size:11px}
-
-#spaceBg{position:fixed;inset:0;z-index:0;pointer-events:none;display:block}
-#app{position:relative;z-index:1}
-#lock{position:fixed;z-index:9999}
-
-@media(max-width:700px){
-  .gallery{grid-template-columns:repeat(2,1fr)}
-  .places{grid-template-columns:1fr}
-  .dishes{grid-template-columns:1fr}
-  .hero{padding:62px 0 44px}
-  .hero h1{letter-spacing:-2px}
-  .photo{border-radius:16px}
-  .calDay{font-size:11px;border-radius:8px;aspect-ratio:auto;min-height:38px;padding-bottom:8px}
-  .calDay .calNum{font-size:11px}
-  .calDay .calDots{bottom:4px;gap:2px}
-  .calDay .calDot{width:4px;height:4px}
-  .calGrid{gap:2px;grid-auto-rows:auto}
-  .calWeekdays{gap:2px}
-  .calendar{padding:12px 10px 8px}
-  .calHead .calTitle{font-size:14px}
-  .calPicker .pickerMonths{grid-template-columns:repeat(3,1fr)}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #14181e;
+  --panel: #1e242d;
+  --panel2: #262e3a;
+  --border: #2f3a48;
+  --text: #d8e0ea;
+  --muted: #7a8697;
+  --accent: #ff9c2b;
+  --danger: #e5484d;
+  --ok: #30a46c;
 }
-@media(max-width:390px){
-  .bdays{grid-template-columns:1fr}
-  .eForm .row{grid-template-columns:1fr}
-  .modalBox{border-radius:18px}
-  .sortToggle{width:100%}
-  .sortToggle button{flex:1}
-  .paletteRow{grid-template-columns:1fr}
+body {
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
 }
+header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 20px;
+  background: var(--panel);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  flex-wrap: wrap;
+}
+.logo { font-weight: 700; font-size: 18px; color: var(--accent); white-space: nowrap; }
+.search {
+  flex: 1 1 200px;
+  max-width: 400px;
+  padding: 9px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text);
+  font-size: 14px;
+  outline: none;
+}
+.search:focus { border-color: var(--accent); }
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  border-radius: 8px;
+  padding: 9px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  transition: filter .15s, background .15s;
+}
+button:hover { filter: brightness(1.1); }
+button:active { transform: translateY(1px); }
+.btn-primary { background: var(--accent); color: #1a1000; }
+.btn-ghost { background: var(--panel2); color: var(--text); border: 1px solid var(--border); }
+.btn-sm { padding: 6px 12px; font-size: 13px; }
+
+main { padding: 20px; }
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 16px;
+}
+.card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: border-color .15s, transform .15s;
+}
+.card:hover { border-color: var(--accent); transform: translateY(-2px); }
+.card .thumb {
+  width: 100%;
+  aspect-ratio: 16/10;
+  object-fit: cover;
+  display: block;
+  background: #0b0e12;
+}
+.card .info {
+  padding: 10px 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+.card .name {
+  font-weight: 600;
+  font-size: 14px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+}
+.card .del {
+  background: transparent;
+  color: var(--muted);
+  padding: 4px 8px;
+  font-size: 16px;
+  line-height: 1;
+  border-radius: 6px;
+  flex-shrink: 0;
+}
+.card .del:hover { color: var(--danger); background: rgba(229,72,77,.15); }
+
+.empty {
+  text-align: center;
+  color: var(--muted);
+  padding: 60px 20px;
+  font-size: 15px;
+  line-height: 1.7;
+}
+
+/* Modal */
+.modal-bg {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,.78);
+  display: none;
+  z-index: 100;
+  padding: 16px;
+  overflow-y: auto;
+}
+.modal-bg.open { display: block; }
+.modal {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  max-width: 1200px;
+  margin: 0 auto;
+  overflow: hidden;
+}
+.modal-head {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  flex-wrap: wrap;
+}
+.modal-head input {
+  flex: 1 1 180px;
+  padding: 9px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text);
+  font-size: 14px;
+  outline: none;
+}
+.modal-head input:focus { border-color: var(--accent); }
+.toolbar {
+  display: flex;
+  gap: 6px;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--border);
+  flex-wrap: wrap;
+  align-items: center;
+  background: var(--panel2);
+}
+.tool {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+}
+.tool.active { background: var(--accent); color: #1a1000; border-color: var(--accent); }
+.tool-label { font-size: 12px; color: var(--muted); }
+input[type="color"] {
+  width: 38px; height: 34px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--panel);
+  cursor: pointer;
+  padding: 2px;
+}
+input[type="range"] { width: 100px; accent-color: var(--accent); }
+.canvas-wrap {
+  padding: 16px;
+  display: flex;
+  justify-content: center;
+  background: #0b0e12;
+  overflow: auto;
+}
+canvas {
+  max-width: 100%;
+  max-height: calc(100vh - 260px);
+  background: #333;
+  border-radius: 6px;
+  touch-action: none;
+  cursor: crosshair;
+  display: block;
+}
+.modal-foot {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  padding: 12px 16px;
+  border-top: 1px solid var(--border);
+  flex-wrap: wrap;
+}
+.spacer { flex: 1; }
 </style>
 </head>
 <body>
 
-<canvas id="spaceBg"></canvas>
-
-<div id="lock">
-  <div class="lockbox">
-    <div class="heart">💙💗</div>
-    <h1>Наш уголок</h1>
-    <p>Только для нас двоих</p>
-    <div class="dots" id="dots"><i class="dot"></i><i class="dot"></i><i class="dot"></i><i class="dot"></i></div>
-    <div class="keys">
-      <button class="key" onclick="pin('1')">1</button><button class="key" onclick="pin('2')">2</button><button class="key" onclick="pin('3')">3</button>
-      <button class="key" onclick="pin('4')">4</button><button class="key" onclick="pin('5')">5</button><button class="key" onclick="pin('6')">6</button>
-      <button class="key" onclick="pin('7')">7</button><button class="key" onclick="pin('8')">8</button><button class="key" onclick="pin('9')">9</button>
-      <button class="key zero" onclick="pin('0')">0</button>
-    </div>
-    <div class="err" id="err"></div>
-  </div>
-</div>
-
-<div id="app">
-<header class="top"><div class="container"><div class="topbar">
-  <div class="logo"><span>Никита</span> & Валерия</div>
-  <div class="topRight">
-    <div class="status"><i></i> наш уголок</div>
-    <button class="editBtn" onclick="openEditor()" title="Редактор">✏️</button>
-  </div>
-</div></div></header>
+<header>
+  <div class="logo">🎯 ТАКТИКА ЛТ</div>
+  <input type="search" class="search" id="search" placeholder="Поиск по названию карты...">
+  <button class="btn-ghost" id="clearCache">🧹 Очистить кеш</button>
+  <button class="btn-primary" id="addBtn">+ Добавить карту</button>
+</header>
 
 <main>
-<section class="hero" id="home"><div class="container">
-  <div class="small">Наша маленькая вселенная</div>
-  <h1>Никита & Валерия</h1>
-  <p class="sub">Здесь живут наши воспоминания, мечты, места и маленькие моменты, которые хочется сохранить навсегда.</p>
-  <div class="counter"><div class="ct">Мы вместе</div><div class="time" id="time">Загрузка...</div><div class="date" id="startDate">💙💗</div></div>
-
-  <div class="calendar card" id="calendar">
-    <div class="calHead">
-      <button onclick="calPrev()" title="Назад">‹</button>
-      <div class="calTitle" id="calTitle" onclick="togglePicker()" title="Нажмите, чтобы выбрать год и месяц">Месяц</div>
-      <button class="calToday" onclick="calToday()" title="Сегодня">Сегодня</button>
-      <button onclick="calNext()" title="Вперёд">›</button>
-    </div>
-    <div class="calWeekdays">
-      <span>Пн</span><span>Вт</span><span>Ср</span><span>Чт</span><span>Пт</span><span>Сб</span><span>Вс</span>
-    </div>
-    <div class="calGrid" id="calGrid"></div>
-    <div class="calPicker" id="calPicker">
-      <h4>Год</h4>
-      <div class="pickerYears">
-        <button onclick="pickerYear(-1)">‹</button>
-        <input type="number" id="pickerYearInput" min="1900" max="2200" onchange="pickerYearSet(this.value)">
-        <button onclick="pickerYear(1)">›</button>
-      </div>
-      <h4>Месяц</h4>
-      <div class="pickerMonths" id="pickerMonths"></div>
-      <div class="pickerFoot">
-        <button onclick="pickerGoToday()">Сегодня</button>
-        <button onclick="togglePicker()">Закрыть</button>
-      </div>
-    </div>
-    <div class="calDayInfo" id="calDayInfo"></div>
-  </div>
-</div></section>
-
-<section id="history"><div class="container">
-  <div class="sortRow">
-    <div class="head">
-      <div class="label">Наша история</div>
-      <h2>С самых важных моментов</h2>
-      <p>То, что хочется помнить.</p>
-    </div>
-    <div class="sortToggle" id="sortToggle">
-      <button data-mode="asc" onclick="setSort('asc')">↑ Старые</button>
-      <button data-mode="desc" onclick="setSort('desc')">↓ Новые</button>
-    </div>
-  </div>
-  <div class="timeline" id="events"><div class="empty card"><span>❤️</span><span>Загружаем историю...</span></div></div>
-</div></section>
-
-<section id="gallerySection"><div class="container"><div class="head"><div class="label">Воспоминания</div><h2>Наша галерея 📸</h2><p>Фотографии, которые хочется пересматривать.</p></div><div class="gallery" id="gallery"><div class="empty card" style="grid-column:1/-1"><span>📸</span><span>Фотографии появятся здесь</span></div></div></div></section>
-
-<section id="placesSection"><div class="container"><div class="head"><div class="label">Наши места</div><h2>Где мы были ❤️</h2><p>Места, которые стали частью нашей истории.</p></div><div class="places" id="places"><div class="empty card" style="grid-column:1/-1"><span>📍</span><span>Загрузка...</span></div></div></div></section>
-
-<section id="dreamsSection"><div class="container"><div class="head"><div class="label">Наши мечты</div><h2>То, что ещё впереди ✨</h2><p>От маленьких желаний до больших планов.</p></div><div class="dreams" id="dreams"><div class="empty card" style="grid-column:1/-1"><span>✨</span><span>Загрузка...</span></div></div></div></section>
-
-<section id="dishesSection"><div class="container"><div class="head"><div class="label">Наши вкусняшки</div><h2>Что мы готовим 🍰</h2><p>Наши любимые блюда и рецепты.</p></div><div class="dishes" id="dishes"><div class="empty card" style="grid-column:1/-1"><span>🍰</span><span>Блюда появятся здесь</span></div></div></div></section>
-
-<section><div class="container"><div class="head"><div class="label">Даты</div><h2>Наши дни рождения 🎂</h2></div><div class="bdays">
-<div class="birthday card"><div class="bi">🧑🏻</div><h3>Никита</h3><p>02 января 2003</p></div>
-<div class="birthday card"><div class="bi">👩🏻</div><h3>Валерия</h3><p>31 декабря 2003</p></div>
-</div></div></section>
-
-<section id="secret"><div class="container"><div class="secret card"><div class="si">🔐</div><div class="secrettext" id="secretText">У меня для тебя кое-что есть...</div><button onclick="nextSecret()">Открыть секрет 💗</button></div></div></section>
+  <div class="grid" id="grid"></div>
+  <div class="empty" id="empty" style="display:none"></div>
 </main>
 
-<footer><div class="fh">💙💗</div>Никита & Валерия<br>Наш уголок • 2026</footer>
-
-<nav class="nav">
-<button class="active" onclick="go('home',this)"><span>🏠</span>Главная</button>
-<button onclick="go('history',this)"><span>📖</span>История</button>
-<button onclick="go('gallerySection',this)"><span>📸</span>Фото</button>
-<button onclick="go('dreamsSection',this)"><span>✨</span>Мечты</button>
-<button onclick="go('secret',this)"><span>💗</span>Секрет</button>
-</nav>
-</div>
-
-<div class="toast" id="toast"></div>
-
-<div id="lightbox" onclick="closeLightbox(event)">
-  <button class="close" onclick="closeLightbox(event)">✕</button>
-  <img id="lightboxImg" src="" alt="">
-</div>
-
-<div class="modal" id="editor">
-  <div class="modalBox">
-    <div class="modalHead">
-      <h2>✏️ Редактор сайта</h2>
-      <button class="modalClose" onclick="closeEditor()">✕</button>
+<div class="modal-bg" id="modal">
+  <div class="modal">
+    <div class="modal-head">
+      <input type="text" id="mapName" placeholder="Название карты (напр. Малиновка, Прохоровка)">
+      <button class="btn-ghost btn-sm" id="editOther">📁 Сменить карту</button>
     </div>
-    <div class="modalTabs" id="editorTabs">
-      <button data-tab="events" onclick="setTab('events')">📖 История</button>
-      <button data-tab="calendar" onclick="setTab('calendar')">📅 Календарь</button>
-      <button data-tab="places" onclick="setTab('places')">📍 Места</button>
-      <button data-tab="dreams" onclick="setTab('dreams')">✨ Мечты</button>
-      <button data-tab="dishes" onclick="setTab('dishes')">🍰 Вкусняшки</button>
-      <button data-tab="secrets" onclick="setTab('secrets')">💗 Секреты</button>
-      <button data-tab="photos" onclick="setTab('photos')">📸 Фото</button>
-      <button data-tab="settings" onclick="setTab('settings')">⚙ Общее</button>
+    <div class="toolbar">
+      <button class="tool active" data-tool="arrow">→ Стрелка</button>
+      <button class="tool" data-tool="line">— Линия</button>
+      <button class="tool" data-tool="pen">✎ Кисть</button>
+      <div class="spacer"></div>
+      <span class="tool-label">Цвет</span>
+      <input type="color" id="color" value="#ff9c2b">
+      <span class="tool-label">Толщина</span>
+      <input type="range" id="width" min="1" max="20" value="4">
+      <button class="tool" id="undo">↶ Отменить</button>
+      <button class="tool" id="clearDraw">🗑 Рисунок</button>
     </div>
-    <div class="modalBody" id="editorBody"></div>
-    <div class="modalFoot">
-      <button class="btnPrimary" onclick="showJSON()">💾 Сохранить — получить JSON</button>
-      <button class="btnGhost" onclick="reloadData()">Отменить</button>
+    <div class="canvas-wrap">
+      <canvas id="canvas"></canvas>
+    </div>
+    <div class="modal-foot">
+      <button class="btn-ghost" id="cancel">Отмена</button>
+      <button class="btn-primary" id="save">💾 Сохранить</button>
     </div>
   </div>
 </div>
 
-<div class="modal" id="jsonModal">
-  <div class="modalBox">
-    <div class="modalHead">
-      <h2>📋 Готовый data.json</h2>
-      <button class="modalClose" onclick="closeJSON()">✕</button>
-    </div>
-    <div class="modalBody">
-      <div class="hintBox">
-        <b>Что делать дальше:</b><br>
-        1. Скопируйте код ниже.<br>
-        2. Откройте файл <b>data.json</b> в вашем репозитории на GitHub.<br>
-        3. Нажмите карандаш ✏️ и <b>замените</b> всё содержимое этим кодом.<br>
-        4. Нажмите <b>Commit changes</b>. Готово!
-      </div>
-      <textarea class="jsonText" id="jsonText" readonly></textarea>
-    </div>
-    <div class="modalFoot">
-      <button class="btnPrimary" onclick="copyJSON()">📋 Скопировать</button>
-      <button class="btnGhost" onclick="downloadJSON()">⬇️ Скачать файл</button>
-    </div>
-  </div>
-</div>
+<input type="file" id="fileInput" accept="image/*" hidden>
 
 <script>
-const PIN = "2568";
-const START_DEFAULT = "2026-06-13T00:00:00";
-const CAL_COLORS = ["#62a8ff","#ff72ad","#aa7cff","#63e6be","#ffb84d","#ff6b6b","#4dd0e1","#ba68c8"];
-const MONTH_SHORT = ["Янв","Фев","Мар","Апр","Май","Июн","Июл","Авг","Сен","Окт","Ноя","Дек"];
+/* ==================== IndexedDB ==================== */
+const DB_NAME = 'lt-tactics-db';
+const STORE = 'maps';
+let dbPromise = null;
 
-let entered = "";
-let DATA = {startDate:"2026-06-13", events:[], places:[], dreams:[], dishes:[], secrets:[], photos:[], calendar:{marks:[],cycles:[],schedules:[]}};
-let DRAFT = null;
-let editorTab = "events";
-let editing = null;
-let secrets = [];
-let secretIndex = -1;
-let sortMode = localStorage.getItem("nv_sort_events") || "asc";
-
-let calYear, calMonth;
-let calSwipeX = 0, calSwipeY = 0;
-let selectedDate = null;
-
-function esc(v){
-  return String(v ?? "")
-    .replaceAll("&","&amp;")
-    .replaceAll("<","&lt;")
-    .replaceAll(">","&gt;")
-    .replaceAll('"',"&quot;")
-    .replaceAll("'","&#039;");
-}
-function escAttr(v){
-  return String(v ?? "")
-    .replaceAll("&","&amp;")
-    .replaceAll('"',"&quot;")
-    .replaceAll("<","&lt;")
-    .replaceAll(">","&gt;");
-}
-function fmtDate(v){
-  if(!v) return "";
-  const d = new Date(v);
-  return Number.isNaN(d.getTime()) ? v :
-    d.toLocaleDateString("ru-RU",{day:"2-digit",month:"2-digit",year:"numeric"});
-}
-function toIso(d){
-  const y = d.getFullYear();
-  const m = String(d.getMonth() + 1).padStart(2, "0");
-  const day = String(d.getDate()).padStart(2, "0");
-  return `${y}-${m}-${day}`;
-}
-function toast(t){
-  const x = document.getElementById("toast");
-  x.textContent = t;
-  x.classList.add("show");
-  clearTimeout(window.__tt);
-  window.__tt = setTimeout(()=>x.classList.remove("show"),2400);
-}
-
-function pin(n){
-  if(entered.length >= 4) return;
-  entered += n;
-  document.querySelectorAll(".dot").forEach((x,i)=>x.classList.toggle("on", i < entered.length));
-  if(entered.length === 4) setTimeout(checkPin, 160);
-}
-function checkPin(){
-  if(entered === PIN){
-    localStorage.setItem("nv_site_unlocked","1");
-    unlock();
-  } else {
-    document.getElementById("err").textContent = "Неверный код 💔";
-    entered = "";
-    document.querySelectorAll(".dot").forEach(x=>x.classList.remove("on"));
-    setTimeout(()=>document.getElementById("err").textContent="", 1500);
-  }
-}
-function unlock(){
-  document.getElementById("lock").style.display = "none";
-  document.getElementById("app").style.display = "block";
-  init();
-}
-if(localStorage.getItem("nv_site_unlocked") === "1") unlock();
-
-function getStart(){
-  const d = new Date(DATA.startDate || START_DEFAULT);
-  return Number.isNaN(d.getTime()) ? new Date(START_DEFAULT) : d;
-}
-function counter(){
-  const diff = Math.max(0, Date.now() - getStart().getTime());
-  const s = Math.floor(diff/1000);
-  const days = Math.floor(s/86400);
-  const h = Math.floor(s%86400/3600);
-  const m = Math.floor(s%3600/60);
-  const sec = s%60;
-  const el = document.getElementById("time");
-  if(el) el.textContent = `${days} дн. ${h} ч. ${m} мин. ${sec} сек.`;
-}
-setInterval(counter, 1000);
-
-async function loadData(){
-  try{
-    const r = await fetch("data.json?v=" + Date.now());
-    if(!r.ok) throw new Error("HTTP " + r.status);
-    const j = await r.json();
-    DATA = {
-      startDate: j.startDate || "2026-06-13",
-      events: Array.isArray(j.events) ? j.events : [],
-      places: Array.isArray(j.places) ? j.places : [],
-      dreams: Array.isArray(j.dreams) ? j.dreams : [],
-      dishes: Array.isArray(j.dishes) ? j.dishes : [],
-      secrets: Array.isArray(j.secrets) ? j.secrets : [],
-      photos: Array.isArray(j.photos) ? j.photos : [],
-      calendar: {
-        marks: Array.isArray(j.calendar?.marks) ? j.calendar.marks : [],
-        cycles: Array.isArray(j.calendar?.cycles) ? j.calendar.cycles : [],
-        schedules: Array.isArray(j.calendar?.schedules) ? j.calendar.schedules : []
-      }
-    };
-  }catch(e){
-    console.warn("Не удалось загрузить data.json:", e);
-  }
-}
-
-function renderAll(){
-  renderEvents();
-  renderPhotos();
-  renderPlaces();
-  renderDreams();
-  renderDishes();
-  renderSecrets();
-  renderStartDate();
-  renderCalendar();
-  updateSortToggle();
-}
-function renderStartDate(){
-  const d = getStart();
-  const el = document.getElementById("startDate");
-  if(el) el.textContent = "с " + d.toLocaleDateString("ru-RU",{day:"numeric",month:"long",year:"numeric"}) + " 💙💗";
-}
-function setSort(mode){
-  sortMode = mode;
-  localStorage.setItem("nv_sort_events", mode);
-  renderEvents();
-  updateSortToggle();
-  toast(mode === "asc" ? "↑ Сначала старые" : "↓ Сначала новые");
-}
-function updateSortToggle(){
-  document.querySelectorAll("#sortToggle button").forEach(b=>{
-    b.classList.toggle("active", b.dataset.mode === sortMode);
-  });
-}
-function sortedEvents(list){
-  return [...list].sort((a,b)=>{
-    const da = new Date(a.date || 0).getTime() || 0;
-    const db = new Date(b.date || 0).getTime() || 0;
-    return sortMode === "asc" ? da - db : db - da;
-  });
-}
-function renderEvents(){
-  const el = document.getElementById("events");
-  const list = sortedEvents(DATA.events || []);
-  if(!list.length){
-    el.innerHTML = `<div class="empty card"><span>❤️</span><span>Пока здесь пусто</span></div>`;
-    return;
-  }
-  el.innerHTML = list.map(x => `
-    <article class="event card">
-      <div class="edate">${esc(fmtDate(x.date))}</div>
-      <h3>${esc(x.title)}</h3>
-      <p>${esc(x.description || "")}</p>
-    </article>
-  `).join("");
-}
-function renderPhotos(){
-  const el = document.getElementById("gallery");
-  const list = DATA.photos || [];
-  if(!list.length){
-    el.innerHTML = `<div class="empty card" style="grid-column:1/-1"><span>📸</span><span>Фотографии появятся здесь</span></div>`;
-    return;
-  }
-  el.innerHTML = list.map(x => `
-    <div class="photo" onclick="openLightbox('${escAttr(x.image_url)}')">
-      <img src="${escAttr(x.image_url)}" alt="${escAttr(x.title || "Фото")}" loading="lazy"
-           onerror="this.style.opacity=.35">
-      ${x.title ? `<div class="photoCaption">${esc(x.title)}</div>` : ""}
-    </div>
-  `).join("");
-}
-function renderPlaces(){
-  const el = document.getElementById("places");
-  const list = DATA.places || [];
-  if(!list.length){
-    el.innerHTML = `<div class="empty card" style="grid-column:1/-1"><span>📍</span><span>Пока здесь пусто</span></div>`;
-    return;
-  }
-  el.innerHTML = list.map(x => `
-    <article class="place card">
-      <div class="pi">${esc(x.icon || "📍")}</div>
-      <h3>${esc(x.title)}</h3>
-      <p>${esc(x.description || "")}</p>
-      ${x.map_url ? `<a href="${escAttr(x.map_url)}" target="_blank" rel="noopener">Открыть карту →</a>` : ""}
-    </article>
-  `).join("");
-}
-function renderDreams(){
-  const el = document.getElementById("dreams");
-  const list = DATA.dreams || [];
-  if(!list.length){
-    el.innerHTML = `<div class="empty card" style="grid-column:1/-1"><span>✨</span><span>Пока здесь пусто</span></div>`;
-    return;
-  }
-  const saved = getDreamsState();
-  el.innerHTML = list.map((x,i) => {
-    const done = saved[i] !== undefined ? saved[i] : !!x.done;
-    return `
-      <button class="dream ${done?"done":""}" onclick="toggleDream(${i})">
-        <span class="check">${done?"✓":""}</span>
-        <span class="dt">${esc(x.title)}</span>
-      </button>
-    `;
-  }).join("");
-}
-function getDreamsState(){
-  try{ return JSON.parse(localStorage.getItem("nv_dreams") || "{}"); }
-  catch{ return {}; }
-}
-function toggleDream(i){
-  const s = getDreamsState();
-  const current = s[i] !== undefined ? s[i] : !!(DATA.dreams[i]?.done);
-  s[i] = !current;
-  localStorage.setItem("nv_dreams", JSON.stringify(s));
-  renderDreams();
-}
-function renderDishes(){
-  const el = document.getElementById("dishes");
-  const list = DATA.dishes || [];
-  if(!list.length){
-    el.innerHTML = `<div class="empty card" style="grid-column:1/-1"><span>🍰</span><span>Блюда появятся здесь</span></div>`;
-    return;
-  }
-  el.innerHTML = list.map(x => {
-    const hasImg = x.image_url;
-    return `
-      <article class="dish card">
-        ${hasImg
-          ? `<div class="dishImg" onclick="openLightbox('${escAttr(x.image_url)}')" style="cursor:pointer">
-               <img src="${escAttr(x.image_url)}" alt="${escAttr(x.title || "")}" loading="lazy" onerror="this.style.opacity=.3">
-             </div>`
-          : `<div class="dishImgEmpty">🍽</div>`}
-        <div class="dishBody">
-          <h3>${esc(x.title || "")}</h3>
-          ${x.recipe ? `<div class="recipe">${esc(x.recipe)}</div>` : ""}
-        </div>
-      </article>
-    `;
-  }).join("");
-}
-function renderSecrets(){
-  secrets = DATA.secrets || [];
-}
-function nextSecret(){
-  if(!secrets.length){
-    document.getElementById("secretText").textContent = "Секретов пока нет 💗";
-    return;
-  }
-  secretIndex = (secretIndex + 1) % secrets.length;
-  document.getElementById("secretText").textContent = secrets[secretIndex].text;
-}
-
-/* ===== КАЛЕНДАРЬ ===== */
-function calToday(){
-  const t = new Date();
-  calYear = t.getFullYear();
-  calMonth = t.getMonth();
-  renderCalendar();
-}
-function calPrev(){
-  calMonth--;
-  if(calMonth < 0){ calMonth = 11; calYear--; }
-  renderCalendar();
-}
-function calNext(){
-  calMonth++;
-  if(calMonth > 11){ calMonth = 0; calYear++; }
-  renderCalendar();
-}
-function togglePicker(){
-  const p = document.getElementById("calPicker");
-  if(p) p.classList.toggle("open");
-}
-function closePicker(){
-  const p = document.getElementById("calPicker");
-  if(p) p.classList.remove("open");
-}
-function pickerYear(delta){
-  calYear += delta;
-  renderCalendar();
-}
-function pickerYearSet(v){
-  const y = parseInt(v, 10);
-  if(!Number.isNaN(y) && y > 1900 && y < 2200){
-    calYear = y;
-    renderCalendar();
-  }
-}
-function pickerMonth(m){
-  calMonth = m;
-  closePicker();
-  renderCalendar();
-}
-function pickerGoToday(){
-  const t = new Date();
-  calYear = t.getFullYear();
-  calMonth = t.getMonth();
-  closePicker();
-  renderCalendar();
-}
-
-function getMarksForDate(date){
-  const marks = [];
-  const dStr = toIso(date);
-
-  (DATA.calendar?.marks || []).forEach(m => {
-    if(m.date === dStr) marks.push({title: m.title || "Событие", color: m.color || "#62a8ff"});
-  });
-
-  (DATA.calendar?.cycles || []).forEach(c => {
-    const start = new Date((c.start || "") + "T00:00:00");
-    if(Number.isNaN(start.getTime())) return;
-    start.setHours(0,0,0,0);
-    const diff = Math.floor((date - start) / 86400000);
-    if(diff < 0) return;
-    const every = Math.max(1, Number(c.every) || 1);
-    if(diff % every === 0){
-      marks.push({title: c.title || "Цикл", color: c.color || "#63e6be"});
-    }
-  });
-
-  (DATA.calendar?.schedules || []).forEach(s => {
-    const start = new Date((s.start || "") + "T00:00:00");
-    if(Number.isNaN(start.getTime())) return;
-    start.setHours(0,0,0,0);
-    const diff = Math.floor((date - start) / 86400000);
-    if(diff < 0) return;
-    const work = Math.max(1, Number(s.workDays) || 1);
-    const off = Math.max(1, Number(s.offDays) || 1);
-    const cycle = work + off;
-    const pos = diff % cycle;
-    if(pos < work){
-      marks.push({title: s.workTitle || "Работа", color: s.workColor || "#62a8ff"});
-    } else {
-      marks.push({title: s.offTitle || "Выходной", color: s.offColor || "#63e6be"});
-    }
-  });
-
-  return marks;
-}
-function renderCalendar(){
-  if(calYear === undefined){
-    const t = new Date();
-    calYear = t.getFullYear();
-    calMonth = t.getMonth();
-  }
-  const title = document.getElementById("calTitle");
-  const grid = document.getElementById("calGrid");
-  if(!title || !grid) return;
-
-  const monthNames = ["Январь","Февраль","Март","Апрель","Май","Июнь","Июль","Август","Сентябрь","Октябрь","Ноябрь","Декабрь"];
-  title.textContent = monthNames[calMonth] + " " + calYear;
-
-  const pyi = document.getElementById("pickerYearInput");
-  if(pyi) pyi.value = calYear;
-  const pm = document.getElementById("pickerMonths");
-  if(pm){
-    pm.innerHTML = MONTH_SHORT.map((m, i) =>
-      `<button class="${i===calMonth?"active":""}" onclick="pickerMonth(${i})">${m}</button>`
-    ).join("");
-  }
-
-  const today = new Date();
-  today.setHours(0,0,0,0);
-
-  const firstDay = new Date(calYear, calMonth, 1);
-  const daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
-  let startDow = firstDay.getDay() - 1;
-  if(startDow < 0) startDow = 6;
-
-  const totalCells = 42;
-  let html = "";
-  for(let i = 0; i < totalCells; i++){
-    const dayNum = i - startDow + 1;
-    if(dayNum < 1 || dayNum > daysInMonth){
-      html += `<div class="calDay empty"></div>`;
-      continue;
-    }
-    const date = new Date(calYear, calMonth, dayNum);
-    date.setHours(0,0,0,0);
-    const marks = getMarksForDate(date);
-    const isToday = date.getTime() === today.getTime();
-    const isSelected = selectedDate && selectedDate.getTime() === date.getTime();
-    let cls = "calDay";
-    if(isToday) cls += " today";
-    if(isSelected) cls += " selected";
-    let style = "";
-    let dotsHTML = "";
-    if(marks.length){
-      const m = marks[0];
-      style = `background:${m.color}22;border-color:${m.color}66;`;
-      // несколько точек — по одной на каждое событие (максимум 5)
-      const shown = marks.slice(0, 5);
-      dotsHTML = `<span class="calDots">${
-        shown.map(mm =>
-          `<span class="calDot" style="background:${mm.color};box-shadow:0 0 6px ${mm.color}"></span>`
-        ).join("")
-      }</span>`;
-    }
-    const tip = marks.map(x=>x.title).join(", ");
-    const isoD = toIso(date);
-    html += `<div class="${cls}" style="${style}" title="${escAttr(tip)}" onclick="selectDay('${isoD}')">
-      <span class="calNum">${dayNum}</span>${dotsHTML}
-    </div>`;
-  }
-  grid.innerHTML = html;
-}
-
-function selectDay(isoDate){
-  const parts = isoDate.split("-");
-  const d = new Date(parseInt(parts[0],10), parseInt(parts[1],10) - 1, parseInt(parts[2],10));
-  d.setHours(0,0,0,0);
-  selectedDate = d;
-  renderCalendar();
-
-  const marks = getMarksForDate(d);
-  const events = (DATA.events || []).filter(ev => (ev.date || "").slice(0,10) === isoDate);
-
-  const weekDays = ["воскресенье","понедельник","вторник","среда","четверг","пятница","суббота"];
-  const monthGen = ["января","февраля","марта","апреля","мая","июня","июля","августа","сентября","октября","ноября","декабря"];
-  const title = `${d.getDate()} ${monthGen[d.getMonth()]} ${d.getFullYear()}, ${weekDays[d.getDay()]}`;
-
-  let rows = "";
-  marks.forEach(m => {
-    rows += `<div class="ciRow"><span class="legendDot" style="background:${m.color}"></span><b>${esc(m.title)}</b></div>`;
-  });
-  events.forEach(ev => {
-    rows += `<div class="ciRow">📖 <div><b>${esc(ev.title)}</b>${ev.description ? `<br><small style="color:var(--muted)">${esc(ev.description)}</small>` : ""}</div></div>`;
-  });
-  if(!rows) rows = `<div class="ciEmpty">На этот день пока ничего нет 🌙</div>`;
-
-  const info = document.getElementById("calDayInfo");
-  info.innerHTML = `
-    <div class="ciHead">
-      <div class="ciTitle">${esc(title)}</div>
-      <button class="ciClose" onclick="closeDayInfo()">✕</button>
-    </div>
-    ${rows}
-  `;
-  info.classList.add("open");
-}
-function closeDayInfo(){
-  selectedDate = null;
-  document.getElementById("calDayInfo").classList.remove("open");
-  renderCalendar();
-}
-
-document.addEventListener("DOMContentLoaded", () => {
-  const cv = document.getElementById("calendar");
-  if(!cv) return;
-  cv.addEventListener("touchstart", e => {
-    if(!e.touches[0]) return;
-    calSwipeX = e.touches[0].clientX;
-    calSwipeY = e.touches[0].clientY;
-  }, {passive: true});
-  cv.addEventListener("touchend", e => {
-    const t = e.changedTouches[0];
-    if(!t) return;
-    const dx = t.clientX - calSwipeX;
-    const dy = t.clientY - calSwipeY;
-    if(Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.5){
-      if(dx > 0) calPrev(); else calNext();
-    }
-  }, {passive: true});
-});
-
-function openLightbox(url){
-  document.getElementById("lightboxImg").src = url;
-  document.getElementById("lightbox").classList.add("open");
-  document.body.style.overflow = "hidden";
-}
-function closeLightbox(e){
-  if(e) e.stopPropagation();
-  document.getElementById("lightbox").classList.remove("open");
-  document.body.style.overflow = "";
-}
-
-function go(id, b){
-  document.getElementById(id)?.scrollIntoView({behavior:"smooth",block:"start"});
-  document.querySelectorAll(".nav button").forEach(x=>x.classList.remove("active"));
-  b.classList.add("active");
-}
-window.addEventListener("scroll", () => {
-  const ids = ["home","history","gallerySection","dreamsSection","secret"];
-  const y = scrollY + 180;
-  let n = 0;
-  ids.forEach((id,i)=>{
-    const e = document.getElementById(id);
-    if(e && e.offsetTop <= y) n = i;
-  });
-  document.querySelectorAll(".nav button").forEach((b,i)=>b.classList.toggle("active", i === n));
-});
-
-/* ===== РЕДАКТОР ===== */
-function cloneData(o){ return JSON.parse(JSON.stringify(o)); }
-function openEditor(){
-  DRAFT = cloneData(DATA);
-  editorTab = "events";
-  editing = null;
-  document.getElementById("editor").classList.add("open");
-  document.body.style.overflow = "hidden";
-  renderEditor();
-}
-function closeEditor(){
-  document.getElementById("editor").classList.remove("open");
-  document.body.style.overflow = "";
-  editing = null;
-}
-function setTab(t){
-  editorTab = t;
-  editing = null;
-  renderEditor();
-}
-function startEdit(key, index){
-  editing = { key, index };
-  renderEditor();
-  setTimeout(()=>{
-    const f = document.querySelector(".eForm");
-    if(f) f.scrollIntoView({behavior:"smooth",block:"start"});
-  }, 50);
-}
-function cancelEdit(){ editing = null; renderEditor(); }
-function isEditing(key, index){ return editing && editing.key === key && editing.index === index; }
-function formClass(key){ return "eForm" + (editing && editing.key === key ? " editing" : ""); }
-function formTitle(key, addText, editText){
-  return `<div class="formTitle ${editing && editing.key === key ? "edit" : ""}">${
-    editing && editing.key === key ? "✏️ " + editText : addText
-  }</div>`;
-}
-function formButtons(key){
-  if(editing && editing.key === key){
-    return `<div class="formBtns">
-      <button type="submit">💾 Сохранить изменения</button>
-      <button type="button" class="cancelEdit" onclick="cancelEdit()">Отмена</button>
-    </div>`;
-  }
-  return `<button type="submit">+ Добавить</button>`;
-}
-
-function parsePhoto(item){
-  const url = item?.image_url || "";
-  const title = item?.title || "";
-  if(!url) return {title, ext:"jpg", external:""};
-  if(url.startsWith("images/")){
-    const rest = url.slice(7);
-    const dot = rest.lastIndexOf(".");
-    const ext = dot > 0 ? rest.slice(dot+1).toLowerCase() : "jpg";
-    const fileBase = dot > 0 ? rest.slice(0, dot) : rest;
-    return {title: title || fileBase, ext, external:""};
-  }
-  return {title, ext:"jpg", external:url};
-}
-function photoPreviewHTML(title, ext, external){
-  if(external){
-    return `🌐 <b>Ссылка на фото:</b><br><code>${esc(external)}</code>`;
-  }
-  const name = (title || "Название").trim();
-  return `📁 Загрузите файл <b>${esc(name)}.${esc(ext)}</b> в папку <b>images</b> на GitHub.<br>После этого фото появится на сайте.`;
-}
-function updatePhotoPreview(form){
-  const title = form.querySelector('[name=title]').value.trim();
-  const ext = form.querySelector('[name=ext]').value;
-  const external = form.querySelector('[name=external_url]').value.trim();
-  const preview = form.querySelector('#photoPreview');
-  if(preview) preview.innerHTML = photoPreviewHTML(title, ext, external);
-}
-function parseDishPhoto(item){
-  const url = item?.image_url || "";
-  if(!url) return {photo_title:"", ext:"jpg", external:""};
-  if(url.startsWith("images/")){
-    const rest = url.slice(7);
-    const dot = rest.lastIndexOf(".");
-    const ext = dot > 0 ? rest.slice(dot+1).toLowerCase() : "jpg";
-    const fileBase = dot > 0 ? rest.slice(0, dot) : rest;
-    return {photo_title: fileBase, ext, external:""};
-  }
-  return {photo_title:"", ext:"jpg", external:url};
-}
-function dishPreviewHTML(photo_title, ext, external){
-  if(external){
-    return `🌐 <b>Ссылка на фото:</b><br><code>${esc(external)}</code>`;
-  }
-  const name = (photo_title || "Название блюда").trim();
-  return `📁 Загрузите файл <b>${esc(name)}.${esc(ext)}</b> в папку <b>images</b> на GitHub.<br>После этого фото появится на сайте.`;
-}
-function updateDishPreview(form){
-  const title = form.querySelector('[name=title]').value.trim();
-  const ptRaw = form.querySelector('[name=photo_title]').value.trim();
-  const ext = form.querySelector('[name=ext]').value;
-  const external = form.querySelector('[name=external_url]').value.trim();
-  const preview = form.querySelector('#dishPreview');
-  if(preview) preview.innerHTML = dishPreviewHTML(ptRaw || title, ext, external);
-}
-
-// палитра: цветные кнопки + input[type=color] для любого цвета
-function paletteHTML(name, selected){
-  const isCustom = !CAL_COLORS.includes(selected);
-  const customValue = isCustom ? selected : CAL_COLORS[0];
-  return `<div class="calPalette">${
-    CAL_COLORS.map(c =>
-      `<label><input type="radio" name="${name}" value="${c}" ${c===selected?"checked":""}>
-        <span style="background:${c};box-shadow:0 0 0 2px ${c}33"></span></label>`
-    ).join("")
-  }
-    <input type="color" class="customColor" name="${name}Custom" value="${customValue}"
-           title="Свой цвет"
-           oninput="pickCustomColor(this, '${name}')">
-    ${isCustom ? `<input type="hidden" name="${name}" value="${selected}">` : ""}
-  </div>`;
-}
-function pickCustomColor(input, name){
-  const form = input.closest("form");
-  if(!form) return;
-  // снимаем выбор с радиокнопок
-  form.querySelectorAll(`input[type=radio][name="${name}"]`).forEach(r=>r.checked=false);
-  // удаляем старый hidden
-  form.querySelectorAll(`input[type=hidden][name="${name}"]`).forEach(h=>h.remove());
-  // добавляем новый hidden с выбранным цветом
-  const h = document.createElement("input");
-  h.type = "hidden";
-  h.name = name;
-  h.value = input.value;
-  input.parentNode.appendChild(h);
-}
-
-function renderEditor(){
-  document.querySelectorAll(".modalTabs button").forEach(b=>{
-    b.classList.toggle("active", b.dataset.tab === editorTab);
-  });
-  const body = document.getElementById("editorBody");
-
-  if(editorTab === "events"){
-    const sorted = sortedEvents(DRAFT.events || []);
-    const idxMap = sorted.map(x => DRAFT.events.indexOf(x));
-    const ed = editing && editing.key === "events" ? DRAFT.events[editing.index] : null;
-    const dval = ed && ed.date ? String(ed.date).slice(0,10) : "";
-    body.innerHTML = `
-      <form class="${formClass("events")}" onsubmit="submitEvent(event,this)">
-        ${formTitle("events", "Добавить событие", "Редактировать событие")}
-        <label>Дата</label>
-        <input type="date" name="date" required value="${escAttr(dval)}">
-        <label>Заголовок</label>
-        <input type="text" name="title" required placeholder="Например: Первое свидание" value="${escAttr(ed?.title || "")}">
-        <label>Описание</label>
-        <textarea name="description" placeholder="Что произошло, что запомнилось">${esc(ed?.description || "")}</textarea>
-        ${formButtons("events")}
-      </form>
-      <div class="eList">
-        ${sorted.map((x,k)=>{
-          const orig = idxMap[k];
-          const active = isEditing("events", orig);
-          return `
-            <div class="eItem ${active?"editing":""}">
-              <div class="eItemInfo">
-                <b>${esc(x.title)}</b>
-                <small>${esc(fmtDate(x.date))}${x.description ? " · "+esc(x.description.slice(0,40)) : ""}</small>
-              </div>
-              <div class="eItemBtns">
-                <button class="eEdit" onclick="startEdit('events',${orig})">✏️</button>
-                <button class="eDel" onclick="delItem('events',${orig})">🗑</button>
-              </div>
-            </div>
-          `;
-        }).join("") || `<div class="eEmpty">Пока ничего нет — добавьте первое событие ✨</div>`}
-      </div>
-    `;
-  }
-  else if(editorTab === "calendar"){
-    const marks = DRAFT.calendar?.marks || [];
-    const cycles = DRAFT.calendar?.cycles || [];
-    const schedules = DRAFT.calendar?.schedules || [];
-    const edM = editing && editing.key === "calMark" ? marks[editing.index] : null;
-    const edS = editing && editing.key === "calSchedule" ? schedules[editing.index] : null;
-    const edC = editing && editing.key === "calCycle" ? cycles[editing.index] : null;
-
-    body.innerHTML = `
-      <div class="hintBox">
-        <b>График работы</b> — введите сколько рабочих и выходных дней подряд.<br>
-        <b>Отдельные дни</b> — конкретные даты.<br>
-        <b>Циклы</b> — если нужна другая периодичность.
-      </div>
-
-      <div class="sectionHead">🔁 График работы N/M</div>
-      <form class="${formClass("calSchedule")}" onsubmit="submitCalSchedule(event,this)">
-        ${formTitle("calSchedule", "Добавить график", "Редактировать график")}
-        <div class="row">
-          <div><label>Рабочих подряд</label><input type="number" name="workDays" min="1" max="30" required value="${escAttr(edS?.workDays ?? 2)}"></div>
-          <div><label>Выходных подряд</label><input type="number" name="offDays" min="1" max="30" required value="${escAttr(edS?.offDays ?? 2)}"></div>
-        </div>
-        <label>Первый рабочий день (начало отсчёта)</label>
-        <input type="date" name="start" required value="${escAttr(edS?.start || toIso(new Date()))}">
-        <div class="row">
-          <div><label>Название работы</label><input type="text" name="workTitle" placeholder="Работа" value="${escAttr(edS?.workTitle || "Работа")}"></div>
-          <div><label>Название выходного</label><input type="text" name="offTitle" placeholder="Выходной" value="${escAttr(edS?.offTitle || "Выходной")}"></div>
-        </div>
-        <div class="paletteRow">
-          <div class="paletteBlock"><label>Цвет работы</label>${paletteHTML("workColor", edS?.workColor || CAL_COLORS[0])}</div>
-          <div class="paletteBlock"><label>Цвет выходного</label>${paletteHTML("offColor", edS?.offColor || CAL_COLORS[3])}</div>
-        </div>
-        ${formButtons("calSchedule")}
-      </form>
-      <div class="eList">
-        ${schedules.map((s,i)=>{
-          const active = isEditing("calSchedule", i);
-          return `
-            <div class="eItem ${active?"editing":""}">
-              <span class="eColorDot" style="background:${escAttr(s.workColor||CAL_COLORS[0])}"></span>
-              <div class="eItemInfo">
-                <b>${esc(s.workDays||1)}/${esc(s.offDays||1)} — ${esc(s.workTitle||"Работа")} / ${esc(s.offTitle||"Выходной")}</b>
-                <small>старт: ${esc(fmtDate(s.start))}</small>
-              </div>
-              <div class="eItemBtns">
-                <button class="eEdit" onclick="startEdit('calSchedule',${i})">✏️</button>
-                <button class="eDel" onclick="delCal('schedules',${i})">🗑</button>
-              </div>
-            </div>
-          `;
-        }).join("") || `<div class="eEmpty">Графиков пока нет</div>`}
-      </div>
-
-      <div class="sectionHead">📌 Отдельные дни</div>
-      <form class="${formClass("calMark")}" onsubmit="submitCalMark(event,this)">
-        ${formTitle("calMark", "Добавить день", "Редактировать день")}
-        <label>Дата</label>
-        <input type="date" name="date" required value="${escAttr(edM?.date || "")}">
-        <label>Название</label>
-        <input type="text" name="title" required placeholder="Например: Годовщина" value="${escAttr(edM?.title || "")}">
-        <label>Цвет</label>
-        ${paletteHTML("calMarkColor", edM?.color || CAL_COLORS[0])}
-        ${formButtons("calMark")}
-      </form>
-      <div class="eList">
-        ${marks.map((m,i)=>{
-          const active = isEditing("calMark", i);
-          return `
-            <div class="eItem ${active?"editing":""}">
-              <span class="eColorDot" style="background:${escAttr(m.color||CAL_COLORS[0])}"></span>
-              <div class="eItemInfo">
-                <b>${esc(m.title || "Без названия")}</b>
-                <small>${esc(fmtDate(m.date))}</small>
-              </div>
-              <div class="eItemBtns">
-                <button class="eEdit" onclick="startEdit('calMark',${i})">✏️</button>
-                <button class="eDel" onclick="delCal('marks',${i})">🗑</button>
-              </div>
-            </div>
-          `;
-        }).join("") || `<div class="eEmpty">Отдельных дней пока нет</div>`}
-      </div>
-
-      <div class="sectionHead">🔁 Циклы (раз в N дней)</div>
-      <form class="${formClass("calCycle")}" onsubmit="submitCalCycle(event,this)">
-        ${formTitle("calCycle", "Добавить цикл", "Редактировать цикл")}
-        <label>Название</label>
-        <input type="text" name="title" required placeholder="Например: Зарядка" value="${escAttr(edC?.title || "")}">
-        <div class="row">
-          <div><label>Повтор каждые N дней</label><input type="number" name="every" min="1" max="365" required value="${escAttr(edC?.every ?? 2)}"></div>
-          <div><label>Начало отсчёта</label><input type="date" name="start" required value="${escAttr(edC?.start || toIso(new Date()))}"></div>
-        </div>
-        <label>Цвет</label>
-        ${paletteHTML("calCycleColor", edC?.color || CAL_COLORS[3])}
-        ${formButtons("calCycle")}
-      </form>
-      <div class="eList">
-        ${cycles.map((c,i)=>{
-          const active = isEditing("calCycle", i);
-          return `
-            <div class="eItem ${active?"editing":""}">
-              <span class="eColorDot" style="background:${escAttr(c.color||CAL_COLORS[3])}"></span>
-              <div class="eItemInfo">
-                <b>${esc(c.title || "Цикл")}</b>
-                <small>каждые ${esc(c.every||1)} дн. · с ${esc(fmtDate(c.start))}</small>
-              </div>
-              <div class="eItemBtns">
-                <button class="eEdit" onclick="startEdit('calCycle',${i})">✏️</button>
-                <button class="eDel" onclick="delCal('cycles',${i})">🗑</button>
-              </div>
-            </div>
-          `;
-        }).join("") || `<div class="eEmpty">Циклов пока нет</div>`}
-      </div>
-    `;
-  }
-  else if(editorTab === "places"){
-    const ed = editing && editing.key === "places" ? DRAFT.places[editing.index] : null;
-    body.innerHTML = `
-      <form class="${formClass("places")}" onsubmit="submitPlace(event,this)">
-        ${formTitle("places", "Добавить место", "Редактировать место")}
-        <div class="row">
-          <div><label>Иконка</label><input type="text" name="icon" placeholder="📍" maxlength="4" value="${escAttr(ed?.icon || "")}"></div>
-          <div><label>Название</label><input type="text" name="title" required placeholder="Наш парк" value="${escAttr(ed?.title || "")}"></div>
-        </div>
-        <label>Описание</label>
-        <textarea name="description" placeholder="Что это за место">${esc(ed?.description || "")}</textarea>
-        <label>Ссылка на карту (необязательно)</label>
-        <input type="url" name="map_url" placeholder="https://yandex.ru/maps/..." value="${escAttr(ed?.map_url || "")}">
-        ${formButtons("places")}
-      </form>
-      <div class="eList">
-        ${(DRAFT.places||[]).map((x,i)=>{
-          const active = isEditing("places", i);
-          return `
-            <div class="eItem ${active?"editing":""}">
-              <div class="eItemInfo">
-                <b>${esc(x.icon||"📍")} ${esc(x.title)}</b>
-                <small>${esc((x.description||"").slice(0,50))}</small>
-              </div>
-              <div class="eItemBtns">
-                <button class="eEdit" onclick="startEdit('places',${i})">✏️</button>
-                <button class="eDel" onclick="delItem('places',${i})">🗑</button>
-              </div>
-            </div>
-          `;
-        }).join("") || `<div class="eEmpty">Пока ничего нет 📍</div>`}
-      </div>
-    `;
-  }
-  else if(editorTab === "dreams"){
-    const ed = editing && editing.key === "dreams" ? DRAFT.dreams[editing.index] : null;
-    body.innerHTML = `
-      <form class="${formClass("dreams")}" onsubmit="submitDream(event,this)">
-        ${formTitle("dreams", "Добавить мечту", "Редактировать мечту")}
-        <label>Мечта</label>
-        <input type="text" name="title" required placeholder="Например: Съездить в Париж 🗼" value="${escAttr(ed?.title || "")}">
-        <label>Уже сбылось?</label>
-        <label style="display:flex;align-items:center;gap:8px;font-size:13px;color:#fff;text-transform:none;letter-spacing:0;font-weight:500;padding:10px;background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:11px">
-          <input type="checkbox" name="done" style="width:auto" ${ed?.done ? "checked" : ""}> Да, сбылась
-        </label>
-        ${formButtons("dreams")}
-      </form>
-      <div class="eList">
-        ${(DRAFT.dreams||[]).map((x,i)=>{
-          const active = isEditing("dreams", i);
-          return `
-            <div class="eItem ${active?"editing":""}">
-              <div class="eItemInfo">
-                <b>${esc(x.title)}</b>
-                <small>${x.done ? "✓ сбылась" : "в планах"}</small>
-              </div>
-              <div class="eItemBtns">
-                <button class="eEdit" onclick="startEdit('dreams',${i})">✏️</button>
-                <button class="eDel" onclick="delItem('dreams',${i})">🗑</button>
-              </div>
-            </div>
-          `;
-        }).join("") || `<div class="eEmpty">Пока ничего нет ✨</div>`}
-      </div>
-    `;
-  }
-  else if(editorTab === "dishes"){
-    const ed = editing && editing.key === "dishes" ? DRAFT.dishes[editing.index] : null;
-    const dp = ed ? parseDishPhoto(ed) : {photo_title:"", ext:"jpg", external:""};
-    body.innerHTML = `
-      <div class="hintBox">
-        <b>Как это работает:</b><br>
-        1. Введите название блюда, рецепт и (по желанию) название фото.<br>
-        2. Нажмите «Сохранить — получить JSON» и вставьте новый data.json на GitHub.<br>
-        3. Загрузите фото в папку <b>images</b> с указанным названием.<br>
-        4. Блюдо с фото появится в разделе «Наши вкусняшки» 🍰
-      </div>
-      <form class="${formClass("dishes")}" onsubmit="submitDish(event,this)">
-        ${formTitle("dishes", "Добавить блюдо", "Редактировать блюдо")}
-        <label>Название блюда</label>
-        <input type="text" name="title" required placeholder="Например: Шоколадный торт"
-               value="${escAttr(ed?.title || "")}" oninput="updateDishPreview(this.form)">
-        <label>Рецепт</label>
-        <textarea name="recipe" class="recipeInput" placeholder="Ингредиенты и как готовить...">${esc(ed?.recipe || "")}</textarea>
-        <label>Название фото (по умолчанию — как блюдо)</label>
-        <input type="text" name="photo_title" placeholder="Например: Шоколадный торт"
-               value="${escAttr(dp.photo_title)}" oninput="updateDishPreview(this.form)">
-        <label>Расширение файла</label>
-        <select name="ext" onchange="updateDishPreview(this.form)">
-          <option value="jpg"  ${dp.ext==="jpg"?"selected":""}>jpg</option>
-          <option value="jpeg" ${dp.ext==="jpeg"?"selected":""}>jpeg</option>
-          <option value="png"  ${dp.ext==="png"?"selected":""}>png</option>
-          <option value="webp" ${dp.ext==="webp"?"selected":""}>webp</option>
-          <option value="gif"  ${dp.ext==="gif"?"selected":""}>gif</option>
-        </select>
-        <label>Или ссылка на фото из интернета</label>
-        <input type="url" name="external_url" placeholder="https://..." value="${escAttr(dp.external)}" oninput="updateDishPreview(this.form)">
-        <div class="hintBox" id="dishPreview">${dishPreviewHTML(dp.photo_title || ed?.title || "", dp.ext, dp.external)}</div>
-        ${formButtons("dishes")}
-      </form>
-      <div class="eList">
-        ${(DRAFT.dishes||[]).map((x,i)=>{
-          const active = isEditing("dishes", i);
-          return `
-            <div class="eItem ${active?"editing":""}">
-              ${x.image_url ? `<img src="${escAttr(x.image_url)}" alt="" onerror="this.style.opacity=.3">` : `<div style="width:42px;height:42px;border-radius:9px;display:grid;place-items:center;background:rgba(255,255,255,.05);flex:none">🍽</div>`}
-              <div class="eItemInfo">
-                <b>${esc(x.title || "Без названия")}</b>
-                <small>${esc((x.recipe||"").slice(0,60))}</small>
-              </div>
-              <div class="eItemBtns">
-                <button class="eEdit" onclick="startEdit('dishes',${i})">✏️</button>
-                <button class="eDel" onclick="delItem('dishes',${i})">🗑</button>
-              </div>
-            </div>
-          `;
-        }).join("") || `<div class="eEmpty">Пока ничего нет 🍰</div>`}
-      </div>
-    `;
-  }
-  else if(editorTab === "secrets"){
-    const ed = editing && editing.key === "secrets" ? DRAFT.secrets[editing.index] : null;
-    body.innerHTML = `
-      <form class="${formClass("secrets")}" onsubmit="submitSecret(event,this)">
-        ${formTitle("secrets", "Добавить секрет", "Редактировать секрет")}
-        <label>Заголовок</label>
-        <input type="text" name="title" required placeholder="Секрет №4" value="${escAttr(ed?.title || "")}">
-        <label>Текст</label>
-        <textarea name="text" required placeholder="Что-то важное...">${esc(ed?.text || "")}</textarea>
-        ${formButtons("secrets")}
-      </form>
-      <div class="eList">
-        ${(DRAFT.secrets||[]).map((x,i)=>{
-          const active = isEditing("secrets", i);
-          return `
-            <div class="eItem ${active?"editing":""}">
-              <div class="eItemInfo">
-                <b>${esc(x.title)}</b>
-                <small>${esc((x.text||"").slice(0,50))}</small>
-              </div>
-              <div class="eItemBtns">
-                <button class="eEdit" onclick="startEdit('secrets',${i})">✏️</button>
-                <button class="eDel" onclick="delItem('secrets',${i})">🗑</button>
-              </div>
-            </div>
-          `;
-        }).join("") || `<div class="eEmpty">Пока ничего нет 💗</div>`}
-      </div>
-    `;
-  }
-  else if(editorTab === "photos"){
-    const ed = editing && editing.key === "photos" ? DRAFT.photos[editing.index] : null;
-    const p = ed ? parsePhoto(ed) : {title:"", ext:"jpg", external:""};
-    body.innerHTML = `
-      <div class="hintBox">
-        <b>Как это работает:</b><br>
-        1. Введите название фотографии.<br>
-        2. Нажмите «Сохранить — получить JSON» и вставьте новый data.json на GitHub.<br>
-        3. Загрузите файл с <b>таким же именем</b> в папку <b>images</b>.<br>
-        4. Фото появится на сайте автоматически.
-      </div>
-      <form class="${formClass("photos")}" onsubmit="submitPhoto(event,this)" id="photoForm">
-        ${formTitle("photos", "Добавить фото", "Редактировать фото")}
-        <label>Название фотографии</label>
-        <input type="text" name="title" required placeholder="Например: Наша прогулка" value="${escAttr(p.title)}" oninput="updatePhotoPreview(this.form)">
-        <div class="hint">Так же назовите файл: например «Наша прогулка.jpg»</div>
-        <label>Расширение файла</label>
-        <select name="ext" onchange="updatePhotoPreview(this.form)">
-          <option value="jpg"  ${p.ext==="jpg"?"selected":""}>jpg</option>
-          <option value="jpeg" ${p.ext==="jpeg"?"selected":""}>jpeg</option>
-          <option value="png"  ${p.ext==="png"?"selected":""}>png</option>
-          <option value="webp" ${p.ext==="webp"?"selected":""}>webp</option>
-          <option value="gif"  ${p.ext==="gif"?"selected":""}>gif</option>
-        </select>
-        <label>Или ссылка из интернета (если фото не в папке images)</label>
-        <input type="url" name="external_url" placeholder="https://..." value="${escAttr(p.external)}" oninput="updatePhotoPreview(this.form)">
-        <div class="hintBox" id="photoPreview">${photoPreviewHTML(p.title, p.ext, p.external)}</div>
-        ${formButtons("photos")}
-      </form>
-      <div class="eList">
-        ${(DRAFT.photos||[]).map((x,i)=>{
-          const active = isEditing("photos", i);
-          return `
-            <div class="eItem ${active?"editing":""}">
-              <img src="${escAttr(x.image_url)}" alt="" onerror="this.style.opacity=.3">
-              <div class="eItemInfo">
-                <b>${esc(x.title || "Без названия")}</b>
-                <small>${esc(x.image_url)}</small>
-              </div>
-              <div class="eItemBtns">
-                <button class="eEdit" onclick="startEdit('photos',${i})">✏️</button>
-                <button class="eDel" onclick="delItem('photos',${i})">🗑</button>
-              </div>
-            </div>
-          `;
-        }).join("") || `<div class="eEmpty">Пока ничего нет 📸</div>`}
-      </div>
-    `;
-  }
-  else if(editorTab === "settings"){
-    body.innerHTML = `
-      <form class="eForm" onsubmit="saveSettings(event,this)">
-        <div class="formTitle">⚙ Общие настройки</div>
-        <label>Дата начала отношений</label>
-        <input type="date" name="startDate" value="${escAttr((DRAFT.startDate||"").slice(0,10))}" required>
-        <div class="hint">От этой даты считается счётчик «Мы вместе» 💙💗</div>
-        <button type="submit">💾 Сохранить дату</button>
-      </form>
-      <div class="hintBox">
-        <b>Как пользоваться редактором:</b><br>
-        1. Внесите изменения во вкладках.<br>
-        2. У любого элемента нажмите <b>✏️</b>, чтобы изменить, или <b>🗑</b>, чтобы удалить.<br>
-        3. Нажмите <b>Сохранить — получить JSON</b>.<br>
-        4. Скопируйте код и вставьте его в <b>data.json</b> на GitHub.<br>
-        5. Обновите страницу сайта — всё появится.
-      </div>
-    `;
-  }
-}
-
-function submitEvent(e, form){
-  e.preventDefault();
-  const fd = new FormData(form);
-  const obj = {
-    date: fd.get("date"),
-    title: fd.get("title").trim(),
-    description: (fd.get("description")||"").trim()
-  };
-  if(editing && editing.key === "events"){
-    DRAFT.events[editing.index] = obj; editing = null; toast("Событие обновлено ✅");
-  } else {
-    DRAFT.events.push(obj); toast("Событие добавлено ✅");
-  }
-  form.reset(); renderEditor();
-}
-function submitPlace(e, form){
-  e.preventDefault();
-  const fd = new FormData(form);
-  const obj = {
-    icon: (fd.get("icon")||"📍").trim() || "📍",
-    title: fd.get("title").trim(),
-    description: (fd.get("description")||"").trim(),
-    map_url: (fd.get("map_url")||"").trim()
-  };
-  if(editing && editing.key === "places"){
-    DRAFT.places[editing.index] = obj; editing = null; toast("Место обновлено ✅");
-  } else {
-    DRAFT.places.push(obj); toast("Место добавлено ✅");
-  }
-  form.reset(); renderEditor();
-}
-function submitDream(e, form){
-  e.preventDefault();
-  const fd = new FormData(form);
-  const obj = { title: fd.get("title").trim(), done: !!fd.get("done") };
-  if(editing && editing.key === "dreams"){
-    DRAFT.dreams[editing.index] = obj; editing = null; toast("Мечта обновлена ✅");
-  } else {
-    DRAFT.dreams.push(obj); toast("Мечта добавлена ✅");
-  }
-  form.reset(); renderEditor();
-}
-function submitDish(e, form){
-  e.preventDefault();
-  const fd = new FormData(form);
-  const title = fd.get("title").trim();
-  const recipe = fd.get("recipe").trim();
-  const ptRaw = (fd.get("photo_title")||"").trim();
-  const photoTitle = ptRaw || title;
-  const ext = (fd.get("ext") || "jpg").toLowerCase();
-  const external = (fd.get("external_url")||"").trim();
-  const image_url = external || `images/${photoTitle}.${ext}`;
-  const obj = { title, recipe, image_url };
-  if(editing && editing.key === "dishes"){
-    DRAFT.dishes[editing.index] = obj; editing = null; toast("Блюдо обновлено ✅");
-  } else {
-    DRAFT.dishes.push(obj); toast("Блюдо добавлено ✅");
-  }
-  form.reset(); renderEditor();
-}
-function submitSecret(e, form){
-  e.preventDefault();
-  const fd = new FormData(form);
-  const obj = { title: fd.get("title").trim(), text: fd.get("text").trim() };
-  if(editing && editing.key === "secrets"){
-    DRAFT.secrets[editing.index] = obj; editing = null; toast("Секрет обновлён ✅");
-  } else {
-    DRAFT.secrets.push(obj); toast("Секрет добавлен ✅");
-  }
-  form.reset(); renderEditor();
-}
-function submitPhoto(e, form){
-  e.preventDefault();
-  const fd = new FormData(form);
-  const title = fd.get("title").trim();
-  const ext = (fd.get("ext") || "jpg").toLowerCase();
-  const external = (fd.get("external_url")||"").trim();
-  const image_url = external || `images/${title}.${ext}`;
-  const obj = { image_url, title };
-  if(editing && editing.key === "photos"){
-    DRAFT.photos[editing.index] = obj; editing = null; toast("Фото обновлено ✅");
-  } else {
-    DRAFT.photos.push(obj); toast("Фото добавлено ✅");
-  }
-  form.reset(); renderEditor();
-}
-function submitCalMark(e, form){
-  e.preventDefault();
-  const fd = new FormData(form);
-  const obj = {
-    date: fd.get("date"),
-    title: fd.get("title").trim(),
-    color: fd.get("calMarkColor") || CAL_COLORS[0]
-  };
-  if(!DRAFT.calendar) DRAFT.calendar = {marks:[],cycles:[],schedules:[]};
-  if(editing && editing.key === "calMark"){
-    DRAFT.calendar.marks[editing.index] = obj; editing = null; toast("День обновлён ✅");
-  } else {
-    DRAFT.calendar.marks.push(obj); toast("День добавлен ✅");
-  }
-  form.reset(); renderEditor();
-}
-function submitCalCycle(e, form){
-  e.preventDefault();
-  const fd = new FormData(form);
-  const obj = {
-    title: fd.get("title").trim(),
-    every: Math.max(1, parseInt(fd.get("every"), 10) || 1),
-    start: fd.get("start"),
-    color: fd.get("calCycleColor") || CAL_COLORS[3]
-  };
-  if(!DRAFT.calendar) DRAFT.calendar = {marks:[],cycles:[],schedules:[]};
-  if(editing && editing.key === "calCycle"){
-    DRAFT.calendar.cycles[editing.index] = obj; editing = null; toast("Цикл обновлён ✅");
-  } else {
-    DRAFT.calendar.cycles.push(obj); toast("Цикл добавлен ✅");
-  }
-  form.reset(); renderEditor();
-}
-function submitCalSchedule(e, form){
-  e.preventDefault();
-  const fd = new FormData(form);
-  const obj = {
-    workDays: Math.max(1, parseInt(fd.get("workDays"), 10) || 1),
-    offDays: Math.max(1, parseInt(fd.get("offDays"), 10) || 1),
-    start: fd.get("start"),
-    workTitle: (fd.get("workTitle")||"Работа").trim() || "Работа",
-    offTitle: (fd.get("offTitle")||"Выходной").trim() || "Выходной",
-    workColor: fd.get("workColor") || CAL_COLORS[0],
-    offColor: fd.get("offColor") || CAL_COLORS[3]
-  };
-  if(!DRAFT.calendar) DRAFT.calendar = {marks:[],cycles:[],schedules:[]};
-  if(editing && editing.key === "calSchedule"){
-    DRAFT.calendar.schedules[editing.index] = obj; editing = null; toast("График обновлён ✅");
-  } else {
-    DRAFT.calendar.schedules.push(obj); toast("График добавлен ✅");
-  }
-  form.reset(); renderEditor();
-}
-function delCal(kind, i){
-  if(!confirm("Удалить этот элемент?")) return;
-  if(!DRAFT.calendar) return;
-  DRAFT.calendar[kind].splice(i,1);
-  if(editing){
-    const editMap = {marks:"calMark", cycles:"calCycle", schedules:"calSchedule"};
-    if(editing.key === editMap[kind]){
-      if(editing.index === i) editing = null;
-      else if(editing.index > i) editing.index--;
-    }
-  }
-  renderEditor();
-}
-function saveSettings(e, form){
-  e.preventDefault();
-  const fd = new FormData(form);
-  DRAFT.startDate = fd.get("startDate");
-  toast("Дата сохранена ✅");
-}
-function delItem(key, i){
-  if(!confirm("Удалить этот элемент?")) return;
-  DRAFT[key].splice(i,1);
-  if(editing && editing.key === key){
-    if(editing.index === i) editing = null;
-    else if(editing.index > i) editing.index--;
-  }
-  renderEditor();
-}
-
-function showJSON(){
-  DRAFT.events.sort((a,b) => {
-    const da = new Date(a.date || 0).getTime() || 0;
-    const db = new Date(b.date || 0).getTime() || 0;
-    return da - db;
-  });
-  if(!DRAFT.calendar) DRAFT.calendar = {marks:[],cycles:[],schedules:[]};
-  if(!DRAFT.calendar.schedules) DRAFT.calendar.schedules = [];
-  const json = JSON.stringify(DRAFT, null, 2);
-  document.getElementById("jsonText").value = json;
-  document.getElementById("jsonModal").classList.add("open");
-}
-function closeJSON(){ document.getElementById("jsonModal").classList.remove("open"); }
-function copyJSON(){
-  const t = document.getElementById("jsonText");
-  t.removeAttribute("readonly");
-  t.select();
-  t.setSelectionRange(0, 999999);
-  let ok = false;
-  try{
-    if(navigator.clipboard && window.isSecureContext){
-      navigator.clipboard.writeText(t.value);
-      ok = true;
-    }
-  }catch(e){}
-  if(!ok){ try{ ok = document.execCommand("copy"); }catch(e){} }
-  t.setAttribute("readonly","");
-  toast(ok ? "Скопировано ✅ Вставьте в data.json" : "Выделите текст и скопируйте вручную");
-}
-function downloadJSON(){
-  const blob = new Blob([document.getElementById("jsonText").value], {type:"application/json;charset=utf-8"});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url; a.download = "data.json";
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  setTimeout(()=>URL.revokeObjectURL(url), 1000);
-  toast("Файл скачан ⬇️");
-}
-async function reloadData(){
-  if(!confirm("Отменить все несохранённые изменения?")) return;
-  await loadData();
-  renderAll();
-  editing = null;
-  renderEditor();
-  toast("Изменения отменены");
-}
-
-async function init(){
-  await loadData();
-  renderAll();
-  counter();
-}
-
-/* ===== ФОН ===== */
-(function(){
-  const cv = document.getElementById("spaceBg");
-  if(!cv) return;
-  const ctx = cv.getContext("2d");
-  let W, H, stars = [], hearts = [];
-
-  function resize(){
-    W = cv.width = window.innerWidth;
-    H = cv.height = window.innerHeight;
-  }
-  resize();
-  window.addEventListener("resize", resize);
-
-  const starCount = Math.min(160, Math.floor(window.innerWidth / 7));
-  for(let i = 0; i < starCount; i++){
-    stars.push({
-      x: Math.random() * W,
-      y: Math.random() * H,
-      r: Math.random() * 1.3 + 0.2,
-      a: Math.random() * 0.7 + 0.15,
-      da: (Math.random() * 0.008 + 0.002) * (Math.random() < 0.5 ? 1 : -1)
+function getDB() {
+  if (!dbPromise) {
+    dbPromise = new Promise((res, rej) => {
+      const req = indexedDB.open(DB_NAME, 1);
+      req.onupgradeneeded = e => {
+        const db = e.target.result;
+        if (!db.objectStoreNames.contains(STORE)) {
+          db.createObjectStore(STORE, { keyPath: 'id', autoIncrement: true });
+        }
+      };
+      req.onsuccess = e => res(e.target.result);
+      req.onerror = e => rej(e.target.error);
     });
   }
+  return dbPromise;
+}
+async function dbGetAll() {
+  const db = await getDB();
+  return new Promise((res, rej) => {
+    const tx = db.transaction(STORE, 'readonly');
+    const req = tx.objectStore(STORE).getAll();
+    req.onsuccess = () => res(req.result || []);
+    req.onerror = () => rej(req.error);
+  });
+}
+async function dbPut(obj) {
+  const db = await getDB();
+  return new Promise((res, rej) => {
+    const tx = db.transaction(STORE, 'readwrite');
+    const req = tx.objectStore(STORE).put(obj);
+    req.onsuccess = () => res(req.result);
+    req.onerror = () => rej(req.error);
+  });
+}
+async function dbDelete(id) {
+  const db = await getDB();
+  return new Promise((res, rej) => {
+    const tx = db.transaction(STORE, 'readwrite');
+    const req = tx.objectStore(STORE).delete(id);
+    req.onsuccess = () => res();
+    req.onerror = () => rej(req.error);
+  });
+}
+async function dbClear() {
+  const db = await getDB();
+  return new Promise((res, rej) => {
+    const tx = db.transaction(STORE, 'readwrite');
+    const req = tx.objectStore(STORE).clear();
+    req.onsuccess = () => res();
+    req.onerror = () => rej(req.error);
+  });
+}
 
-  const heartColors = ["#62a8ff","#ff72ad","#aa7cff","#ff9bc2","#8ec4ff","#ffb3d9"];
-  function makeHeart(){
-    return {
-      x: Math.random() * W,
-      y: H + Math.random() * 120,
-      s: Math.random() * 10 + 7,
-      vy: -(Math.random() * 0.35 + 0.2),
-      vx: (Math.random() - 0.5) * 0.25,
-      rot: (Math.random() - 0.5) * 0.4,
-      color: heartColors[Math.floor(Math.random() * heartColors.length)],
-      alpha: Math.random() * 0.3 + 0.25
+/* ==================== Состояние ==================== */
+const $ = id => document.getElementById(id);
+const modal = $('modal');
+const canvas = $('canvas');
+const ctx = canvas.getContext('2d');
+const nameInput = $('mapName');
+const fileInput = $('fileInput');
+
+let allMaps = [];
+let currentId = null;
+let bgImage = null;
+let paths = [];
+let currentPath = null;
+let isDrawing = false;
+let tool = 'arrow';
+let replacingBg = false;
+
+/* ==================== Отрисовка ==================== */
+function drawPath(c, p) {
+  c.strokeStyle = p.color;
+  c.fillStyle = p.color;
+  c.lineWidth = p.width;
+  c.lineCap = 'round';
+  c.lineJoin = 'round';
+
+  if (p.type === 'arrow') {
+    const [x1, y1] = p.from;
+    const [x2, y2] = p.to;
+    const dx = x2 - x1, dy = y2 - y1;
+    const len = Math.hypot(dx, dy);
+    if (len < 2) return;
+    const angle = Math.atan2(dy, dx);
+    const headLen = Math.min(len * 0.5, Math.max(12, p.width * 4));
+    const headAngle = Math.PI / 7;
+
+    c.beginPath();
+    c.moveTo(x1, y1);
+    c.lineTo(x2, y2);
+    c.stroke();
+
+    c.beginPath();
+    c.moveTo(x2, y2);
+    c.lineTo(x2 - headLen * Math.cos(angle - headAngle), y2 - headLen * Math.sin(angle - headAngle));
+    c.lineTo(x2 - headLen * Math.cos(angle + headAngle), y2 - headLen * Math.sin(angle + headAngle));
+    c.closePath();
+    c.fill();
+  } else if (p.type === 'line') {
+    const [x1, y1] = p.from;
+    const [x2, y2] = p.to;
+    c.beginPath();
+    c.moveTo(x1, y1);
+    c.lineTo(x2, y2);
+    c.stroke();
+  } else if (p.type === 'pen') {
+    const pts = p.points;
+    if (!pts.length) return;
+    c.beginPath();
+    c.moveTo(pts[0][0], pts[0][1]);
+    for (let i = 1; i < pts.length; i++) c.lineTo(pts[i][0], pts[i][1]);
+    if (pts.length === 1) c.lineTo(pts[0][0] + 0.1, pts[0][1] + 0.1);
+    c.stroke();
+  }
+}
+
+function redraw() {
+  if (!canvas.width || !canvas.height) return;
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  if (bgImage) ctx.drawImage(bgImage, 0, 0);
+  for (const p of paths) drawPath(ctx, p);
+  if (currentPath) drawPath(ctx, currentPath);
+}
+
+/* ==================== Загрузка изображения ==================== */
+function processImage(file) {
+  return new Promise((res, rej) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const img = new Image();
+      img.onload = () => {
+        let { width, height } = img;
+        const MAX = 2000;
+        if (Math.max(width, height) > MAX) {
+          const s = MAX / Math.max(width, height);
+          width = Math.round(width * s);
+          height = Math.round(height * s);
+        }
+        const c = document.createElement('canvas');
+        c.width = width; c.height = height;
+        c.getContext('2d').drawImage(img, 0, 0, width, height);
+        res({ dataURL: c.toDataURL('image/jpeg', 0.92), width, height });
+      };
+      img.onerror = () => rej(new Error('Не удалось прочитать изображение'));
+      img.src = reader.result;
     };
-  }
-  const heartCount = Math.min(18, Math.floor(window.innerWidth / 70) + 6);
-  for(let i = 0; i < heartCount; i++){
-    const h = makeHeart();
-    h.y = Math.random() * H;
-    hearts.push(h);
-  }
+    reader.onerror = () => rej(new Error('Ошибка чтения файла'));
+    reader.readAsDataURL(file);
+  });
+}
 
-  function drawHeart(x, y, s, rot, color, alpha){
-    ctx.save();
-    ctx.translate(x, y);
-    ctx.rotate(rot);
-    ctx.globalAlpha = alpha;
-    ctx.fillStyle = color;
-    ctx.shadowColor = color;
-    ctx.shadowBlur = 10;
-    ctx.beginPath();
-    ctx.moveTo(0, s * 0.35);
-    ctx.bezierCurveTo(s * 0.6, -s * 0.2, s * 0.9, s * 0.6, 0, s * 1.1);
-    ctx.bezierCurveTo(-s * 0.9, s * 0.6, -s * 0.6, -s * 0.2, 0, s * 0.35);
-    ctx.closePath();
-    ctx.fill();
-    ctx.restore();
-  }
+function loadBg(dataURL) {
+  return new Promise((res, rej) => {
+    const img = new Image();
+    img.onload = () => {
+      bgImage = img;
+      canvas.width = img.width;
+      canvas.height = img.height;
+      redraw();
+      res();
+    };
+    img.onerror = () => rej(new Error('Не удалось загрузить фон'));
+    img.src = dataURL;
+  });
+}
 
-  const capStars = [
-    {x: 0.70, y: 0.10, size: 3.4, color: [255, 225, 110]},
-    {x: 0.38, y: 0.42, size: 2.2, color: [255, 230, 145]},
-    {x: 0.12, y: 0.68, size: 3.0, color: [255, 225, 120]},
-    {x: 0.28, y: 0.76, size: 1.9, color: [255, 230, 150]},
-    {x: 0.44, y: 0.79, size: 1.9, color: [255, 230, 150]},
-    {x: 0.60, y: 0.79, size: 1.9, color: [255, 230, 150]},
-    {x: 0.74, y: 0.73, size: 2.3, color: [255, 228, 135]},
-    {x: 0.78, y: 0.44, size: 2.2, color: [255, 225, 130]}
+/* ==================== Редактор ==================== */
+async function openEditor(mapData) {
+  currentId = mapData.id || null;
+  nameInput.value = mapData.name || '';
+  paths = mapData.paths ? JSON.parse(JSON.stringify(mapData.paths)) : [];
+  currentPath = null;
+  isDrawing = false;
+  await loadBg(mapData.bg);
+  modal.classList.add('open');
+}
+
+function closeEditor() {
+  modal.classList.remove('open');
+  currentId = null;
+  bgImage = null;
+  paths = [];
+  currentPath = null;
+  isDrawing = false;
+  nameInput.value = '';
+  canvas.width = 0;
+  canvas.height = 0;
+}
+
+function makeThumb() {
+  const t = document.createElement('canvas');
+  const scale = Math.min(1, 400 / canvas.width);
+  t.width = Math.round(canvas.width * scale);
+  t.height = Math.round(canvas.height * scale);
+  const tc = t.getContext('2d');
+  tc.drawImage(bgImage, 0, 0, t.width, t.height);
+  tc.save();
+  tc.scale(scale, scale);
+  for (const p of paths) drawPath(tc, p);
+  tc.restore();
+  return t.toDataURL('image/jpeg', 0.82);
+}
+
+async function saveMap() {
+  const name = nameInput.value.trim();
+  if (!name) { alert('Введите название карты'); nameInput.focus(); return; }
+  if (!bgImage) { alert('Нет изображения карты'); return; }
+
+  const obj = {
+    name,
+    bg: bgImage.src,
+    paths,
+    thumb: makeThumb(),
+    width: canvas.width,
+    height: canvas.height,
+    updatedAt: Date.now()
+  };
+  if (currentId) obj.id = currentId;
+  else obj.createdAt = Date.now();
+
+  try {
+    currentId = await dbPut(obj);
+    closeEditor();
+    await loadMaps();
+    toast('Сохранено');
+  } catch (err) {
+    alert('Ошибка сохранения: ' + err.message);
+  }
+}
+
+/* ==================== Рисование ==================== */
+function getPoint(e) {
+  const r = canvas.getBoundingClientRect();
+  return [
+    (e.clientX - r.left) * (canvas.width / r.width),
+    (e.clientY - r.top) * (canvas.height / r.height)
   ];
-  const capLines = [[0,1],[1,2],[2,3],[3,4],[4,5],[5,6],[6,7],[7,0]];
-  const capState = { x: 0, y: 0, w: 0, h: 0, appearAt: 0, lifeMs: 12000 };
-
-  function newCapSpot(now){
-    const capSize = Math.min(W * 0.55, H * 0.42, 320);
-    capState.w = capSize;
-    capState.h = capSize;
-    const pad = 20;
-    capState.x = pad + Math.random() * Math.max(10, W - capSize - pad * 2);
-    capState.y = pad + Math.random() * Math.max(10, H - capSize - pad * 2);
-    capState.appearAt = now;
-  }
-  function capOpacity(now){
-    const t = now - capState.appearAt;
-    const T = capState.lifeMs;
-    if(t < 0) return 0;
-    if(t < T * 0.2)  return t / (T * 0.2);
-    if(t < T * 0.8)  return 1;
-    if(t < T)        return 1 - (t - T * 0.8) / (T * 0.2);
-    return 0;
-  }
-  function drawCapricorn(now){
-    if(capState.appearAt === 0 || now - capState.appearAt > capState.lifeMs) newCapSpot(now);
-    const alpha = capOpacity(now);
-    if(alpha <= 0) return;
-    const N = capStars.length;
-    const capLeft = capState.x, capTop = capState.y, capW = capState.w, capH = capState.h;
-    const period = 10;
-    const cycle = (now / 1000 / period) % 1;
-    const head = cycle < 0.5 ? cycle * 2 : 2 - cycle * 2;
-    const headPos = head * (N - 1);
-    const glowRadius = 2.6;
-    const intensities = [];
-    for(let i = 0; i < N; i++){
-      const dist = Math.abs(i - headPos);
-      const wave = dist < glowRadius ? 0.5 * (1 + Math.cos((dist / glowRadius) * Math.PI)) : 0;
-      const twinkle = 0.85 + 0.15 * Math.sin(now / 1000 * 2 + i * 1.7);
-      intensities[i] = (0.22 + 0.78 * wave) * twinkle;
-    }
-    ctx.save();
-    ctx.globalAlpha = alpha;
-    ctx.lineCap = "round";
-    for(let k = 0; k < capLines.length; k++){
-      const a = capLines[k][0], b = capLines[k][1];
-      const x1 = capLeft + capStars[a].x * capW;
-      const y1 = capTop + capStars[a].y * capH;
-      const x2 = capLeft + capStars[b].x * capW;
-      const y2 = capTop + capStars[b].y * capH;
-      const li = (intensities[a] + intensities[b]) / 2;
-      ctx.strokeStyle = "rgba(255, 220, 120, " + (0.4 * li).toFixed(3) + ")";
-      ctx.lineWidth = 1.1;
-      ctx.beginPath();
-      ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
-    }
-    for(let i = 0; i < N; i++){
-      const s = capStars[i];
-      const x = capLeft + s.x * capW;
-      const y = capTop + s.y * capH;
-      const intensity = intensities[i];
-      const r = s.color[0], g = s.color[1], b = s.color[2];
-      ctx.fillStyle = "rgba(" + r + "," + g + "," + b + "," + (0.18 * intensity).toFixed(3) + ")";
-      ctx.beginPath(); ctx.arc(x, y, s.size * 6, 0, Math.PI * 2); ctx.fill();
-      ctx.fillStyle = "rgba(" + r + "," + g + "," + b + "," + (0.45 * intensity).toFixed(3) + ")";
-      ctx.beginPath(); ctx.arc(x, y, s.size * 2.6, 0, Math.PI * 2); ctx.fill();
-      ctx.fillStyle = "rgba(255, 245, 200," + (0.55 + 0.45 * intensity).toFixed(3) + ")";
-      ctx.beginPath(); ctx.arc(x, y, s.size * 0.9, 0, Math.PI * 2); ctx.fill();
-    }
-    ctx.restore();
-  }
-  function draw(now){
-    now = now || performance.now();
-    ctx.clearRect(0, 0, W, H);
-    for(const st of stars){
-      st.a += st.da;
-      if(st.a > 0.9 || st.a < 0.1) st.da *= -1;
-      ctx.beginPath();
-      ctx.arc(st.x, st.y, st.r, 0, Math.PI * 2);
-      ctx.fillStyle = "rgba(255,255,255," + st.a.toFixed(2) + ")";
-      ctx.fill();
-    }
-    drawCapricorn(now);
-    for(let i = 0; i < hearts.length; i++){
-      const h = hearts[i];
-      h.y += h.vy;
-      h.x += h.vx + Math.sin(h.y * 0.008) * 0.15;
-      h.rot += 0.002;
-      drawHeart(h.x, h.y, h.s, h.rot, h.color, h.alpha);
-      if(h.y < -40) hearts[i] = makeHeart();
-    }
-    requestAnimationFrame(draw);
-  }
-  requestAnimationFrame(draw);
-})();
-
-if('serviceWorker' in navigator){
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./sw.js')
-      .then(reg => {
-        console.log('ServiceWorker зарегистрирован:', reg.scope);
-        setInterval(() => reg.update().catch(()=>{}), 30000);
-        reg.addEventListener('updatefound', () => {
-          const nw = reg.installing;
-          if(!nw) return;
-          nw.addEventListener('statechange', () => {
-            if(nw.state === 'installed' && navigator.serviceWorker.controller){
-              nw.postMessage({ type: 'SKIP_WAITING' });
-              setTimeout(() => window.location.reload(true), 300);
-            }
-          });
-        });
-      })
-      .catch(e => console.log('Ошибка ServiceWorker:', e));
-
-    let refreshing = false;
-    navigator.serviceWorker.addEventListener('controllerchange', () => {
-      if(refreshing) return;
-      refreshing = true;
-      window.location.reload();
-    });
-  });
 }
+
+canvas.addEventListener('pointerdown', e => {
+  if (!bgImage) return;
+  e.preventDefault();
+  isDrawing = true;
+  canvas.setPointerCapture(e.pointerId);
+  const pt = getPoint(e);
+  const color = $('color').value;
+  const width = parseInt($('width').value);
+  if (tool === 'pen') {
+    currentPath = { type: 'pen', points: [pt], color, width };
+  } else {
+    currentPath = { type: tool, from: pt, to: pt, color, width };
+  }
+  redraw();
+});
+
+canvas.addEventListener('pointermove', e => {
+  if (!isDrawing || !currentPath) return;
+  e.preventDefault();
+  const pt = getPoint(e);
+  if (tool === 'pen') currentPath.points.push(pt);
+  else currentPath.to = pt;
+  redraw();
+});
+
+function finishPath() {
+  if (!isDrawing) return;
+  isDrawing = false;
+  if (currentPath) {
+    if (currentPath.type === 'pen') {
+      if (currentPath.points.length > 1) paths.push(currentPath);
+    } else {
+      const d = Math.hypot(
+        currentPath.to[0] - currentPath.from[0],
+        currentPath.to[1] - currentPath.from[1]
+      );
+      if (d >= 4) paths.push(currentPath);
+    }
+    currentPath = null;
+  }
+  redraw();
+}
+canvas.addEventListener('pointerup', finishPath);
+canvas.addEventListener('pointercancel', finishPath);
+
+/* ==================== Сетка карт ==================== */
+async function loadMaps() {
+  try {
+    allMaps = await dbGetAll();
+    allMaps.sort((a, b) => (b.updatedAt || b.createdAt || 0) - (a.updatedAt || a.createdAt || 0));
+    renderGrid();
+  } catch (err) {
+    console.error(err);
+    alert('Ошибка загрузки данных: ' + err.message);
+  }
+}
+
+function renderGrid() {
+  const query = $('search').value.trim().toLowerCase();
+  const list = allMaps.filter(m => !query || m.name.toLowerCase().includes(query));
+  const grid = $('grid');
+  const empty = $('empty');
+  grid.innerHTML = '';
+
+  if (list.length === 0) {
+    empty.style.display = 'block';
+    empty.innerHTML = allMaps.length === 0
+      ? 'Карт пока нет.<br>Нажмите «+ Добавить карту», загрузите изображение и рисуйте тактику стрелками.<br><br><span style="font-size:13px">Все данные хранятся локально в вашем браузере.</span>'
+      : `По запросу «${escapeHtml(query)}» ничего не найдено.`;
+  } else {
+    empty.style.display = 'none';
+  }
+
+  for (const m of list) {
+    const card = document.createElement('div');
+    card.className = 'card';
+    const img = document.createElement('img');
+    img.className = 'thumb';
+    img.src = m.thumb || m.bg;
+    img.alt = m.name;
+    const info = document.createElement('div');
+    info.className = 'info';
+    const nameEl = document.createElement('div');
+    nameEl.className = 'name';
+    nameEl.textContent = m.name;
+    const delBtn = document.createElement('button');
+    delBtn.className = 'del';
+    delBtn.textContent = '✕';
+    delBtn.title = 'Удалить';
+    info.append(nameEl, delBtn);
+    card.append(img, info);
+
+    card.addEventListener('click', () => openEditor(m));
+    delBtn.addEventListener('click', async e => {
+      e.stopPropagation();
+      if (!confirm(`Удалить карту «${m.name}»?`)) return;
+      await dbDelete(m.id);
+      await loadMaps();
+      toast('Удалено');
+    });
+    grid.appendChild(card);
+  }
+}
+
+function escapeHtml(s) {
+  return s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+/* ==================== UI события ==================== */
+$('addBtn').onclick = () => { replacingBg = false; fileInput.click(); };
+$('editOther').onclick = () => {
+  if (paths.length > 0 && !confirm('При смене карты текущий рисунок будет удалён. Продолжить?')) return;
+  replacingBg = true;
+  fileInput.click();
+};
+
+fileInput.onchange = async e => {
+  const file = e.target.files[0];
+  e.target.value = '';
+  if (!file) return;
+  let dataURL;
+  try {
+    const r = await processImage(file);
+    dataURL = r.dataURL;
+  } catch (err) {
+    alert('Ошибка: ' + err.message);
+    replacingBg = false;
+    return;
+  }
+  if (replacingBg) {
+    replacingBg = false;
+    paths = [];
+    currentPath = null;
+    await loadBg(dataURL);
+  } else {
+    try {
+      await openEditor({ name: '', bg: dataURL, paths: [] });
+    } catch (err) {
+      alert('Ошибка: ' + err.message);
+    }
+  }
+};
+
+$('search').addEventListener('input', renderGrid);
+$('save').onclick = saveMap;
+$('cancel').onclick = () => { if (confirm('Закрыть без сохранения?')) closeEditor(); };
+
+$('undo').onclick = () => { if (paths.length) { paths.pop(); redraw(); } };
+$('clearDraw').onclick = () => {
+  if (!paths.length) return;
+  if (!confirm('Удалить весь рисунок?')) return;
+  paths = [];
+  redraw();
+};
+
+document.querySelectorAll('.tool[data-tool]').forEach(btn => {
+  btn.onclick = () => {
+    document.querySelectorAll('.tool[data-tool]').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    tool = btn.dataset.tool;
+  };
+});
+
+$('clearCache').onclick = async () => {
+  if (!confirm('Удалить ВСЕ сохранённые карты? Это действие необратимо.')) return;
+  await dbClear();
+  await loadMaps();
+  toast('Кеш очищен');
+};
+
+/* ==================== Toast ==================== */
+let toastTimer;
+function toast(msg) {
+  let el = document.getElementById('toast');
+  if (!el) {
+    el = document.createElement('div');
+    el.id = 'toast';
+    el.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#30a46c;color:#fff;padding:10px 20px;border-radius:8px;font-weight:600;font-size:14px;z-index:999;transition:opacity .3s;box-shadow:0 4px 20px rgba(0,0,0,.4);pointer-events:none';
+    document.body.appendChild(el);
+  }
+  el.textContent = msg;
+  el.style.opacity = '1';
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { el.style.opacity = '0'; }, 1600);
+}
+
+/* ==================== Инициализация ==================== */
+loadMaps();
 </script>
 </body>
 </html>
