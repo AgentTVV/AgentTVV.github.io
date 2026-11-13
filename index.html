@@ -37,8 +37,8 @@ header {
 }
 .logo { font-weight: 700; font-size: 18px; color: var(--accent); white-space: nowrap; }
 .search {
-  flex: 1 1 200px;
-  max-width: 400px;
+  flex: 1 1 180px;
+  max-width: 360px;
   padding: 9px 12px;
   border-radius: 8px;
   border: 1px solid var(--border);
@@ -60,6 +60,7 @@ button {
 }
 button:hover { filter: brightness(1.1); }
 button:active { transform: translateY(1px); }
+button:disabled { opacity: .45; cursor: not-allowed; }
 .btn-primary { background: var(--accent); color: #1a1000; }
 .btn-ghost { background: var(--panel2); color: var(--text); border: 1px solid var(--border); }
 .btn-sm { padding: 6px 12px; font-size: 13px; }
@@ -211,6 +212,55 @@ canvas {
   flex-wrap: wrap;
 }
 .spacer { flex: 1; }
+
+/* Export modal */
+.tabs {
+  display: flex;
+  gap: 4px;
+  padding: 10px 16px 0;
+  border-bottom: 1px solid var(--border);
+  background: var(--panel2);
+}
+.tab {
+  background: transparent;
+  color: var(--muted);
+  border: none;
+  padding: 10px 16px;
+  border-radius: 8px 8px 0 0;
+  font-weight: 600;
+  font-size: 14px;
+}
+.tab.active { background: var(--panel); color: var(--accent); }
+.tab-body { padding: 16px; }
+.hint {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.6;
+  margin-bottom: 12px;
+}
+.hint code {
+  background: var(--panel2);
+  padding: 2px 6px;
+  border-radius: 4px;
+  color: var(--accent);
+  font-size: 12px;
+  font-family: ui-monospace, monospace;
+}
+.hint b { color: var(--text); }
+#exportCode {
+  width: 100%;
+  height: 340px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 12px;
+  background: var(--bg);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px;
+  resize: vertical;
+  outline: none;
+  white-space: pre;
+}
 </style>
 </head>
 <body>
@@ -218,6 +268,7 @@ canvas {
 <header>
   <div class="logo">🎯 ТАКТИКА ЛТ</div>
   <input type="search" class="search" id="search" placeholder="Поиск по названию карты...">
+  <button class="btn-ghost" id="saveSite">💾 Сохранить сайт</button>
   <button class="btn-ghost" id="clearCache">🧹 Очистить кеш</button>
   <button class="btn-primary" id="addBtn">+ Добавить карту</button>
 </header>
@@ -227,6 +278,7 @@ canvas {
   <div class="empty" id="empty" style="display:none"></div>
 </main>
 
+<!-- Редактор -->
 <div class="modal-bg" id="modal">
   <div class="modal">
     <div class="modal-head">
@@ -237,6 +289,8 @@ canvas {
       <button class="tool active" data-tool="arrow">→ Стрелка</button>
       <button class="tool" data-tool="line">— Линия</button>
       <button class="tool" data-tool="pen">✎ Кисть</button>
+      <button class="tool" data-tool="fire">🔥 Огонь</button>
+      <button class="tool" data-tool="vision">👁 Обзор</button>
       <div class="spacer"></div>
       <span class="tool-label">Цвет</span>
       <input type="color" id="color" value="#ff9c2b">
@@ -255,22 +309,71 @@ canvas {
   </div>
 </div>
 
+<!-- Экспорт -->
+<div class="modal-bg" id="exportModal">
+  <div class="modal" style="max-width: 960px;">
+    <div class="modal-head">
+      <strong style="font-size:16px">💾 Экспорт карт</strong>
+      <span style="color:var(--muted);font-size:13px" id="exportCount"></span>
+    </div>
+    <div class="tabs">
+      <button class="tab active" data-tab="single">Один файл (код)</button>
+      <button class="tab" data-tab="folder">Папка + фото (ZIP)</button>
+    </div>
+    <div class="tab-body" id="tabSingle">
+      <p class="hint">
+        Скопируйте код и замените им в <code>index.html</code> блок между
+        <code>/* ====== ПРЕСЕТЫ START ====== */</code> и <code>/* ====== ПРЕСЕТЫ END ====== */</code>.
+        После замены все карты будут «вшиты» в сайт и сохранятся даже после очистки кеша.
+      </p>
+      <textarea id="exportCode" readonly></textarea>
+      <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
+        <button class="btn-primary" id="copyCode">📋 Копировать</button>
+        <button class="btn-ghost" id="downloadJs">⬇ Скачать .js</button>
+      </div>
+    </div>
+    <div class="tab-body" id="tabFolder" style="display:none">
+      <p class="hint">
+        Скачайте ZIP-архив. Внутри: папка <code>maps/</code> со всеми фото и файл <code>maps-data.js</code> с кодом.
+        Распакуйте рядом с <code>index.html</code> и добавьте в HTML перед основным скриптом строку
+        <code>&lt;script src="maps-data.js"&gt;&lt;/script&gt;</code> — либо откройте <code>maps-data.js</code>
+        и вставьте его содержимое в блок ПРЕСЕТЫ.
+      </p>
+      <button class="btn-primary" id="downloadZip">⬇ Скачать ZIP</button>
+      <span id="zipStatus" style="margin-left:12px;color:var(--muted);font-size:13px"></span>
+    </div>
+    <div class="modal-foot">
+      <button class="btn-ghost" id="closeExport">Закрыть</button>
+    </div>
+  </div>
+</div>
+
 <input type="file" id="fileInput" accept="image/*" hidden>
 
 <script>
+/* ====== ПРЕСЕТЫ START ====== */
+const PRESET_MAPS = [
+  // Сюда вставляется код из кнопки «Сохранить сайт»
+];
+/* ====== ПРЕСЕТЫ END ====== */
+
 /* ==================== IndexedDB ==================== */
 const DB_NAME = 'lt-tactics-db';
 const STORE = 'maps';
+const META = 'meta';
 let dbPromise = null;
 
 function getDB() {
   if (!dbPromise) {
     dbPromise = new Promise((res, rej) => {
-      const req = indexedDB.open(DB_NAME, 1);
+      const req = indexedDB.open(DB_NAME, 2);
       req.onupgradeneeded = e => {
         const db = e.target.result;
         if (!db.objectStoreNames.contains(STORE)) {
           db.createObjectStore(STORE, { keyPath: 'id', autoIncrement: true });
+        }
+        if (!db.objectStoreNames.contains(META)) {
+          db.createObjectStore(META, { keyPath: 'key' });
         }
       };
       req.onsuccess = e => res(e.target.result);
@@ -306,19 +409,83 @@ async function dbDelete(id) {
     req.onerror = () => rej(req.error);
   });
 }
-async function dbClear() {
+async function dbClearAll() {
   const db = await getDB();
   return new Promise((res, rej) => {
-    const tx = db.transaction(STORE, 'readwrite');
-    const req = tx.objectStore(STORE).clear();
-    req.onsuccess = () => res();
-    req.onerror = () => rej(req.error);
+    const tx = db.transaction([STORE, META], 'readwrite');
+    tx.objectStore(STORE).clear();
+    tx.objectStore(META).clear();
+    tx.oncomplete = () => res();
+    tx.onerror = () => rej(tx.error);
   });
+}
+async function metaGet(key) {
+  const db = await getDB();
+  return new Promise((res, rej) => {
+    const tx = db.transaction(META, 'readonly');
+    const r = tx.objectStore(META).get(key);
+    r.onsuccess = () => res(r.result ? r.result.value : null);
+    r.onerror = () => rej(r.error);
+  });
+}
+async function metaSet(key, value) {
+  const db = await getDB();
+  return new Promise((res, rej) => {
+    const tx = db.transaction(META, 'readwrite');
+    const r = tx.objectStore(META).put({ key, value });
+    r.onsuccess = () => res();
+    r.onerror = () => rej(r.error);
+  });
+}
+
+/* ==================== Хэш строки ==================== */
+function hashStr(s) {
+  let h = 5381;
+  for (let i = 0; i < s.length; i++) h = ((h << 5) + h + s.charCodeAt(i)) | 0;
+  return (h >>> 0).toString(36) + '_' + s.length.toString(36);
+}
+
+/* ==================== Сидирование пресетов ==================== */
+async function seedPresets() {
+  if (typeof PRESET_MAPS === 'undefined' || !Array.isArray(PRESET_MAPS) || !PRESET_MAPS.length) return;
+  const json = JSON.stringify(PRESET_MAPS);
+  const hash = hashStr(json);
+  const stored = await metaGet('preset_hash');
+  if (stored === hash) return;
+
+  const existing = await dbGetAll();
+  const byName = new Map(existing.map(m => [m.name, m]));
+  let imported = 0;
+  for (const p of PRESET_MAPS) {
+    const ex = byName.get(p.name);
+    if (!ex) {
+      await dbPut({
+        name: p.name,
+        bg: p.bg,
+        thumb: p.thumb || p.bg,
+        paths: p.paths || [],
+        updatedAt: p.updatedAt || Date.now()
+      });
+      imported++;
+    } else if ((p.updatedAt || 0) > (ex.updatedAt || 0)) {
+      await dbPut({
+        ...ex,
+        bg: p.bg,
+        thumb: p.thumb || p.bg,
+        paths: p.paths || [],
+        updatedAt: p.updatedAt
+      });
+      imported++;
+    }
+  }
+  await metaSet('preset_hash', hash);
+  if (imported > 0) console.log('Импортировано пресетов:', imported);
 }
 
 /* ==================== Состояние ==================== */
 const $ = id => document.getElementById(id);
 const modal = $('modal');
+const exportModal = $('exportModal');
 const canvas = $('canvas');
 const ctx = canvas.getContext('2d');
 const nameInput = $('mapName');
@@ -333,7 +500,139 @@ let isDrawing = false;
 let tool = 'arrow';
 let replacingBg = false;
 
+/* ==================== Хелперы ==================== */
+function hexToRgba(hex, a) {
+  hex = String(hex).replace('#', '');
+  if (hex.length === 3) hex = hex.split('').map(c => c + c).join('');
+  const n = parseInt(hex, 16);
+  const r = (n >> 16) & 255, g = (n >> 8) & 255, b = n & 255;
+  return `rgba(${r},${g},${b},${a})`;
+}
+
 /* ==================== Отрисовка ==================== */
+function drawArrow(c, p) {
+  const [x1, y1] = p.from;
+  const [x2, y2] = p.to;
+  const dx = x2 - x1, dy = y2 - y1;
+  const len = Math.hypot(dx, dy);
+  if (len < 2) return;
+  const angle = Math.atan2(dy, dx);
+  const headLen = Math.min(len * 0.5, Math.max(12, p.width * 4));
+  const headAngle = Math.PI / 7;
+
+  c.beginPath();
+  c.moveTo(x1, y1);
+  c.lineTo(x2, y2);
+  c.stroke();
+
+  c.beginPath();
+  c.moveTo(x2, y2);
+  c.lineTo(x2 - headLen * Math.cos(angle - headAngle), y2 - headLen * Math.sin(angle - headAngle));
+  c.lineTo(x2 - headLen * Math.cos(angle + headAngle), y2 - headLen * Math.sin(angle + headAngle));
+  c.closePath();
+  c.fill();
+}
+
+function drawLine(c, p) {
+  const [x1, y1] = p.from;
+  const [x2, y2] = p.to;
+  c.beginPath();
+  c.moveTo(x1, y1);
+  c.lineTo(x2, y2);
+  c.stroke();
+}
+
+function drawPen(c, p) {
+  const pts = p.points;
+  if (!pts.length) return;
+  c.beginPath();
+  c.moveTo(pts[0][0], pts[0][1]);
+  for (let i = 1; i < pts.length; i++) c.lineTo(pts[i][0], pts[i][1]);
+  if (pts.length === 1) c.lineTo(pts[0][0] + 0.1, pts[0][1] + 0.1);
+  c.stroke();
+}
+
+function drawFire(c, p) {
+  const [x, y] = p.at;
+  const r = 10 + p.width * 1.6;
+  c.save();
+  c.translate(x, y);
+
+  // подсветка
+  c.fillStyle = hexToRgba(p.color, 0.22);
+  c.beginPath();
+  c.arc(0, 0, r, 0, Math.PI * 2);
+  c.fill();
+
+  // кольцо
+  c.strokeStyle = p.color;
+  c.lineWidth = Math.max(2, p.width * 0.7);
+  c.beginPath();
+  c.arc(0, 0, r, 0, Math.PI * 2);
+  c.stroke();
+
+  // перекрестие
+  c.beginPath();
+  c.moveTo(-r * 1.45, 0); c.lineTo(-r * 0.55, 0);
+  c.moveTo(r * 0.55, 0);  c.lineTo(r * 1.45, 0);
+  c.moveTo(0, -r * 1.45); c.lineTo(0, -r * 0.55);
+  c.moveTo(0, r * 0.55);  c.lineTo(0, r * 1.45);
+  c.stroke();
+
+  // центр
+  c.fillStyle = p.color;
+  c.beginPath();
+  c.arc(0, 0, r * 0.34, 0, Math.PI * 2);
+  c.fill();
+
+  // подпись
+  c.fillStyle = p.color;
+  c.font = `bold ${Math.max(10, r * 0.75)}px system-ui, sans-serif`;
+  c.textAlign = 'center';
+  c.textBaseline = 'bottom';
+  c.fillText('ОГОНЬ', 0, -r * 1.55);
+
+  c.restore();
+}
+
+function drawVision(c, p) {
+  const [x, y] = p.center;
+  const r = Math.max(p.radius, 2);
+  c.save();
+
+  // заливка
+  c.fillStyle = hexToRgba(p.color, 0.13);
+  c.beginPath();
+  c.arc(x, y, r, 0, Math.PI * 2);
+  c.fill();
+
+  // пунктирный контур
+  c.strokeStyle = p.color;
+  c.lineWidth = Math.max(1.5, p.width * 0.6);
+  c.setLineDash([8, 6]);
+  c.beginPath();
+  c.arc(x, y, r, 0, Math.PI * 2);
+  c.stroke();
+  c.setLineDash([]);
+
+  // глаз по центру
+  const size = Math.min(r * 0.4, 22);
+  c.translate(x, y);
+  c.strokeStyle = p.color;
+  c.fillStyle = p.color;
+  c.lineWidth = Math.max(1.5, size * 0.16);
+  c.beginPath();
+  c.moveTo(-size, 0);
+  c.quadraticCurveTo(0, -size * 0.8, size, 0);
+  c.quadraticCurveTo(0, size * 0.8, -size, 0);
+  c.stroke();
+  c.beginPath();
+  c.arc(0, 0, size * 0.35, 0, Math.PI * 2);
+  c.fill();
+
+  c.restore();
+}
+
 function drawPath(c, p) {
   c.strokeStyle = p.color;
   c.fillStyle = p.color;
@@ -341,42 +640,12 @@ function drawPath(c, p) {
   c.lineCap = 'round';
   c.lineJoin = 'round';
 
-  if (p.type === 'arrow') {
-    const [x1, y1] = p.from;
-    const [x2, y2] = p.to;
-    const dx = x2 - x1, dy = y2 - y1;
-    const len = Math.hypot(dx, dy);
-    if (len < 2) return;
-    const angle = Math.atan2(dy, dx);
-    const headLen = Math.min(len * 0.5, Math.max(12, p.width * 4));
-    const headAngle = Math.PI / 7;
-
-    c.beginPath();
-    c.moveTo(x1, y1);
-    c.lineTo(x2, y2);
-    c.stroke();
-
-    c.beginPath();
-    c.moveTo(x2, y2);
-    c.lineTo(x2 - headLen * Math.cos(angle - headAngle), y2 - headLen * Math.sin(angle - headAngle));
-    c.lineTo(x2 - headLen * Math.cos(angle + headAngle), y2 - headLen * Math.sin(angle + headAngle));
-    c.closePath();
-    c.fill();
-  } else if (p.type === 'line') {
-    const [x1, y1] = p.from;
-    const [x2, y2] = p.to;
-    c.beginPath();
-    c.moveTo(x1, y1);
-    c.lineTo(x2, y2);
-    c.stroke();
-  } else if (p.type === 'pen') {
-    const pts = p.points;
-    if (!pts.length) return;
-    c.beginPath();
-    c.moveTo(pts[0][0], pts[0][1]);
-    for (let i = 1; i < pts.length; i++) c.lineTo(pts[i][0], pts[i][1]);
-    if (pts.length === 1) c.lineTo(pts[0][0] + 0.1, pts[0][1] + 0.1);
-    c.stroke();
+  switch (p.type) {
+    case 'arrow':  drawArrow(c, p);  break;
+    case 'line':   drawLine(c, p);   break;
+    case 'pen':    drawPen(c, p);    break;
+    case 'fire':   drawFire(c, p);   break;
+    case 'vision': drawVision(c, p); break;
   }
 }
 
@@ -511,8 +780,13 @@ canvas.addEventListener('pointerdown', e => {
   const pt = getPoint(e);
   const color = $('color').value;
   const width = parseInt($('width').value);
+
   if (tool === 'pen') {
     currentPath = { type: 'pen', points: [pt], color, width };
+  } else if (tool === 'fire') {
+    currentPath = { type: 'fire', at: pt, color, width };
+  } else if (tool === 'vision') {
+    currentPath = { type: 'vision', center: pt, radius: 0, color, width };
   } else {
     currentPath = { type: tool, from: pt, to: pt, color, width };
   }
@@ -523,8 +797,14 @@ canvas.addEventListener('pointermove', e => {
   if (!isDrawing || !currentPath) return;
   e.preventDefault();
   const pt = getPoint(e);
-  if (tool === 'pen') currentPath.points.push(pt);
-  else currentPath.to = pt;
+  if (tool === 'pen') {
+    currentPath.points.push(pt);
+  } else if (tool === 'vision') {
+    currentPath.radius = Math.hypot(pt[0] - currentPath.center[0], pt[1] - currentPath.center[1]);
+  } else if (tool === 'arrow' || tool === 'line') {
+    currentPath.to = pt;
+  }
+  // fire — позиция фиксируется при pointerdown
   redraw();
 });
 
@@ -534,6 +814,10 @@ function finishPath() {
   if (currentPath) {
     if (currentPath.type === 'pen') {
       if (currentPath.points.length > 1) paths.push(currentPath);
+    } else if (currentPath.type === 'fire') {
+      paths.push(currentPath);
+    } else if (currentPath.type === 'vision') {
+      if (currentPath.radius > 5) paths.push(currentPath);
     } else {
       const d = Math.hypot(
         currentPath.to[0] - currentPath.from[0],
@@ -570,7 +854,7 @@ function renderGrid() {
   if (list.length === 0) {
     empty.style.display = 'block';
     empty.innerHTML = allMaps.length === 0
-      ? 'Карт пока нет.<br>Нажмите «+ Добавить карту», загрузите изображение и рисуйте тактику стрелками.<br><br><span style="font-size:13px">Все данные хранятся локально в вашем браузере.</span>'
+      ? 'Карт пока нет.<br>Нажмите «+ Добавить карту», загрузите изображение и рисуйте тактику стрелками, огнём и обзором.<br><br><span style="font-size:13px">Все данные хранятся локально в вашем браузере.<br>Кнопка «Сохранить сайт» позволяет вшить карты в HTML-файл.</span>'
       : `По запросу «${escapeHtml(query)}» ничего не найдено.`;
   } else {
     empty.style.display = 'none';
@@ -583,6 +867,7 @@ function renderGrid() {
     img.className = 'thumb';
     img.src = m.thumb || m.bg;
     img.alt = m.name;
+    img.loading = 'lazy';
     const info = document.createElement('div');
     info.className = 'info';
     const nameEl = document.createElement('div');
@@ -667,10 +952,269 @@ document.querySelectorAll('.tool[data-tool]').forEach(btn => {
 });
 
 $('clearCache').onclick = async () => {
-  if (!confirm('Удалить ВСЕ сохранённые карты? Это действие необратимо.')) return;
-  await dbClear();
+  if (!confirm('Удалить ВСЕ сохранённые карты и настройки? Пресеты, вшитые в файл, вернутся после перезагрузки.')) return;
+  await dbClearAll();
   await loadMaps();
   toast('Кеш очищен');
+};
+
+/* ==================== Экспорт ==================== */
+function sanitizeFilename(name) {
+  let s = String(name).replace(/[\\/:*?"<>|\s]+/g, '_').replace(/^_+|_+$/g, '');
+  s = s.slice(0, 60);
+  return s || 'map';
+}
+
+function uniqBase(name, used) {
+  const base = sanitizeFilename(name);
+  let b = base, i = 2;
+  while (used.has(b)) { b = base + '_' + i++; }
+  used.add(b);
+  return b;
+}
+
+function buildPresetArray(folderMode) {
+  const used = new Set();
+  const arr = [];
+  for (const m of allMaps) {
+    const obj = {
+      name: m.name,
+      paths: m.paths || [],
+      updatedAt: m.updatedAt || m.createdAt || Date.now()
+    };
+    if (folderMode) {
+      const base = uniqBase(m.name, used);
+      obj.bg = 'maps/' + base + '.jpg';
+      obj.thumb = 'maps/' + base + '_thumb.jpg';
+    } else {
+      obj.bg = m.bg;
+      obj.thumb = m.thumb || m.bg;
+    }
+    arr.push(obj);
+  }
+  return arr;
+}
+
+function buildPresetCode(folderMode) {
+  const arr = buildPresetArray(folderMode);
+  const json = JSON.stringify(arr, null, 2);
+  return `/* ====== ПРЕСЕТЫ START ====== */\nconst PRESET_MAPS = ${json};\n/* ====== ПРЕСЕТЫ END ====== */`;
+}
+
+function refreshExport() {
+  const code = buildPresetCode(false);
+  $('exportCode').value = code;
+  $('exportCount').textContent = `Карт: ${allMaps.length}`;
+  const has = allMaps.length > 0;
+  $('copyCode').disabled = !has;
+  $('downloadJs').disabled = !has;
+  $('downloadZip').disabled = !has;
+  $('zipStatus').textContent = '';
+}
+
+$('saveSite').onclick = () => {
+  refreshExport();
+  exportModal.classList.add('open');
+};
+$('closeExport').onclick = () => exportModal.classList.remove('open');
+
+document.querySelectorAll('#exportModal .tab').forEach(btn => {
+  btn.onclick = () => {
+    document.querySelectorAll('#exportModal .tab').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const isSingle = btn.dataset.tab === 'single';
+    $('tabSingle').style.display = isSingle ? 'block' : 'none';
+    $('tabFolder').style.display = isSingle ? 'none' : 'block';
+  };
+});
+
+$('copyCode').onclick = async () => {
+  try {
+    await navigator.clipboard.writeText($('exportCode').value);
+    toast('Скопировано');
+  } catch {
+    $('exportCode').select();
+    document.execCommand('copy');
+    toast('Скопировано');
+  }
+};
+
+$('downloadJs').onclick = () => {
+  const text = $('exportCode').value;
+  const blob = new Blob([text], { type: 'application/javascript;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'maps-data.js';
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(url), 3000);
+  toast('Файл maps-data.js скачан');
+};
+
+/* --- ZIP (store, без сжатия) --- */
+const CRC_TABLE = (() => {
+  const t = new Uint32Array(256);
+  for (let n = 0; n < 256; n++) {
+    let c = n;
+    for (let k = 0; k < 8; k++) c = (c & 1) ? (0xEDB88320 ^ (c >>> 1)) : (c >>> 1);
+    t[n] = c >>> 0;
+  }
+  return t;
+})();
+function crc32(u8) {
+  let c = 0xFFFFFFFF;
+  for (let i = 0; i < u8.length; i++) c = CRC_TABLE[(c ^ u8[i]) & 0xFF] ^ (c >>> 8);
+  return (c ^ 0xFFFFFFFF) >>> 0;
+}
+
+function makeZip(files) {
+  const enc = new TextEncoder();
+  const chunks = [];
+  const central = [];
+  let offset = 0;
+
+  for (const f of files) {
+    const nameU8 = enc.encode(f.name);
+    const crc = crc32(f.data);
+    const size = f.data.length;
+
+    const lh = new Uint8Array(30 + nameU8.length);
+    const dv = new DataView(lh.buffer);
+    dv.setUint32(0, 0x04034b50, true);
+    dv.setUint16(4, 20, true);
+    dv.setUint16(6, 0x0800, true);
+    dv.setUint16(8, 0, true);
+    dv.setUint16(10, 0, true);
+    dv.setUint16(12, 0, true);
+    dv.setUint32(14, crc, true);
+    dv.setUint32(18, size, true);
+    dv.setUint32(22, size, true);
+    dv.setUint16(26, nameU8.length, true);
+    dv.setUint16(28, 0, true);
+    lh.set(nameU8, 30);
+    chunks.push(lh, f.data);
+
+    const ch = new Uint8Array(46 + nameU8.length);
+    const cv = new DataView(ch.buffer);
+    cv.setUint32(0, 0x02014b50, true);
+    cv.setUint16(4, 20, true);
+    cv.setUint16(6, 20, true);
+    cv.setUint16(8, 0x0800, true);
+    cv.setUint16(10, 0, true);
+    cv.setUint16(12, 0, true);
+    cv.setUint16(14, 0, true);
+    cv.setUint32(16, crc, true);
+    cv.setUint32(20, size, true);
+    cv.setUint32(24, size, true);
+    cv.setUint16(28, nameU8.length, true);
+    cv.setUint16(30, 0, true);
+    cv.setUint16(32, 0, true);
+    cv.setUint16(34, 0, true);
+    cv.setUint16(36, 0, true);
+    cv.setUint32(38, 0, true);
+    cv.setUint32(42, offset, true);
+    ch.set(nameU8, 46);
+    central.push(ch);
+
+    offset += lh.length + size;
+  }
+
+  const centralStart = offset;
+  let centralSize = 0;
+  for (const c of central) { chunks.push(c); centralSize += c.length; }
+
+  const eocd = new Uint8Array(22);
+  const ev = new DataView(eocd.buffer);
+  ev.setUint32(0, 0x06054b50, true);
+  ev.setUint16(4, 0, true);
+  ev.setUint16(6, 0, true);
+  ev.setUint16(8, files.length, true);
+  ev.setUint16(10, files.length, true);
+  ev.setUint32(12, centralSize, true);
+  ev.setUint32(16, centralStart, true);
+  ev.setUint16(20, 0, true);
+  chunks.push(eocd);
+
+  return new Blob(chunks, { type: 'application/zip' });
+}
+
+function dataURLtoU8(dataURL) {
+  const base64 = dataURL.split(',')[1];
+  const bin = atob(base64);
+  const u8 = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) u8[i] = bin.charCodeAt(i);
+  return u8;
+}
+
+async function srcToU8(src) {
+  if (src.startsWith('data:')) return dataURLtoU8(src);
+  const res = await fetch(src);
+  if (!res.ok) throw new Error('fetch failed: ' + src);
+  return new Uint8Array(await res.arrayBuffer());
+}
+
+$('downloadZip').onclick = async () => {
+  const status = $('zipStatus');
+  status.textContent = 'Готовлю архив...';
+  try {
+    const used = new Set();
+    const files = [];
+    const arr = [];
+    let skipped = 0;
+
+    for (const m of allMaps) {
+      const base = uniqBase(m.name, used);
+      const bgName = base + '.jpg';
+      const thumbName = base + '_thumb.jpg';
+      let bgU8, thumbU8;
+      try {
+        bgU8 = await srcToU8(m.bg);
+        thumbU8 = await srcToU8(m.thumb || m.bg);
+      } catch (err) {
+        skipped++;
+        continue;
+      }
+      files.push({ name: 'maps/' + bgName, data: bgU8 });
+      files.push({ name: 'maps/' + thumbName, data: thumbU8 });
+      arr.push({
+        name: m.name,
+        bg: 'maps/' + bgName,
+        thumb: 'maps/' + thumbName,
+        paths: m.paths || [],
+        updatedAt: m.updatedAt || m.createdAt || Date.now()
+      });
+    }
+
+    const dataJs = `/* ====== ПРЕСЕТЫ START ====== */\nconst PRESET_MAPS = ${JSON.stringify(arr, null, 2)};\n/* ====== ПРЕСЕТЫ END ====== */`;
+    files.push({ name: 'maps-data.js', data: new TextEncoder().encode(dataJs) });
+    files.push({ name: 'README.txt', data: new TextEncoder().encode(
+      'Экспорт тактических карт ЛТ\n' +
+      '============================\n\n' +
+      '1. Распакуйте архив рядом с index.html — появится папка maps/ и файл maps-data.js.\n' +
+      '2. В index.html перед основным <script> добавьте:\n' +
+      '       <script src="maps-data.js"></script>\n' +
+      '   Либо откройте maps-data.js и вставьте его содержимое\n' +
+      '   вместо блока /* ====== ПРЕСЕТЫ START/END ====== *\/ в index.html.\n' +
+      '3. Откройте сайт — карты автоматически импортируются в браузер.\n\n' +
+      'Если сайт открыт через file:// и папка maps/ на месте — всё будет работать.\n'
+    ) });
+
+    const zip = makeZip(files);
+    const url = URL.createObjectURL(zip);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'lt-tactics-maps.zip';
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(url), 5000);
+
+    status.textContent = skipped > 0
+      ? `Готово. Пропущено карт (не удалось загрузить фото): ${skipped}`
+      : 'Готово!';
+    toast('ZIP скачан');
+  } catch (err) {
+    status.textContent = 'Ошибка: ' + err.message;
+    alert('Не удалось создать архив: ' + err.message);
+  }
 };
 
 /* ==================== Toast ==================== */
@@ -690,7 +1234,10 @@ function toast(msg) {
 }
 
 /* ==================== Инициализация ==================== */
-loadMaps();
+(async function init() {
+  try { await seedPresets(); } catch (e) { console.warn('seed error', e); }
+  await loadMaps();
+})();
 </script>
 </body>
 </html>
